@@ -1,5 +1,6 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
+import { MakerDMG } from '@electron-forge/maker-dmg';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
@@ -19,9 +20,9 @@ const config: ForgeConfig = {
       createStartMenuShortcut: true,
       shortcutLocations: ['Desktop', 'StartMenu'],
     }),
-    new MakerZIP({}, ['darwin']),
-    new MakerRpm({}),
-    new MakerDeb({}),
+    new MakerDMG({ format: 'ULFO' }, ['darwin']),
+    new MakerRpm({}, ['linux']),
+    new MakerDeb({}, ['linux']),
   ],
   plugins: [
     new VitePlugin({

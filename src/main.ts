@@ -39,11 +39,16 @@ app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) creat
 // ── Helpers ───────────────────────────────────────────────────
 
 function dockerEnv() {
+  const base = process.env.PATH ?? '';
+  if (process.platform === 'darwin') {
+    const extra = '/usr/local/bin:/opt/homebrew/bin:/usr/bin';
+    return { ...process.env, PATH: `${base}:${extra}` };
+  }
   const extra = [
     'C:\\Program Files\\Docker\\Docker\\resources\\bin',
     'C:\\Program Files (x86)\\Docker\\Docker\\resources\\bin',
   ].join(';');
-  return { ...process.env, PATH: `${process.env.PATH ?? ''};${extra}` };
+  return { ...process.env, PATH: `${base};${extra}` };
 }
 
 function composeDir() {
