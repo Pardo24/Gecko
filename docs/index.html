@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Caliu — El teu Netflix casolà, sense subscripcions</title>
   <link rel="icon" type="image/png" href="icon.png" />
-  <meta name="description" content="Caliu instal·la i gestiona Jellyfin, Radarr, Sonarr i qBittorrent en un clic. El teu servidor multimèdia gratuït per a Windows." />
+  <meta name="description" content="Caliu instal·la i gestiona Jellyfin, Radarr, Sonarr i qBittorrent en un clic. El teu servidor multimèdia gratuït per a Windows i Mac." />
   <meta property="og:title" content="Caliu — El teu Netflix casolà" />
   <meta property="og:description" content="Servidor multimèdia gratuït per a casa. Instal·lació en 1 clic. Sense subscripcions, sense límits." />
   <meta property="og:type" content="website" />
@@ -103,8 +103,8 @@
     /* ─── Buy Me a Coffee ────────────────────────────────────────────── */
     .btn-bmc { display: inline-flex; align-items: center; gap: 7px; background: #FFDD00; color: #000; font-weight: 700; font-size: 0.9rem; padding: 10px 22px; border-radius: 10px; text-decoration: none; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 2px 12px rgba(255,221,0,0.3); }
     .btn-bmc:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,221,0,0.45); }
-    .nav-bmc { font-size: 0.8rem; font-weight: 700; color: var(--text-2); text-decoration: none; padding: 4px 10px; border-radius: 6px; background: rgba(255,221,0,0.12); transition: background 0.15s; }
-    .nav-bmc:hover { background: rgba(255,221,0,0.25); color: var(--text); }
+    .nav-bmc { font-size: 0.8rem; font-weight: 400; color: var(--text-2); text-decoration: underline; text-underline-offset: 3px; background: none; padding: 0; transition: color 0.15s; }
+    .nav-bmc:hover { color: var(--text); }
 
     /* ─── Lang switcher ───────────────────────────────────────────────── */
     .lang-switch { display: flex; align-items: center; gap: 3px; }
@@ -559,10 +559,15 @@
     <div class="logo-mark" style="width:76px;height:76px;border-radius:22px;margin:0 auto 28px;box-shadow:0 12px 32px rgba(249,115,22,0.38);"><img src="icon.png" alt="Caliu" style="border-radius:22px;" /></div>
     <h2 data-i18n="cta_title">Comença avui. És gratis.</h2>
     <p data-i18n="cta_sub">Descarrega Caliu i tingues el teu Netflix casolà en 5 minuts.</p>
-    <a href="https://github.com/Pardo24/caliu/releases/latest" class="btn btn-primary" data-i18n="cta_btn">
-      Descarregar Caliu per Windows
-    </a>
-    <p class="cta-note" data-i18n="cta_note">Windows 10 / 11 &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.0.6 &nbsp;·&nbsp; Docker Desktop necessari (gratuït)</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="https://github.com/Pardo24/caliu/releases/latest" class="btn btn-primary" data-i18n="cta_btn_win">
+        🪟 Descarregar per Windows
+      </a>
+      <a href="https://github.com/Pardo24/caliu/releases/latest" class="btn" style="background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.2);color:#fff;" data-i18n="cta_btn_mac">
+        🍎 Descarregar per Mac
+      </a>
+    </div>
+    <p class="cta-note" data-i18n="cta_note">Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.0.6 &nbsp;·&nbsp; Docker Desktop necessari (gratuït)</p>
     <div style="margin-top:28px;">
       <a href="https://buymeacoffee.com/danipardo24" target="_blank" rel="noopener" class="btn-bmc">
         ☕ <span data-i18n="bmc_btn">Invita'm a un cafè</span>
@@ -618,11 +623,11 @@
 const i18n = {
   ca: {
     nav_features:"Característiques", nav_how:"Com funciona", nav_guide:"Guia", nav_download:"Descarregar", nav_bmc:"☕ Suport al projecte",
-    hero_badge:"✦ Gratuït &nbsp;·&nbsp; Codi obert &nbsp;·&nbsp; Windows",
+    hero_badge:"✦ Gratuït &nbsp;·&nbsp; Codi obert &nbsp;·&nbsp; Windows &amp; Mac",
     hero_title:'El teu<br/><span class="gradient-text">Netflix casolà</span><br/>sense subscripcions',
     hero_sub:"Un clic. Cinc minuts. El teu propi Netflix a casa, per sempre i sense pagar subscripcions.",
     hero_btn_dl:"Descarregar Caliu — gratis", hero_btn_gh:"⭐&nbsp; Veure a GitHub",
-    hero_note:"Windows 10 / 11 &nbsp;·&nbsp; x64 &nbsp;·&nbsp; Requereix Docker Desktop (gratuït)",
+    hero_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; Requereix Docker Desktop (gratuït)",
     mock_running:"En marxa", mock_stop:"Parar", mock_active:"● actiu",
     mock_nav_home:"INICI", mock_nav_vpn:"VPN", mock_nav_net:"XARXA", mock_nav_cfg:"CONFIG",
     stat1:"Serveis integrats", stat2:"Clic per instal·lar", stat3:"Cost de llicència", stat4:"Idiomes inclosos",
@@ -651,14 +656,14 @@ const i18n = {
     vpn_disclaimer:"⚠️ L'ús de Caliu i de les descàrregues és responsabilitat exclusiva de l'usuari. Compleix la legislació vigent al teu país.",
     faq_eyebrow:"Preguntes freqüents", faq_title:"Tens dubtes?",
     faq1_q:"Cal tenir coneixements tècnics per instal·lar Caliu?", faq1_a:"No. L'assistent de Caliu guia l'usuari pas a pas. Si pots instal·lar un programa com VLC o Spotify, pots instal·lar Caliu sense cap problema.",
-    faq2_q:"Funciona a Mac o Linux?", faq2_a:"De moment, Caliu (l'aplicació d'escriptori) és exclusiva de Windows 10/11. El propi stack de serveis (Docker) funciona a qualsevol plataforma, però l'instal·lador és per a Windows. Suport Mac/Linux és possible en versions futures.",
+    faq2_q:"Funciona a Mac o Linux?", faq2_a:"Sí, Caliu té instal·lador per a Windows i Mac. Linux no està suportat de moment. A més, pots veure el teu contingut des de qualsevol dispositiu: iPhone, iPad i Apple TV via l'app de Jellyfin, i Android via l'app oficial o el navegador.",
     faq3_q:"L'ordinador ha d'estar sempre engegat?", faq3_a:"Sí. Per accedir als teus continguts des d'altres dispositius, l'ordinador on s'executa Caliu ha d'estar encès. Per a un ús continu, es recomana tenir-lo connectat per cable Ethernet i configurar Windows perquè no es suspengui.",
     faq4_q:"Quant d'espai ocupen els serveis?", faq4_a:"Les imatges Docker dels 6 serveis ocupen aproximadament 3-4 GB. El contingut multimèdia que descarreguis ocuparà tant espai com vulguis al disc que triïs. Es recomana un disc dur de com a mínim 1 TB per al contingut.",
     faq5_q:"És gratuït per sempre?", faq5_a:"Sí. Caliu és programari de codi obert sota llicència MIT. No hi ha versions premium, subscripcions ni funcions de pagament. Els serveis que instal·la (Jellyfin, Radarr, Sonarr, etc.) també són gratuïts i de codi obert.",
     faq6_q:"Puc accedir als meus continguts fora de casa?", faq6_a:"Sí. La forma més senzilla és instal·lar Tailscale (gratuït) al teu ordinador i als dispositius que facis servir. Tailscale crea una xarxa privada virtual entre els teus dispositius sense que hagis d'obrir ports al router.",
     cta_title:"Comença avui. És gratis.", cta_sub:"Descarrega Caliu i tingues el teu Netflix casolà en 5 minuts.",
-    cta_btn:"Descarregar Caliu per Windows",
-    cta_note:"Windows 10 / 11 &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.0.4 &nbsp;·&nbsp; Docker Desktop necessari (gratuït)",
+    cta_btn_win:"🪟 Descarregar per Windows", cta_btn_mac:"🍎 Descarregar per Mac",
+    cta_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.0.6 &nbsp;·&nbsp; Docker Desktop necessari (gratuït)",
     footer_tagline:"El teu servidor multimèdia de codi obert. Gratuït per sempre.",
     footer_col1:"Projecte", footer_releases:"Versions", footer_guide_link:"Guia d'usuari", footer_issues:"Reportar error",
     footer_col2:"Eines recomanades", footer_col3:"Serveis",
@@ -669,11 +674,11 @@ const i18n = {
   },
   es: {
     nav_features:"Características", nav_how:"Cómo funciona", nav_guide:"Guía", nav_download:"Descargar", nav_bmc:"☕ Apoya el proyecto",
-    hero_badge:"✦ Gratuito &nbsp;·&nbsp; Código abierto &nbsp;·&nbsp; Windows",
+    hero_badge:"✦ Gratuito &nbsp;·&nbsp; Código abierto &nbsp;·&nbsp; Windows &amp; Mac",
     hero_title:'Tu propio<br/><span class="gradient-text">Netflix casero</span><br/>sin suscripciones',
     hero_sub:"Un clic. Cinco minutos. Tu propio Netflix en casa, para siempre y sin pagar suscripciones.",
     hero_btn_dl:"Descargar Caliu — gratis", hero_btn_gh:"⭐&nbsp; Ver en GitHub",
-    hero_note:"Windows 10 / 11 &nbsp;·&nbsp; x64 &nbsp;·&nbsp; Requiere Docker Desktop (gratuito)",
+    hero_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; Requiere Docker Desktop (gratuito)",
     mock_running:"En marcha", mock_stop:"Parar", mock_active:"● activo",
     mock_nav_home:"INICIO", mock_nav_vpn:"VPN", mock_nav_net:"RED", mock_nav_cfg:"CONFIG",
     stat1:"Servicios integrados", stat2:"Clic para instalar", stat3:"Coste de licencia", stat4:"Idiomas incluidos",
@@ -702,14 +707,14 @@ const i18n = {
     vpn_disclaimer:"⚠️ El uso de Caliu y de las descargas es responsabilidad exclusiva del usuario. Cumple la legislación vigente en tu país.",
     faq_eyebrow:"Preguntas frecuentes", faq_title:"¿Tienes dudas?",
     faq1_q:"¿Se necesitan conocimientos técnicos para instalar Caliu?", faq1_a:"No. El asistente de Caliu guía al usuario paso a paso. Si puedes instalar un programa como VLC o Spotify, puedes instalar Caliu sin ningún problema.",
-    faq2_q:"¿Funciona en Mac o Linux?", faq2_a:"Por ahora, Caliu (la aplicación de escritorio) es exclusiva de Windows 10/11. El propio stack de servicios (Docker) funciona en cualquier plataforma, pero el instalador es para Windows. Soporte Mac/Linux es posible en versiones futuras.",
+    faq2_q:"¿Funciona en Mac o Linux?", faq2_a:"Sí, Caliu tiene instalador para Windows y Mac. Linux no está soportado de momento. Además, puedes ver tu contenido desde cualquier dispositivo: iPhone, iPad y Apple TV via la app de Jellyfin, y Android via la app oficial o el navegador.",
     faq3_q:"¿El ordenador tiene que estar siempre encendido?", faq3_a:"Sí. Para acceder a tus contenidos desde otros dispositivos, el ordenador donde se ejecuta Caliu debe estar encendido. Para un uso continuo, se recomienda tenerlo conectado por cable Ethernet y configurar Windows para que no se suspenda.",
     faq4_q:"¿Cuánto espacio ocupan los servicios?", faq4_a:"Las imágenes Docker de los 6 servicios ocupan aproximadamente 3-4 GB. El contenido multimedia que descargues ocupará tanto espacio como quieras en el disco que elijas. Se recomienda un disco duro de al menos 1 TB para el contenido.",
     faq5_q:"¿Es gratuito para siempre?", faq5_a:"Sí. Caliu es software de código abierto bajo licencia MIT. No hay versiones premium, suscripciones ni funciones de pago. Los servicios que instala (Jellyfin, Radarr, Sonarr, etc.) también son gratuitos y de código abierto.",
     faq6_q:"¿Puedo acceder a mis contenidos desde fuera de casa?", faq6_a:"Sí. La forma más sencilla es instalar Tailscale (gratuito) en tu ordenador y en los dispositivos que uses. Tailscale crea una red privada virtual entre tus dispositivos sin que tengas que abrir puertos en el router.",
     cta_title:"Empieza hoy. Es gratis.", cta_sub:"Descarga Caliu y ten tu Netflix casero en 5 minutos.",
-    cta_btn:"Descargar Caliu para Windows",
-    cta_note:"Windows 10 / 11 &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.0.4 &nbsp;·&nbsp; Docker Desktop necesario (gratuito)",
+    cta_btn_win:"🪟 Descargar para Windows", cta_btn_mac:"🍎 Descargar para Mac",
+    cta_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.0.6 &nbsp;·&nbsp; Docker Desktop necesario (gratuito)",
     footer_tagline:"Tu servidor multimedia de código abierto. Gratis para siempre.",
     footer_col1:"Proyecto", footer_releases:"Versiones", footer_guide_link:"Guía de usuario", footer_issues:"Reportar error",
     footer_col2:"Herramientas recomendadas", footer_col3:"Servicios",
@@ -720,11 +725,11 @@ const i18n = {
   },
   en: {
     nav_features:"Features", nav_how:"How it works", nav_guide:"Guide", nav_download:"Download", nav_bmc:"☕ Support the project",
-    hero_badge:"✦ Free &nbsp;·&nbsp; Open source &nbsp;·&nbsp; Windows",
+    hero_badge:"✦ Free &nbsp;·&nbsp; Open source &nbsp;·&nbsp; Windows &amp; Mac",
     hero_title:'Your own<br/><span class="gradient-text">home Netflix</span><br/>without subscriptions',
     hero_sub:"One click. Five minutes. Your own Netflix at home, forever and without paying subscriptions.",
     hero_btn_dl:"Download Caliu — free", hero_btn_gh:"⭐&nbsp; View on GitHub",
-    hero_note:"Windows 10 / 11 &nbsp;·&nbsp; x64 &nbsp;·&nbsp; Requires Docker Desktop (free)",
+    hero_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; Requires Docker Desktop (free)",
     mock_running:"Running", mock_stop:"Stop", mock_active:"● active",
     mock_nav_home:"HOME", mock_nav_vpn:"VPN", mock_nav_net:"NETWORK", mock_nav_cfg:"CONFIG",
     stat1:"Integrated services", stat2:"Click to install", stat3:"License cost", stat4:"Languages included",
@@ -753,14 +758,14 @@ const i18n = {
     vpn_disclaimer:"⚠️ The use of Caliu and downloads is the user's sole responsibility. Comply with the laws applicable in your country.",
     faq_eyebrow:"Frequently asked questions", faq_title:"Got questions?",
     faq1_q:"Do I need technical knowledge to install Caliu?", faq1_a:"No. Caliu's wizard guides the user step by step. If you can install a program like VLC or Spotify, you can install Caliu without any problem.",
-    faq2_q:"Does it work on Mac or Linux?", faq2_a:"For now, Caliu (the desktop app) is exclusive to Windows 10/11. The service stack itself (Docker) works on any platform, but the installer is for Windows. Mac/Linux support may come in future versions.",
+    faq2_q:"Does it work on Mac or Linux?", faq2_a:"Yes, Caliu has an installer for both Windows and Mac. Linux is not supported yet. You can also watch your content from any device: iPhone, iPad and Apple TV via the Jellyfin app, and Android via the official app or browser.",
     faq3_q:"Does the computer need to stay on all the time?", faq3_a:"Yes. To access your content from other devices, the computer running Caliu must be on. For continuous use, it's recommended to connect it via Ethernet and configure Windows to prevent sleep.",
     faq4_q:"How much space do the services take up?", faq4_a:"The Docker images for the 6 services take up approximately 3-4 GB. The media content you download will take as much space as you want on the disk you choose. A hard drive of at least 1 TB is recommended for content.",
     faq5_q:"Is it free forever?", faq5_a:"Yes. Caliu is open-source software under the MIT license. There are no premium versions, subscriptions or paid features. The services it installs (Jellyfin, Radarr, Sonarr, etc.) are also free and open source.",
     faq6_q:"Can I access my content from outside home?", faq6_a:"Yes. The easiest way is to install Tailscale (free) on your computer and the devices you use. Tailscale creates a private virtual network between your devices without you having to open ports on your router.",
     cta_title:"Start today. It's free.", cta_sub:"Download Caliu and have your home Netflix in 5 minutes.",
-    cta_btn:"Download Caliu for Windows",
-    cta_note:"Windows 10 / 11 &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.0.4 &nbsp;·&nbsp; Docker Desktop required (free)",
+    cta_btn_win:"🪟 Download for Windows", cta_btn_mac:"🍎 Download for Mac",
+    cta_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.0.6 &nbsp;·&nbsp; Docker Desktop required (free)",
     footer_tagline:"Your open-source media server. Free forever.",
     footer_col1:"Project", footer_releases:"Releases", footer_guide_link:"User guide", footer_issues:"Report issue",
     footer_col2:"Recommended tools", footer_col3:"Services",
