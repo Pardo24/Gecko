@@ -1,10 +1,10 @@
-# Caliu 🦎
+# Gecko 🦎
 
-**Caliu** is a desktop app that lets anyone set up a home media server in minutes — no technical knowledge required.
+**Gecko** is a desktop app that lets anyone set up a home media server in minutes — no technical knowledge required.
 
 One installer. Jellyfin, Sonarr, Radarr, Prowlarr, Bazarr, qBittorrent, Jellyseerr and a VPN, all running together with Docker.
 
-> *Caliu* means warmth in Catalan — because your media should feel at home.
+> *Gecko* quick, green and very resilient — because your media deserves a software like this.
 
 ---
 
@@ -51,12 +51,12 @@ One installer. Jellyfin, Sonarr, Radarr, Prowlarr, Bazarr, qBittorrent, Jellysee
 
 Get the latest release for your platform:
 
-👉 **[Download Caliu](https://github.com/Pardo24/caliu/releases/latest)**
+👉 **[Download Gecko](https://github.com/Pardo24/Gecko/releases/latest)**
 
 | Platform | File |
 |---|---|
-| Windows | `caliu-Setup.exe` |
-| macOS | `caliu.dmg` |
+| Windows | `Gecko-Setup.exe` |
+| macOS | `gecko.dmg` |
 
 ---
 
@@ -85,7 +85,7 @@ npm run make
 
 ## Support
 
-If Caliu saves you time, consider buying me a coffee ☕
+If you find Gecko useful, consider buying me a coffee ☕
 
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-danipardo24-teal?logo=buy-me-a-coffee)](https://buymeacoffee.com/danipardo24)
 
@@ -93,4 +93,4 @@ If Caliu saves you time, consider buying me a coffee ☕
 
 ## License
 
-MIT © [Dani Pardo](https://github.com/Pardo24/caliu)
+MIT © [Dani Pardo](https://github.com/Pardo24/Gecko)
