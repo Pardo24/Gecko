@@ -1,14 +1,17 @@
 import { useState } from 'react';
-import { CheckCircle2, Circle, ExternalLink, KeyRound } from 'lucide-react';
+import { CheckCircle2, ExternalLink, KeyRound } from 'lucide-react';
 import { useT } from '../LangContext';
 import type { Lang } from '../i18n';
+import ServiceIcon, { type ServiceName } from '../components/ServiceIcon';
 
 const DONE_KEY = 'moss_guide_done';
 
 type Step = {
   id: string;
+  serviceName: ServiceName;
   port: number;
   title: Record<Lang, string>;
+  intro: Record<Lang, string>;
   items: Record<Lang, string[]>;
   cred: Record<Lang, string>;
 };
@@ -16,61 +19,68 @@ type Step = {
 const STEPS: Step[] = [
   {
     id: 'jellyfin',
+    serviceName: 'Jellyfin',
     port: 8096,
-    title: {
-      ca: 'Configurar Jellyfin',
-      es: 'Configurar Jellyfin',
-      en: 'Set up Jellyfin',
+    title: { ca: 'Configurar Jellyfin', es: 'Configurar Jellyfin', en: 'Set up Jellyfin' },
+    intro: {
+      ca: 'El teu reproductor de cinema. Inicia sessió i afegeix les biblioteques de contingut.',
+      es: 'Tu reproductor de cine. Inicia sesión y añade las bibliotecas de contenido.',
+      en: 'Your cinema player. Sign in and add your media libraries.',
     },
     items: {
       ca: [
-        'El compte admin s\'ha creat automàticament amb la teva contrasenya de Caliu.',
-        'Obre Jellyfin i inicia sessió amb usuari admin i la teva contrasenya.',
+        "Obre Jellyfin i inicia sessió amb usuari admin i la teva contrasenya.",
+        "L'usuari i contrasenya s'han creat automàticament durant la instal·lació.",
         'Dashboard → Libraries → Add Media Library',
-        'Afegeix: Pel·lícules → /data/movies  i  Sèries → /data/series',
+        'Afegeix: Pel·lícules → /data/movies  ·  Sèries → /data/series',
       ],
       es: [
-        'La cuenta admin se ha creado automáticamente con tu contraseña de Caliu.',
         'Abre Jellyfin e inicia sesión con usuario admin y tu contraseña.',
+        'El usuario y contraseña se crearon automáticamente durante la instalación.',
         'Dashboard → Libraries → Add Media Library',
-        'Añade: Películas → /data/movies  y  Series → /data/series',
+        'Añade: Películas → /data/movies  ·  Series → /data/series',
       ],
       en: [
-        'The admin account was auto-created with your Caliu password.',
         'Open Jellyfin and sign in with user admin and your password.',
+        'The user and password were auto-created during installation.',
         'Dashboard → Libraries → Add Media Library',
-        'Add: Movies → /data/movies  and  TV Shows → /data/series',
+        'Add: Movies → /data/movies  ·  TV Shows → /data/series',
       ],
     },
     cred: {
-      ca: 'admin  ·  [la teva contrasenya de Caliu]',
-      es: 'admin  ·  [tu contraseña de Caliu]',
-      en: 'admin  ·  [your Caliu password]',
+      ca: 'admin  ·  [la teva contrasenya de Gecko]',
+      es: 'admin  ·  [tu contraseña de Gecko]',
+      en: 'admin  ·  [your Gecko password]',
     },
   },
   {
     id: 'prowlarr',
+    serviceName: 'Prowlarr',
     port: 9696,
-    title: {
-      ca: 'Afegir indexadors a Prowlarr',
-      es: 'Añadir indexadores a Prowlarr',
-      en: 'Add indexers to Prowlarr',
+    title: { ca: 'Afegir indexadors a Prowlarr', es: 'Añadir indexadores a Prowlarr', en: 'Add indexers to Prowlarr' },
+    intro: {
+      ca: 'Prowlarr és el cercador. Sense indexadors, Radarr i Sonarr no troben res.',
+      es: 'Prowlarr es el buscador. Sin indexadores, Radarr y Sonarr no encuentran nada.',
+      en: 'Prowlarr is the searcher. Without indexers, Radarr and Sonarr find nothing.',
     },
     items: {
       ca: [
-        'Sense contrasenya — accés directe.',
         'Indexers → Add Indexer → tria els que vulguis del catàleg.',
-        'Anota la teva API Key: Settings → General → API Key',
+        'Sense contrasenya — accés directe.',
+        'Settings → General → API Key → Copia la clau.',
+        'Necessitaràs aquesta clau als passos Radarr i Sonarr.',
       ],
       es: [
-        'Sin contraseña — acceso directo.',
         'Indexers → Add Indexer → elige los que quieras del catálogo.',
-        'Anota tu API Key: Settings → General → API Key',
+        'Sin contraseña — acceso directo.',
+        'Settings → General → API Key → Copia la clave.',
+        'Necesitarás esta clave en los pasos Radarr y Sonarr.',
       ],
       en: [
-        'No password — direct access.',
         'Indexers → Add Indexer → pick whichever you want from the catalogue.',
-        'Note your API Key: Settings → General → API Key',
+        'No password — direct access.',
+        'Settings → General → API Key → Copy the key.',
+        "You'll need this key in the Radarr and Sonarr steps.",
       ],
     },
     cred: {
@@ -81,11 +91,13 @@ const STEPS: Step[] = [
   },
   {
     id: 'radarr',
+    serviceName: 'Radarr',
     port: 7878,
-    title: {
-      ca: 'Configurar Radarr (pel·lícules)',
-      es: 'Configurar Radarr (películas)',
-      en: 'Configure Radarr (movies)',
+    title: { ca: 'Configurar Radarr (pel·lícules)', es: 'Configurar Radarr (películas)', en: 'Configure Radarr (movies)' },
+    intro: {
+      ca: 'Radarr gestiona les teves pel·lícules automàticament: busca, descarrega i organitza.',
+      es: 'Radarr gestiona tus películas automáticamente: busca, descarga y organiza.',
+      en: 'Radarr manages your movies automatically: searches, downloads and organises.',
     },
     items: {
       ca: [
@@ -115,11 +127,13 @@ const STEPS: Step[] = [
   },
   {
     id: 'sonarr',
+    serviceName: 'Sonarr',
     port: 8989,
-    title: {
-      ca: 'Configurar Sonarr (sèries)',
-      es: 'Configurar Sonarr (series)',
-      en: 'Configure Sonarr (TV shows)',
+    title: { ca: 'Configurar Sonarr (sèries)', es: 'Configurar Sonarr (series)', en: 'Configure Sonarr (TV shows)' },
+    intro: {
+      ca: 'Sonarr fa el mateix que Radarr però per a sèries. Mateixa configuració.',
+      es: 'Sonarr hace lo mismo que Radarr pero para series. Misma configuración.',
+      en: 'Sonarr does the same as Radarr but for TV shows. Same configuration.',
     },
     items: {
       ca: [
@@ -149,53 +163,58 @@ const STEPS: Step[] = [
   },
   {
     id: 'jellyseerr',
+    serviceName: 'Jellyseerr',
     port: 5055,
-    title: {
-      ca: 'Connectar Jellyseerr',
-      es: 'Conectar Jellyseerr',
-      en: 'Connect Jellyseerr',
+    title: { ca: 'Connectar Jellyseerr', es: 'Conectar Jellyseerr', en: 'Connect Jellyseerr' },
+    intro: {
+      ca: 'Jellyseerr és la interfície per demanar contingut. El connectes a Jellyfin i queda tot lligat.',
+      es: 'Jellyseerr es la interfaz para pedir contenido. Lo conectas a Jellyfin y queda todo enlazado.',
+      en: 'Jellyseerr is the interface for requesting content. Connect it to Jellyfin and everything links up.',
     },
     items: {
       ca: [
-        'Obre Jellyseerr i segueix l\'assistent inicial.',
+        "Obre Jellyseerr i segueix l'assistent inicial.",
+        'Segueix les instruccions de la pantalla.',
         'Quan et demani connectar Jellyfin, usa les credencials del pas 1.',
+        'admin  ·  [la teva contrasenya de Gecko]',
       ],
       es: [
         'Abre Jellyseerr y sigue el asistente inicial.',
+        'Sigue las instrucciones en pantalla.',
         'Cuando te pida conectar Jellyfin, usa las credenciales del paso 1.',
+        'admin  ·  [tu contraseña de Gecko]',
       ],
       en: [
         'Open Jellyseerr and follow the initial setup wizard.',
+        'Follow the on-screen instructions.',
         'When asked to connect Jellyfin, use the credentials from step 1.',
+        'admin  ·  [your Gecko password]',
       ],
     },
     cred: {
-      ca: 'admin  ·  [la teva contrasenya de Caliu]  (les mateixes que Jellyfin)',
-      es: 'admin  ·  [tu contraseña de Caliu]  (las mismas que Jellyfin)',
-      en: 'admin  ·  [your Caliu password]  (same as Jellyfin)',
+      ca: 'admin  ·  [la teva contrasenya de Gecko]  (les mateixes que Jellyfin)',
+      es: 'admin  ·  [tu contraseña de Gecko]  (las mismas que Jellyfin)',
+      en: 'admin  ·  [your Gecko password]  (same as Jellyfin)',
     },
   },
 ];
 
 const SUBTITLE: Record<Lang, string> = {
-  ca: "Segueix aquests passos per posar-ho tot a punt.",
-  es: "Sigue estos pasos para configurar todo.",
-  en: "Follow these steps to get everything set up.",
+  ca: 'Segueix aquests passos per posar-ho tot a punt.',
+  es: 'Sigue estos pasos para configurar todo.',
+  en: 'Follow these steps to get everything set up.',
 };
 
-const OPEN_LABEL: Record<Lang, string> = {
-  ca: 'Obrir',
-  es: 'Abrir',
-  en: 'Open',
-};
+const OPEN_LABEL: Record<Lang, string> = { ca: 'Obrir', es: 'Abrir', en: 'Open' };
+const MARK_DONE:  Record<Lang, string> = { ca: 'Marcar fet', es: 'Marcar hecho', en: 'Mark done' };
+const MARK_UNDO:  Record<Lang, string> = { ca: 'Desmarcar', es: 'Desmarcar', en: 'Undo' };
 
 const DISCLAIMER: Record<Lang, string> = {
-  ca: "⚠️ Caliu és una eina de gestió de serveis multimèdia. L'usuari és l'únic responsable del contingut que descarrega i de complir la legislació vigent al seu país.",
-  es: "⚠️ Caliu es una herramienta de gestión de servicios multimedia. El usuario es el único responsable del contenido que descarga y de cumplir la legislación vigente en su país.",
-  en: "⚠️ Caliu is a media service management tool. The user is solely responsible for the content they download and for complying with applicable law in their country.",
+  ca: "⚠️ Gecko és una eina de gestió de serveis multimèdia. L'usuari és l'únic responsable del contingut que descarrega i de complir la legislació vigent al seu país.",
+  es: '⚠️ Gecko es una herramienta de gestión de servicios multimedia. El usuario es el único responsable del contenido que descarga y de cumplir la legislación vigente en su país.',
+  en: '⚠️ Gecko is a media service management tool. The user is solely responsible for the content they download and for complying with applicable law in their country.',
 };
 
-// Items that are indented "detail" rows (even-indexed after first = detail of previous)
 function isDetail(i: number) { return i % 2 === 1; }
 
 export default function PageGuia() {
@@ -215,132 +234,174 @@ export default function PageGuia() {
 
   const open = (port: number) => window.electron.openExternal(`http://localhost:${port}`);
   const completedCount = STEPS.filter(s => done.has(s.id)).length;
+  const total = STEPS.length;
 
   return (
-    <div className="flex flex-col gap-3 pt-5 px-5 pb-5">
+    <div className="flex flex-col gap-4 pt-5 px-5 pb-5">
 
-      {/* Progress bar */}
-      <div className="card-sm flex items-center justify-between" style={{ padding: '10px 16px' }}>
-        <p className="text-xs" style={{ color: 'var(--text-2)' }}>{SUBTITLE[lang]}</p>
-        <span className="text-xs font-semibold font-mono" style={{ color: 'var(--accent)', flexShrink: 0, marginLeft: 8 }}>
-          {completedCount}/{STEPS.length}
-        </span>
+      {/* Progress header */}
+      <div className="card-sm" style={{ padding: '12px 16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-2)' }}>{SUBTITLE[lang]}</p>
+          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent)', fontFamily: 'monospace' }}>
+            {completedCount}/{total}
+          </span>
+        </div>
+        <div className="progress-track">
+          <div className="progress-fill" style={{ width: `${(completedCount / total) * 100}%` }} />
+        </div>
       </div>
 
       {/* Steps */}
       {STEPS.map((step, i) => {
         const isDone = done.has(step.id);
         return (
-          <div key={step.id} className="card-sm" style={{ opacity: isDone ? 0.5 : 1, transition: 'opacity 0.2s' }}>
-            <div style={{ padding: '11px 14px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+          <div
+            key={step.id}
+            className="card"
+            style={{
+              overflow: 'hidden',
+              opacity: isDone ? 0.6 : 1,
+              transition: 'opacity 0.2s',
+              border: isDone ? '1px solid rgba(34,197,94,0.25)' : '1px solid var(--border)',
+            }}
+          >
+            {/* Header */}
+            <div style={{ padding: '16px 18px', display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+              {/* Step number */}
+              <div style={{
+                width: 46, height: 46, borderRadius: 14, flexShrink: 0,
+                background: isDone ? 'rgba(34,197,94,0.12)' : 'var(--accent-g)',
+                color: isDone ? '#22c55e' : '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 900, fontSize: '1rem',
+                boxShadow: isDone ? 'none' : '0 3px 12px rgba(13,148,136,0.28)',
+                transition: 'all 0.2s',
+              }}>
+                {isDone
+                  ? <CheckCircle2 size={22} strokeWidth={2.5} />
+                  : String(i + 1).padStart(2, '0')}
+              </div>
 
-              {/* Checkbox */}
-              <button
-                onClick={() => toggle(step.id)}
-                style={{ flexShrink: 0, marginTop: 1, color: isDone ? 'var(--accent)' : 'var(--text-3)', lineHeight: 1 }}
-              >
-                {isDone ? <CheckCircle2 size={17} /> : <Circle size={17} />}
-              </button>
-
+              {/* Content */}
               <div style={{ flex: 1, minWidth: 0 }}>
-                {/* Title row */}
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm font-semibold" style={{
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+                  <ServiceIcon name={step.serviceName} size={17} />
+                  <p style={{
+                    fontWeight: 700, fontSize: '0.95rem', flex: 1,
                     color: isDone ? 'var(--text-3)' : 'var(--text)',
                     textDecoration: isDone ? 'line-through' : 'none',
                   }}>
-                    {i + 1}. {step.title[lang]}
+                    {step.title[lang]}
                   </p>
+                </div>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-3)', lineHeight: 1.45, marginBottom: 10 }}>
+                  {step.intro[lang]}
+                </p>
+                <div style={{ display: 'flex', gap: 8 }}>
                   <button
                     onClick={() => open(step.port)}
-                    className="btn-ghost"
-                    style={{ padding: '2px 8px', fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: 3, flexShrink: 0 }}
+                    className="btn-secondary"
+                    style={{ padding: '5px 14px', fontSize: '0.75rem', gap: 5, display: 'inline-flex', alignItems: 'center' }}
                   >
-                    <ExternalLink size={10} />
-                    {OPEN_LABEL[lang]}
+                    <ExternalLink size={11} />{OPEN_LABEL[lang]}
+                  </button>
+                  <button
+                    onClick={() => toggle(step.id)}
+                    className="btn-ghost"
+                    style={{ padding: '5px 12px', fontSize: '0.75rem', color: isDone ? '#22c55e' : 'var(--text-3)' }}
+                  >
+                    {isDone ? `✓ ${MARK_UNDO[lang]}` : MARK_DONE[lang]}
                   </button>
                 </div>
-
-                {/* Step items */}
-                <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  {step.items[lang].map((item, j) => (
-                    <p key={j} className="text-xs" style={{
-                      color: isDetail(j) ? 'var(--text-3)' : 'var(--text-2)',
-                      paddingLeft: isDetail(j) ? 12 : 0,
-                      fontFamily: isDetail(j) ? 'var(--font-mono, monospace)' : 'inherit',
-                      fontSize: isDetail(j) ? '0.68rem' : '0.72rem',
-                      lineHeight: 1.5,
-                    }}>
-                      {!isDetail(j) && <span style={{ color: 'var(--accent)', marginRight: 5 }}>›</span>}
-                      {item}
-                    </p>
-                  ))}
-                </div>
-
-                {/* Credential hint */}
-                <div className="flex items-center gap-1.5" style={{ marginTop: 7 }}>
-                  <KeyRound size={10} style={{ color: 'var(--accent)', flexShrink: 0 }} />
-                  <p style={{ fontSize: '0.68rem', color: 'var(--accent)', opacity: 0.75, fontFamily: 'monospace' }}>
-                    {step.cred[lang]}
-                  </p>
-                </div>
-
               </div>
             </div>
+
+            {/* Expanded content */}
+            {!isDone && (
+              <>
+                <div style={{ height: 1, background: 'var(--border)' }} />
+                <div style={{ padding: '14px 18px 16px 78px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+                    {step.items[lang].map((item, j) => (
+                      isDetail(j) ? (
+                        <div key={j} style={{
+                          background: 'rgba(0,0,0,0.04)', borderRadius: 7,
+                          padding: '5px 11px', borderLeft: '2px solid rgba(13,148,136,0.25)',
+                        }}>
+                          <p style={{ fontFamily: 'monospace', fontSize: '0.69rem', color: 'var(--text-2)', lineHeight: 1.5 }}>{item}</p>
+                        </div>
+                      ) : (
+                        <div key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                          <div style={{
+                            width: 20, height: 20, borderRadius: 6,
+                            background: 'rgba(13,148,136,0.1)', color: 'var(--accent)',
+                            fontSize: '0.62rem', fontWeight: 800,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            flexShrink: 0, marginTop: 1,
+                          }}>
+                            {Math.floor(j / 2) + 1}
+                          </div>
+                          <p style={{ fontSize: '0.82rem', color: 'var(--text-2)', lineHeight: 1.55 }}>{item}</p>
+                        </div>
+                      )
+                    ))}
+                  </div>
+
+                  {/* Credentials */}
+                  <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(13,148,136,0.06)', borderRadius: 8, padding: '8px 12px' }}>
+                    <KeyRound size={12} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+                    <p style={{ fontSize: '0.72rem', color: 'var(--text-2)', fontFamily: 'monospace', lineHeight: 1.4 }}>
+                      {step.cred[lang]}
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         );
       })}
 
       {/* Disclaimer */}
-      {completedCount < STEPS.length && (
+      {completedCount < total && (
         <div style={{ padding: '10px 14px', background: 'rgba(13,148,136,0.05)', border: '1px solid rgba(13,148,136,0.15)', borderRadius: 10 }}>
-          <p className="text-xs leading-relaxed" style={{ color: 'var(--text-3)' }}>
-            {DISCLAIMER[lang]}
-          </p>
+          <p style={{ fontSize: '0.72rem', lineHeight: 1.55, color: 'var(--text-3)' }}>{DISCLAIMER[lang]}</p>
         </div>
       )}
 
       {/* Celebration */}
-      {completedCount === STEPS.length && (
+      {completedCount === total && (
         <div className="card" style={{
-          padding: '28px 24px',
-          textAlign: 'center',
+          padding: '28px 24px', textAlign: 'center',
           background: 'linear-gradient(135deg, rgba(13,148,136,0.07) 0%, rgba(20,184,166,0.03) 100%)',
           border: '1px solid rgba(13,148,136,0.22)',
           animation: 'slideUp 0.5s cubic-bezier(0.34,1.56,0.64,1)',
-          position: 'relative',
-          overflow: 'hidden',
+          position: 'relative', overflow: 'hidden',
         }}>
-          {/* Floating particles */}
-          {(['✨','🎊','✨','🎉','✨','🎊'] as const).map((emoji, i) => (
-            <span key={i} aria-hidden style={{
-              position: 'absolute',
-              fontSize: 16 + (i % 3) * 4,
-              animation: `floatUp ${1.4 + i * 0.35}s ease-out ${i * 0.25}s infinite`,
-              left: `${8 + i * 14}%`,
-              bottom: '6%',
-              pointerEvents: 'none',
-              userSelect: 'none',
+          {(['✨','🎊','✨','🎉','✨','🎊'] as const).map((emoji, idx) => (
+            <span key={idx} aria-hidden style={{
+              position: 'absolute', fontSize: 16 + (idx % 3) * 4,
+              animation: `floatUp ${1.4 + idx * 0.35}s ease-out ${idx * 0.25}s infinite`,
+              left: `${8 + idx * 14}%`, bottom: '6%', pointerEvents: 'none', userSelect: 'none',
             }}>{emoji}</span>
           ))}
-
           <div style={{ fontSize: '2.2rem', marginBottom: 8, position: 'relative' }}>🎉</div>
-          <h3 className="font-bold" style={{ fontSize: '1.1rem', color: 'var(--text)', marginBottom: 4 }}>
+          <h3 style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text)', marginBottom: 4 }}>
             {lang === 'ca' ? 'Tot llest!' : lang === 'es' ? '¡Todo listo!' : "You're all set!"}
           </h3>
-          <p className="text-xs" style={{ color: 'var(--text-2)', marginBottom: 20, lineHeight: 1.5 }}>
-            {lang === 'ca' ? 'Caliu ja està completament configurat i llest per usar.' :
-             lang === 'es' ? 'Caliu ya está completamente configurado y listo para usar.' :
-             'Caliu is fully configured and ready to use.'}
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-2)', marginBottom: 20, lineHeight: 1.6 }}>
+            {lang === 'ca' ? 'Gecko ja està completament configurat i llest per usar.' :
+             lang === 'es' ? 'Gecko ya está completamente configurado y listo para usar.' :
+             'Gecko is fully configured and ready to use.'}
           </p>
           <button
             onClick={() => window.electron.openExternal('http://localhost:5055')}
             className="btn-primary"
             style={{ animation: 'celebGlow 2s ease-in-out infinite', minWidth: 'unset', padding: '12px 28px', fontSize: '0.95rem', position: 'relative' }}
           >
-            {lang === 'ca' ? '🍿 Comença a demanar sèries!' :
-             lang === 'es' ? '🍿 ¡Empieza a pedir series!' :
-             '🍿 Start requesting content!'}
+            {lang === 'ca' ? 'Comença a demanar contingut!' :
+             lang === 'es' ? '¡Empieza a pedir contenido!' :
+             'Start requesting content!'}
           </button>
         </div>
       )}

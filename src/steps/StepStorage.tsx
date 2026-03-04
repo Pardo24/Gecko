@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { HardDrive } from 'lucide-react';
 import type { Config } from '../App';
 import { useT } from '../LangContext';
 
@@ -19,10 +20,14 @@ export default function StepStorage({ config, updateConfig, next }: Props) {
   };
 
   return (
-    <div className="h-full flex flex-col items-center justify-center gap-8 px-8 text-center">
-      <div>
-        <h2 className="text-3xl font-bold mb-2">{t.storage_title}</h2>
-        <p style={{ color: 'var(--text-2)' }}>{t.storage_desc}</p>
+    <div className="h-full flex flex-col items-center justify-center gap-7 px-8 text-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="step-icon amber"><HardDrive size={38} strokeWidth={1.5} /></div>
+        <div>
+          <h2 className="text-3xl font-bold mb-1">{t.storage_title}</h2>
+          <p className="text-sm" style={{ color: 'var(--text-3)' }}>{t.storage_sub}</p>
+        </div>
+        <p className="max-w-xs" style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>{t.storage_desc}</p>
       </div>
 
       <div className="w-full max-w-md space-y-3">

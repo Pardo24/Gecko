@@ -70,7 +70,7 @@ export default function Dashboard({ initialConfig, onReinstall }: Props) {
         {/* Logo mark */}
         <div className="mb-4">
           <div className="logo-circle" style={{ width: 48, height: 48, borderRadius: 14, padding: 0, boxShadow: 'none', border: '1px solid rgba(13,148,136,0.18)' }}>
-            <img src={appIcon} alt="Moss" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 13, mixBlendMode: 'screen' }} />
+            <img src={appIcon} alt="Gecko" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 13, mixBlendMode: 'screen' }} />
           </div>
         </div>
 

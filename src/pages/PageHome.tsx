@@ -74,14 +74,31 @@ export default function PageHome({ config, onGoToVpn }: Props) {
     <div className="flex flex-col gap-3 pt-5 px-5 pb-5">
 
       {/* Status bar */}
-      <div className="card-sm flex items-center justify-between" style={{ padding: '10px 16px' }}>
-        <span className={`badge ${status}`}>
-          {status === 'running' ? t.home_running : status === 'stopped' ? t.home_stopped : t.home_checking}
-        </span>
+      <div className="card-sm flex items-center gap-3" style={{
+        padding: '12px 16px',
+        borderLeft: `3px solid ${status === 'running' ? '#22c55e' : status === 'stopped' ? '#ef4444' : '#eab308'}`,
+      }}>
+        <div style={{
+          width: 38, height: 38, borderRadius: 11, flexShrink: 0,
+          background: status === 'running' ? 'rgba(34,197,94,0.1)' : status === 'stopped' ? 'rgba(239,68,68,0.08)' : 'rgba(234,179,8,0.1)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: status === 'running' ? '#22c55e' : status === 'stopped' ? '#ef4444' : '#eab308',
+        }}>
+          <Power size={17} strokeWidth={2} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <p className="font-bold text-sm">Gecko</p>
+          <p className="text-xs" style={{
+            color: status === 'running' ? '#22c55e' : status === 'stopped' ? '#ef4444' : '#eab308',
+            fontWeight: 500,
+          }}>
+            {status === 'running' ? t.home_running : status === 'stopped' ? t.home_stopped : t.home_checking}
+          </p>
+        </div>
         <div className="flex items-center gap-2">
           {status !== 'running' && (
             <button onClick={handleStart} disabled={action !== 'idle'} className="btn-primary"
-              style={{ padding: '8px 20px', minWidth: 'unset', fontSize: '0.82rem', gap: 6, display: 'inline-flex', alignItems: 'center' }}>
+              style={{ padding: '7px 16px', minWidth: 'unset', fontSize: '0.82rem', gap: 6, display: 'inline-flex', alignItems: 'center' }}>
               {action === 'starting'
                 ? <><RefreshCw size={12} className="spin" />{t.home_starting}</>
                 : <><Power size={12} />{t.home_start}</>}
@@ -89,7 +106,7 @@ export default function PageHome({ config, onGoToVpn }: Props) {
           )}
           {status === 'running' && (
             <button onClick={handleStop} disabled={action !== 'idle'} className="btn-secondary"
-              style={{ padding: '8px 14px', fontSize: '0.82rem', gap: 6, display: 'inline-flex', alignItems: 'center' }}>
+              style={{ padding: '7px 12px', fontSize: '0.82rem', gap: 6, display: 'inline-flex', alignItems: 'center' }}>
               {action === 'stopping'
                 ? <><RefreshCw size={12} className="spin" />{t.home_stopping}</>
                 : <><Square size={10} fill="currentColor" />{t.home_stop}</>}
@@ -175,18 +192,19 @@ export default function PageHome({ config, onGoToVpn }: Props) {
                 <button onClick={dismissHint} className="text-xs shrink-0" style={{ color: 'var(--text-3)' }}>✕</button>
               </div>
             )}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {([
-                { name: 'Radarr'   as const, port: 7878, sub: t.done_movies },
-                { name: 'Sonarr'   as const, port: 8989, sub: t.done_series },
-                { name: 'Prowlarr' as const, port: 9696, sub: 'Indexers'    },
+                { name: 'Radarr'   as const, port: 7878, sub: t.done_movies    },
+                { name: 'Sonarr'   as const, port: 8989, sub: t.done_series    },
+                { name: 'Bazarr'   as const, port: 6767, sub: t.home_subtitles },
+                { name: 'Prowlarr' as const, port: 9696, sub: 'Indexers'       },
               ]).map(s => (
                 <button key={s.name} onClick={() => open(s.port)} disabled={status !== 'running'}
                   className="card-sm flex flex-col items-center disabled:opacity-40 disabled:cursor-not-allowed"
-                  style={{ padding: '10px 4px 8px', gap: 5 }}>
-                  <ServiceIcon name={s.name} size={22} />
-                  <span className="font-semibold text-xs">{s.name}</span>
-                  <span className="text-xs" style={{ color: 'var(--text-3)' }}>{s.sub}</span>
+                  style={{ padding: '7px 4px 6px', gap: 3 }}>
+                  <ServiceIcon name={s.name} size={18} />
+                  <span className="font-semibold" style={{ fontSize: '0.7rem' }}>{s.name}</span>
+                  <span style={{ fontSize: '0.65rem', color: 'var(--text-3)' }}>{s.sub}</span>
                 </button>
               ))}
             </div>

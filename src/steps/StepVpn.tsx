@@ -1,3 +1,4 @@
+import { Shield } from 'lucide-react';
 import type { Config } from '../App';
 import { useT } from '../LangContext';
 
@@ -7,10 +8,14 @@ export default function StepVpn({ config, updateConfig, next }: Props) {
   const { t } = useT();
 
   return (
-    <div className="h-full flex flex-col items-center justify-center gap-7 px-8 text-center">
-      <div>
-        <h2 className="text-3xl font-bold mb-2">{t.vpn_title}</h2>
-        <p className="max-w-md" style={{ color: 'var(--text-2)' }}>{t.vpn_desc}</p>
+    <div className="h-full flex flex-col items-center justify-center gap-7 px-8 py-8 text-center overflow-y-auto">
+      <div className="flex flex-col items-center gap-4">
+        <div className="step-icon green"><Shield size={38} strokeWidth={1.5} /></div>
+        <div>
+          <h2 className="text-3xl font-bold mb-1">{t.vpn_title}</h2>
+          <p className="text-sm" style={{ color: 'var(--text-3)' }}>{t.vpn_sub}</p>
+        </div>
+        <p className="max-w-xs" style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>{t.vpn_desc}</p>
       </div>
 
       <div className="w-full max-w-md space-y-3">

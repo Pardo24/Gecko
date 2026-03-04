@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guia d'usuari — Moss</title>
-  <meta name="description" content="Guia completa per configurar i fer servir Moss: primer inici, dashboard, serveis, accés extern amb Tailscale." />
+  <title>Guia d'usuari — Gecko</title>
+  <meta name="description" content="Guia completa per configurar i fer servir Gecko: primer inici, dashboard, serveis, accés extern amb Tailscale." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -266,7 +266,7 @@
   <div class="header-inner">
     <a href="index.html" class="logo">
       <div class="logo-mark">🔥</div>
-      Moss
+      Gecko
     </a>
     <a href="index.html" class="back-link">← Tornar a la pàgina principal</a>
   </div>
@@ -302,26 +302,26 @@
   <main>
     <!-- Intro -->
     <div class="badge badge-orange" style="margin-bottom:16px;">Documentació</div>
-    <h1>Guia d'usuari de Moss</h1>
+    <h1>Guia d'usuari de Gecko</h1>
     <p class="lead">
-      Aquesta guia explica com fer servir Moss pas a pas: des del primer inici fins a accedir als teus serveis des de qualsevol lloc del món.
+      Aquesta guia explica com fer servir Gecko pas a pas: des del primer inici fins a accedir als teus serveis des de qualsevol lloc del món.
     </p>
 
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:48px;">
-      <a href="https://github.com/danipardog/caliu/releases/latest" class="btn btn-primary">⬇ Descarregar Moss</a>
+      <a href="https://github.com/danipardog/caliu/releases/latest" class="btn btn-primary">⬇ Descarregar Gecko</a>
       <a href="index.html" class="btn btn-outline">← Pàgina principal</a>
     </div>
 
     <!-- ── PRIMER COP ──────────────────────────────────────────────────── -->
     <h2 id="primer-cop">🚀 Primer cop</h2>
     <p>
-      Quan obres Moss per primera vegada (o si mai has instal·lat el stack), l'aplicació mostra l'<strong>assistent d'instal·lació</strong> — un wizard pas a pas que configura tot automàticament.
-      Si ja tens el stack instal·lat, Moss detecta la configuració existent i obre el dashboard directament.
+      Quan obres Gecko per primera vegada (o si mai has instal·lat el stack), l'aplicació mostra l'<strong>assistent d'instal·lació</strong> — un wizard pas a pas que configura tot automàticament.
+      Si ja tens el stack instal·lat, Gecko detecta la configuració existent i obre el dashboard directament.
     </p>
 
     <div class="callout callout-info">
       <div class="callout-icon">ℹ️</div>
-      <div><strong>Requisit previ:</strong> Cal tenir <a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a> instal·lat i obert. És gratuït. Moss comprova automàticament si Docker funciona i et redirigeix si cal instal·lar-lo.</div>
+      <div><strong>Requisit previ:</strong> Cal tenir <a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a> instal·lat i obert. És gratuït. Gecko comprova automàticament si Docker funciona i et redirigeix si cal instal·lar-lo.</div>
     </div>
 
     <!-- ── WIZARD ─────────────────────────────────────────────────────── -->
@@ -333,21 +333,21 @@
         <div class="step-n">1</div>
         <div class="step-content">
           <h4>Benvinguda</h4>
-          <p>Pantalla introductòria amb el resum de què fa Moss. Prem <strong>Començar</strong> per continuar.</p>
+          <p>Pantalla introductòria amb el resum de què fa Gecko. Prem <strong>Començar</strong> per continuar.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">2</div>
         <div class="step-content">
           <h4>Comprovació de Docker</h4>
-          <p>Moss comprova si Docker Desktop és actiu. Si no el tens, veuràs un botó per descarregar-lo. Un cop instal·lat Docker, prem <strong>Ja l'he instal·lat, torna a comprovar</strong>.</p>
+          <p>Gecko comprova si Docker Desktop és actiu. Si no el tens, veuràs un botó per descarregar-lo. Un cop instal·lat Docker, prem <strong>Ja l'he instal·lat, torna a comprovar</strong>.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">3</div>
         <div class="step-content">
           <h4>Carpeta de dades</h4>
-          <p>Selecciona on es guardaran els fitxers de configuració i els continguts que descarreguis. Recomana un disc extern de mínim 1 TB. <strong>Moss no esborra cap fitxer existent.</strong></p>
+          <p>Selecciona on es guardaran els fitxers de configuració i els continguts que descarreguis. Recomana un disc extern de mínim 1 TB. <strong>Gecko no esborra cap fitxer existent.</strong></p>
         </div>
       </div>
       <div class="step-item">
@@ -368,14 +368,14 @@
         <div class="step-n">✓</div>
         <div class="step-content">
           <h4>Instal·lació automàtica</h4>
-          <p>Moss descarrega i configura tots els serveis (pot trigar 5-10 minuts la primera vegada). Un cop acabat, el dashboard s'obre automàticament.</p>
+          <p>Gecko descarrega i configura tots els serveis (pot trigar 5-10 minuts la primera vegada). Un cop acabat, el dashboard s'obre automàticament.</p>
         </div>
       </div>
     </div>
 
     <!-- ── DASHBOARD — MENÚ ───────────────────────────────────────────── -->
     <h2 id="menu">🗂️ El menú lateral del dashboard</h2>
-    <p>Un cop instal·lat el stack, Moss mostra sempre el <strong>dashboard</strong> amb una barra lateral de navegació a l'esquerra amb quatre seccions:</p>
+    <p>Un cop instal·lat el stack, Gecko mostra sempre el <strong>dashboard</strong> amb una barra lateral de navegació a l'esquerra amb quatre seccions:</p>
 
     <div class="menu-grid">
       <div class="menu-item">
@@ -403,7 +403,7 @@
         <div class="menu-icon">⚙️</div>
         <div>
           <div class="menu-label">Configuració</div>
-          <div class="menu-desc">Canviar l'idioma de l'aplicació (català, castellà, anglès). Veure la versió de Moss. Reinstal·lar el stack des de zero (no esborra el contingut multimèdia).</div>
+          <div class="menu-desc">Canviar l'idioma de l'aplicació (català, castellà, anglès). Veure la versió de Gecko. Reinstal·lar el stack des de zero (no esborra el contingut multimèdia).</div>
         </div>
       </div>
     </div>
@@ -449,14 +449,14 @@
       <div class="step-item">
         <div class="step-n">3</div>
         <div class="step-content">
-          <h4>Enganxa-les a Moss i prem Activar VPN</h4>
-          <p>Moss actualitza el fitxer de configuració, canvia al compose file amb VPN i reinicia el stack. Triga uns 30 segons.</p>
+          <h4>Enganxa-les a Gecko i prem Activar VPN</h4>
+          <p>Gecko actualitza el fitxer de configuració, canvia al compose file amb VPN i reinicia el stack. Triga uns 30 segons.</p>
         </div>
       </div>
     </div>
 
     <h3>Desactivar la VPN</h3>
-    <p>Prem el botó <strong>Desactivar VPN</strong>. Moss elimina les claus i passa al compose sense VPN automàticament.</p>
+    <p>Prem el botó <strong>Desactivar VPN</strong>. Gecko elimina les claus i passa al compose sense VPN automàticament.</p>
 
     <!-- ── XARXA ───────────────────────────────────────────────────────── -->
     <h2 id="xarxa">🌐 Pàgina Xarxa</h2>
@@ -477,7 +477,7 @@
     </div>
 
     <h3>URLs de cada servei (xarxa local)</h3>
-    <p>Substitueix <code>IP-LOCAL</code> per la teva IP que apareix a la pàgina Xarxa de Moss:</p>
+    <p>Substitueix <code>IP-LOCAL</code> per la teva IP que apareix a la pàgina Xarxa de Gecko:</p>
 
     <div class="service-grid">
       <div class="service-row">
@@ -534,7 +534,7 @@
     <div class="callout callout-warning">
       <div class="callout-icon">⚠️</div>
       <div>
-        Moss no inclou ni recomana cap indexador concret. L'usuari és l'únic responsable del contingut al qual accedeix i de complir la legislació vigent al seu país.
+        Gecko no inclou ni recomana cap indexador concret. L'usuari és l'únic responsable del contingut al qual accedeix i de complir la legislació vigent al seu país.
       </div>
     </div>
 
@@ -593,7 +593,7 @@
     <h2 id="tailscale">🔗 Configurar Tailscale (accés extern)</h2>
     <p>
       <a href="https://tailscale.com" target="_blank">Tailscale</a> crea una xarxa privada virtual entre tots els teus dispositius.
-      Un cop configurat, pots accedir als serveis de Moss des de qualsevol lloc del món, com si estiguessis a casa.
+      Un cop configurat, pots accedir als serveis de Gecko des de qualsevol lloc del món, com si estiguessis a casa.
       <strong>No cal obrir ports al router ni tenir IP pública.</strong>
     </p>
 
@@ -606,7 +606,7 @@
       <div class="step-item">
         <div class="step-n">1</div>
         <div class="step-content">
-          <h4>Instal·la Tailscale a l'ordinador amb Moss</h4>
+          <h4>Instal·la Tailscale a l'ordinador amb Gecko</h4>
           <p>Descarrega <a href="https://tailscale.com/download/windows" target="_blank">Tailscale per Windows</a>, instal·la'l i inicia sessió amb Google, Microsoft o correu electrònic. Tailscale s'executa en segon pla.</p>
         </div>
       </div>
@@ -657,11 +657,11 @@
       </div>
     </div>
 
-    <h3>Tailscale i la VPN de Moss</h3>
+    <h3>Tailscale i la VPN de Gecko</h3>
     <p>
-      Tailscale i la VPN de les descàrregues de Moss (ProtonVPN/Mullvad via Gluetun) <strong>no interfereixen entre elles</strong>.
+      Tailscale i la VPN de les descàrregues de Gecko (ProtonVPN/Mullvad via Gluetun) <strong>no interfereixen entre elles</strong>.
       Tailscale és per accedir remotament als serveis.
-      La VPN de Moss és perquè les <em>descàrregues de qBittorrent</em> surtin xifrades.
+      La VPN de Gecko és perquè les <em>descàrregues de qBittorrent</em> surtin xifrades.
       Pots tenir les dues actives simultàniament sense cap problema.
     </p>
 
@@ -669,8 +669,8 @@
     <div style="margin-top:64px;padding:40px;background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:20px;text-align:center;">
       <div style="font-size:2rem;margin-bottom:12px;">🔥</div>
       <h3 style="color:#fff;font-size:1.3rem;font-weight:800;margin-bottom:8px;">Ja tens tot el que necessites</h3>
-      <p style="color:#94a3b8;font-size:0.9rem;margin-bottom:24px;">Descarrega Moss i tingues el teu Netflix casolà en menys de 5 minuts.</p>
-      <a href="https://github.com/danipardog/caliu/releases/latest" class="btn btn-primary">⬇ Descarregar Moss</a>
+      <p style="color:#94a3b8;font-size:0.9rem;margin-bottom:24px;">Descarrega Gecko i tingues el teu Netflix casolà en menys de 5 minuts.</p>
+      <a href="https://github.com/danipardog/caliu/releases/latest" class="btn btn-primary">⬇ Descarregar Gecko</a>
     </div>
 
   </main>

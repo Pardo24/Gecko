@@ -1,6 +1,6 @@
 {
   "name": "moss",
-  "productName": "Moss",
+  "productName": "Gecko",
   "version": "1.0.7",
   "description": "Your wild home media server",
   "main": ".vite/build/main.js",

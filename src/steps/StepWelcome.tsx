@@ -13,10 +13,10 @@ export default function StepWelcome({ next }: Props) {
 
       <div className="flex flex-col items-center gap-4 relative z-10">
         <div className="logo-circle" style={{ padding: 6 }}>
-          <img src={appIcon} alt="Moss" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 10 }} />
+          <img src={appIcon} alt="Gecko" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 10 }} />
         </div>
         <div>
-          <h1 className="text-5xl font-bold tracking-tight gradient-title">Moss</h1>
+          <h1 className="text-5xl font-bold tracking-tight gradient-title">Gecko</h1>
           <p className="text-lg mt-2" style={{ color: 'var(--text-2)' }}>{t.welcome_subtitle}</p>
         </div>
       </div>

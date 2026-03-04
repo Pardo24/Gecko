@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Lock } from 'lucide-react';
 import type { Config } from '../App';
 import { useT } from '../LangContext';
 
@@ -17,10 +18,14 @@ export default function StepAdmin({ config, updateConfig, next }: Props) {
   };
 
   return (
-    <div className="h-full flex flex-col items-center justify-center gap-8 px-8 text-center">
-      <div>
-        <h2 className="text-3xl font-bold mb-2">{t.admin_title}</h2>
-        <p style={{ color: 'var(--text-2)' }}>
+    <div className="h-full flex flex-col items-center justify-center gap-7 px-8 text-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="step-icon teal"><Lock size={38} strokeWidth={1.5} /></div>
+        <div>
+          <h2 className="text-3xl font-bold mb-1">{t.admin_title}</h2>
+          <p className="text-sm" style={{ color: 'var(--text-3)' }}>{t.admin_sub}</p>
+        </div>
+        <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>
           {t.admin_user_label} <span className="font-mono font-semibold" style={{ color: 'var(--accent)' }}>admin</span>{t.admin_user_suffix}
         </p>
       </div>

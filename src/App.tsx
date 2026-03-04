@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { LangProvider, useT } from './LangContext';
 import type { Lang } from './i18n';
+import appIcon from '../assets/icons/icons/png/64x64.png';
 import StepWelcome from './steps/StepWelcome';
 import StepDocker from './steps/StepDocker';
 import StepStorage from './steps/StepStorage';
@@ -20,6 +21,9 @@ export type Config = {
 
 const STEPS = ['welcome', 'docker', 'storage', 'admin', 'vpn', 'installing', 'done'] as const;
 type Step = typeof STEPS[number];
+
+const SETUP_STEPS = ['docker', 'storage', 'admin', 'vpn'] as const;
+type SetupStep = typeof SETUP_STEPS[number];
 
 const LANGS: { code: Lang; label: string }[] = [
   { code: 'ca', label: 'CA' },
@@ -41,6 +45,7 @@ function LangBar() {
 }
 
 function Wizard({ onInstalled }: { onInstalled: () => void }) {
+  const { t } = useT();
   const [step, setStep] = useState<Step>('welcome');
   const [config, setConfig] = useState<Config>({
     dataPath: '', adminPassword: '', vpnEnabled: false, mullvadKey: '', mullvadAddress: '',
@@ -55,24 +60,57 @@ function Wizard({ onInstalled }: { onInstalled: () => void }) {
   const updateConfig = (partial: Partial<Config>) => setConfig(prev => ({ ...prev, ...partial }));
   const stepProps = { config, updateConfig, next };
 
+  const sidebarIdx = SETUP_STEPS.indexOf(step as SetupStep);
+  const showSidebar = sidebarIdx !== -1;
+
+  const sidebarLabels = [
+    t.setup_label_docker,
+    t.setup_label_storage,
+    t.setup_label_account,
+    t.setup_label_vpn,
+  ];
+
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      {step !== 'welcome' && step !== 'done' && (
-        <div className="progress-track shrink-0" style={{ borderRadius: 0 }}>
-          <div
-            className="progress-fill"
-            style={{ width: `${(STEPS.indexOf(step) / (STEPS.length - 2)) * 100}%` }}
-          />
+    <div className="flex-1 flex overflow-hidden">
+      {/* Left sidebar — only for config steps */}
+      {showSidebar && (
+        <div className="setup-sidebar">
+          <div className="setup-logo">
+            <div style={{ width: 30, height: 30, borderRadius: 9, background: 'var(--accent-g)', overflow: 'hidden', flexShrink: 0 }}>
+              <img src={appIcon} alt="Gecko" style={{ width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'screen' }} />
+            </div>
+            Gecko
+          </div>
+          <div>
+            <p className="setup-step-counter">{t.setup_step} {sidebarIdx + 1} {t.setup_step_of} 4</p>
+            <div className="setup-steps-list">
+              {SETUP_STEPS.map((s, i) => (
+                <div key={s} className={`setup-step-item ${i < sidebarIdx ? 'done' : i === sidebarIdx ? 'active' : ''}`}>
+                  <div className="setup-step-num">{i < sidebarIdx ? '✓' : i + 1}</div>
+                  <span>{sidebarLabels[i]}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
-      <div className="flex-1 overflow-hidden">
-        {step === 'welcome'    && <StepWelcome    {...stepProps} />}
-        {step === 'docker'     && <StepDocker     {...stepProps} />}
-        {step === 'storage'    && <StepStorage    {...stepProps} />}
-        {step === 'admin'      && <StepAdmin      {...stepProps} />}
-        {step === 'vpn'        && <StepVpn        {...stepProps} />}
-        {step === 'installing' && <StepInstalling {...stepProps} />}
-        {step === 'done'       && <StepDone       {...stepProps} />}
+
+      {/* Right content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {step === 'installing' && (
+          <div className="progress-track shrink-0" style={{ borderRadius: 0 }}>
+            <div className="progress-fill" style={{ width: `${(STEPS.indexOf(step) / (STEPS.length - 2)) * 100}%` }} />
+          </div>
+        )}
+        <div className="flex-1 overflow-hidden">
+          {step === 'welcome'    && <StepWelcome    {...stepProps} />}
+          {step === 'docker'     && <StepDocker     {...stepProps} />}
+          {step === 'storage'    && <StepStorage    {...stepProps} />}
+          {step === 'admin'      && <StepAdmin      {...stepProps} />}
+          {step === 'vpn'        && <StepVpn        {...stepProps} />}
+          {step === 'installing' && <StepInstalling {...stepProps} />}
+          {step === 'done'       && <StepDone       {...stepProps} />}
+        </div>
       </div>
     </div>
   );

@@ -306,6 +306,79 @@
   -webkit-text-fill-color: transparent;
 }
 
+/* ─── Setup wizard sidebar ────────────────────────────────────────────────── */
+.setup-sidebar {
+  width: 210px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 28px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.setup-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.setup-step-counter {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.setup-steps-list { display: flex; flex-direction: column; gap: 2px; }
+
+.setup-step-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-3);
+  transition: all 0.15s;
+}
+
+.setup-step-item.done  { color: var(--text-2); }
+.setup-step-item.active { color: var(--text); font-weight: 700; background: rgba(13,148,136,0.07); }
+
+.setup-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.07);
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.setup-step-item.done .setup-step-num  { background: rgba(13,148,136,0.12); color: var(--accent); }
+.setup-step-item.active .setup-step-num { background: var(--accent-g); color: #fff; box-shadow: 0 2px 8px rgba(13,148,136,0.28); }
+
+/* ─── Step icon circle ────────────────────────────────────────────────────── */
+.step-icon { width: 88px; height: 88px; border-radius: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-icon.blue  { background: rgba(59,130,246,0.09);  border: 1.5px solid rgba(59,130,246,0.18);  color: #3b82f6; }
+.step-icon.amber { background: rgba(245,158,11,0.09);  border: 1.5px solid rgba(245,158,11,0.18);  color: #d97706; }
+.step-icon.teal  { background: rgba(13,148,136,0.09);  border: 1.5px solid rgba(13,148,136,0.18);  color: var(--accent); }
+.step-icon.green { background: rgba(34,197,94,0.09);   border: 1.5px solid rgba(34,197,94,0.18);   color: #16a34a; }
+
 /* ─── Utility ─────────────────────────────────────────────────────────────── */
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 @keyframes spin   { to { transform: rotate(360deg); } }
