@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, Eye, EyeOff } from 'lucide-react';
 import type { Config } from '../App';
 import { useT } from '../LangContext';
 
@@ -68,7 +68,7 @@ export default function StepAdmin({ config, updateConfig, next }: Props) {
             className="absolute right-3 top-1/2 -translate-y-1/2 text-sm"
             style={{ color: 'var(--text-3)' }}
           >
-            {show ? '🙈' : '👁️'}
+            {show ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
         </div>
 
@@ -86,7 +86,7 @@ export default function StepAdmin({ config, updateConfig, next }: Props) {
             className="absolute right-3 top-1/2 -translate-y-1/2 text-sm"
             style={{ color: 'var(--text-3)' }}
           >
-            {show ? '🙈' : '👁️'}
+            {show ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
         </div>
 

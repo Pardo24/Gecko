@@ -178,7 +178,7 @@ services:
       - "6881:6881/tcp"
       - "6881:6881/udp"
     volumes:
-      - qbittorrent_config:/config        # volumen interno — config protegido
+      - ${DATA_PATH}/qbittorrent:/config  # bind mount — password pre-set by Gecko
       - ${DATA_PATH}/downloads:/downloads
     environment:
       PUID: 1000
@@ -205,4 +205,3 @@ volumes:
   sonarr_config:
   lidarr_config:
   bazarr_config:
-  qbittorrent_config:

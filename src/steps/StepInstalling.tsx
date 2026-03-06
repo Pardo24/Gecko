@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AlertTriangle, XCircle } from 'lucide-react';
+import { AlertTriangle, XCircle, Settings2 } from 'lucide-react';
 import type { Config } from '../App';
 import { useT } from '../LangContext';
 import ServiceIcon from '../components/ServiceIcon';
@@ -180,7 +180,7 @@ export default function StepInstalling({ config, next }: Props) {
             fontSize: '2rem',
             animation: 'spin 3s linear infinite',
             boxShadow: '0 6px 20px rgba(13,148,136,0.35)',
-          }}>⚙️</div>
+          }}><Settings2 size={32} style={{ color: '#fff' }} /></div>
           <div>
             <p className="font-semibold text-base" style={{ color: 'var(--text)' }}>{stageLabel}</p>
             <p className="text-xs mt-1" style={{ color: 'var(--text-3)' }}>
@@ -213,7 +213,7 @@ export default function StepInstalling({ config, next }: Props) {
             {serviceInfo?.name ? (
               <ServiceIcon name={serviceInfo.name} size={48} />
             ) : (
-              <span style={{ fontSize: '2.2rem' }}>{serviceInfo?.emoji ?? '⚙️'}</span>
+              <span style={{ fontSize: '2.2rem' }}>{serviceInfo?.emoji ?? <Settings2 size={36} />}</span>
             )}
           </div>
 

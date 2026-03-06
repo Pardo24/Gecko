@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HardDrive } from 'lucide-react';
+import { HardDrive, FolderOpen } from 'lucide-react';
 import type { Config } from '../App';
 import { useT } from '../LangContext';
 
@@ -43,7 +43,7 @@ export default function StepStorage({ config, updateConfig, next }: Props) {
             </div>
           ) : (
             <div className="flex items-center gap-3" style={{ color: 'var(--text-2)' }}>
-              <span className="text-2xl">📁</span>
+              <FolderOpen size={22} strokeWidth={1.5} />
               <span>{t.storage_placeholder}</span>
             </div>
           )}

@@ -105,6 +105,58 @@ async function waitReady(port: number, path: string, apiKey = '', maxWaitSecs = 
   return false;
 }
 
+// ── Jellyfin ─────────────────────────────────────────────────────
+
+async function configureJellyfin(port: number, adminPassword: string): Promise<void> {
+  // Wait until the startup wizard endpoint responds (up to 3 minutes)
+  const ready = await waitReady(port, '/Startup/Configuration', '', 180);
+  if (!ready) throw new Error('Jellyfin not ready');
+
+  // If wizard already completed, /Startup/Configuration returns 4xx — skip
+  const check = await httpRequest({ hostname: 'localhost', port, path: '/Startup/Configuration' });
+  if (check.status !== 200) return;
+
+  // Complete all wizard steps
+  await jsonPost(port, '/Startup/Configuration', {
+    UICulture: 'en-US', MetadataCountryCode: 'US', PreferredMetadataLanguage: 'en',
+  });
+  await jsonPost(port, '/Startup/RemoteAccess', {
+    EnableRemoteAccess: true, EnableAutomaticPortMapping: false,
+  });
+  await jsonPost(port, '/Startup/User', {
+    Name: 'admin', Password: adminPassword, PasswordConf: adminPassword,
+  });
+  await jsonPost(port, '/Startup/Complete', {});
+
+  // Short pause while Jellyfin initialises post-wizard
+  await sleep(3000);
+
+  // Authenticate and set server name to 'Gecko'
+  try {
+    const authResp = await jsonPost(port, '/Users/AuthenticateByName',
+      { Username: 'admin', Pw: adminPassword },
+      { 'X-Emby-Authorization': 'MediaBrowser Client="Gecko", Device="Server", DeviceId="gecko-setup", Version="1.0"' },
+    );
+    if (authResp.status !== 200) return;
+    const { AccessToken } = JSON.parse(authResp.body) as { AccessToken: string };
+    const authHeader = { 'X-Emby-Authorization': `MediaBrowser Token="${AccessToken}"` };
+
+    const cfgResp = await httpRequest({
+      hostname: 'localhost', port, path: '/System/Configuration',
+      headers: authHeader,
+    });
+    if (cfgResp.status === 200) {
+      const sysCfg = JSON.parse(cfgResp.body) as Record<string, unknown>;
+      sysCfg.ServerName = 'Gecko';
+      const body = JSON.stringify(sysCfg);
+      await httpRequest({
+        hostname: 'localhost', port, path: '/System/Configuration', method: 'POST',
+        headers: { ...authHeader, 'Content-Type': 'application/json', 'Content-Length': String(Buffer.byteLength(body)) },
+      }, body);
+    }
+  } catch { /* server name is best-effort — wizard completion is what matters */ }
+}
+
 // ── qBittorrent ──────────────────────────────────────────────────
 
 async function qbitLogin(port: number, password: string): Promise<string | null> {
@@ -115,36 +167,17 @@ async function qbitLogin(port: number, password: string): Promise<string | null>
   return cookie?.match(/SID=([^;]+)/)?.[1] ?? null;
 }
 
-async function configureQbit(
-  port: number,
-  adminPassword: string,
-  dockerEnvObj: NodeJS.ProcessEnv,
-): Promise<void> {
+// Password is pre-set via PBKDF2 config file created by Gecko before docker compose up
+async function configureQbit(port: number, adminPassword: string): Promise<void> {
   const ready = await waitReady(port, '/api/v2/app/version', '', 120);
   if (!ready) throw new Error('qBittorrent not ready');
 
-  // Try to parse temp password from docker logs (LinuxServer qBittorrent logs it on first boot)
-  let tempPassword = 'adminadmin';
-  try {
-    const { stdout } = await execAsync('docker logs media_qbittorrent 2>&1', { env: dockerEnvObj });
-    const m = stdout.match(/(?:temporary|generated)\s+password[^:]*:\s*\*?(\S+?)\*?\s*$/im)
-           ?? stdout.match(/^Password:\s*([A-Za-z0-9]{6,})\s*$/im);
-    if (m) tempPassword = m[1];
-  } catch { /* use default */ }
-
-  // Try passwords in order — if admin already has adminPassword (re-run), that works too
-  let sid: string | null = null;
-  for (const pwd of [adminPassword, tempPassword, 'adminadmin']) {
-    sid = await qbitLogin(port, pwd);
-    if (sid) break;
-    await sleep(1000);
-  }
+  const sid = await qbitLogin(port, adminPassword);
   if (!sid) throw new Error('qBittorrent login failed');
 
-  // Set the admin password to the user's password
-  const json = JSON.stringify({ web_ui_password: adminPassword });
-  const prefBody = `json=${encodeURIComponent(json)}`;
-  await formPost(port, '/api/v2/app/setPreferences', prefBody, { 'Cookie': `SID=${sid}` });
+  // Ensure save path is set
+  const json = JSON.stringify({ save_path: '/downloads' });
+  await formPost(port, '/api/v2/app/setPreferences', `json=${encodeURIComponent(json)}`, { Cookie: `SID=${sid}` });
 }
 
 // ── *arr helpers ─────────────────────────────────────────────────
@@ -206,8 +239,8 @@ async function arrSetFormAuth(
   const current = await arrGet(port, `${versionPath}/config/host`, apiKey);
   if (current.status !== 200) return;
   const cfg = JSON.parse(current.body) as Record<string, unknown>;
-  cfg.authenticationMethod = 'forms';
-  cfg.authenticationRequired = 'enabled';
+  cfg.authenticationMethod = 'Forms';
+  cfg.authenticationRequired = 'Enabled';
   cfg.username = username;
   cfg.password = password;
   const data = JSON.stringify(cfg);
@@ -347,12 +380,20 @@ async function configureBazarr(
   const ready = await waitReady(port, '/api/system/status', '', 120);
   if (!ready) throw new Error('Bazarr not ready');
 
-  // Bazarr generates its own API key — read it from the config file via docker exec
+  // Bazarr generates its own API key — read from config file (newer versions use .yaml)
   let bazarrKey = '';
   for (let attempt = 0; attempt < 6; attempt++) {
     try {
-      const { stdout } = await execAsync('docker exec media_bazarr cat /config/config/config.ini', { env: dockerEnvObj });
-      const m = stdout.match(/apikey\s*=\s*(\S+)/i);
+      let raw = '';
+      try {
+        const { stdout } = await execAsync('docker exec media_bazarr cat /config/config/config.yaml', { env: dockerEnvObj });
+        raw = stdout;
+      } catch { /* fall through to .ini */ }
+      if (!raw.match(/apikey/i)) {
+        const { stdout } = await execAsync('docker exec media_bazarr cat /config/config/config.ini', { env: dockerEnvObj });
+        raw = stdout;
+      }
+      const m = raw.match(/apikey[:\s=]+([a-f0-9]{32,})/i);
       bazarrKey = m?.[1] ?? '';
       if (bazarrKey) break;
     } catch { /* retry */ }
@@ -520,7 +561,8 @@ export async function runAutoSetup(cfg: AutoSetupConfig): Promise<{ failedSteps:
     }
   };
 
-  await tryStep(4, () => configureQbit(ports.qbit, adminPassword, dockerEnvObj));
+  await tryStep(3, () => configureJellyfin(ports.jellyfin, adminPassword));
+  await tryStep(4, () => configureQbit(ports.qbit, adminPassword));
   await tryStep(5, () => configureRadarr(ports.radarr, apiKeys.radarr, adminPassword, qbitHost));
   await tryStep(6, () => configureSonarr(ports.sonarr, apiKeys.sonarr, adminPassword, qbitHost));
   await tryStep(7, () => configureLidarr(ports.lidarr, apiKeys.lidarr, adminPassword, qbitHost));

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Server } from 'lucide-react';
+import { Server, CheckCircle2, Box, AlertTriangle } from 'lucide-react';
 import type { Config } from '../App';
 import { useT } from '../LangContext';
 
@@ -51,7 +51,7 @@ export default function StepDocker({ next }: Props) {
 
       {status === 'running' && (
         <div className="card px-8 py-6 flex flex-col items-center gap-5">
-          <div className="text-5xl">✅</div>
+          <CheckCircle2 size={52} style={{ color: '#16a34a' }} strokeWidth={1.5} />
           <p className="font-semibold text-green-600">{t.docker_ok}</p>
           <button onClick={next} className="btn-primary">{t.continue}</button>
         </div>
@@ -59,7 +59,7 @@ export default function StepDocker({ next }: Props) {
 
       {status === 'installed' && (
         <div className="card px-8 py-6 flex flex-col items-center gap-5 max-w-sm w-full">
-          <div className="text-5xl">🐳</div>
+          <Box size={52} style={{ color: '#2563eb' }} strokeWidth={1.5} />
           <p className="font-semibold text-amber-600">{t.docker_not_running}</p>
           <p className="text-sm leading-relaxed" style={{ color: 'var(--text-2)' }}>{t.docker_not_running_desc}</p>
           {starting ? (
@@ -76,7 +76,7 @@ export default function StepDocker({ next }: Props) {
 
       {status === 'missing' && (
         <div className="card px-8 py-6 flex flex-col items-center gap-5 max-w-sm w-full">
-          <div className="text-5xl">⚠️</div>
+          <AlertTriangle size={52} style={{ color: '#d97706' }} strokeWidth={1.5} />
           <p className="font-semibold text-amber-600">{t.docker_missing}</p>
           <p className="text-sm leading-relaxed" style={{ color: 'var(--text-2)' }}>{t.docker_missing_desc}</p>
           <button

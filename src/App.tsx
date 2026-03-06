@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Check } from 'lucide-react';
 import { LangProvider, useT } from './LangContext';
 import type { Lang } from './i18n';
 import appIcon from '../assets/icons/icons/png/64x64.png';
@@ -87,7 +88,7 @@ function Wizard({ onInstalled }: { onInstalled: () => void }) {
             <div className="setup-steps-list">
               {SETUP_STEPS.map((s, i) => (
                 <div key={s} className={`setup-step-item ${i < sidebarIdx ? 'done' : i === sidebarIdx ? 'active' : ''}`}>
-                  <div className="setup-step-num">{i < sidebarIdx ? '✓' : i + 1}</div>
+                  <div className="setup-step-num">{i < sidebarIdx ? <Check size={13} strokeWidth={3} /> : i + 1}</div>
                   <span>{sidebarLabels[i]}</span>
                 </div>
               ))}

@@ -20,8 +20,8 @@ const execAsync = promisify(exec);
 
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 780,
-    height: 580,
+    width: 920,
+    height: 680,
     resizable: false,
     backgroundColor: '#ffffff',
     webPreferences: {
@@ -48,50 +48,6 @@ app.on('ready', async () => {
 });
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
-
-// ── Jellyfin auto-setup ───────────────────────────────────────
-
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
-
-function jellyfinGet(path: string, port: number): Promise<number> {
-  return new Promise(resolve => {
-    http.get({ hostname: 'localhost', port, path }, res => {
-      res.resume();
-      resolve(res.statusCode ?? 0);
-    }).on('error', () => resolve(0));
-  });
-}
-
-function jellyfinPost(path: string, port: number, body: object): Promise<number> {
-  return new Promise(resolve => {
-    const data = JSON.stringify(body);
-    const req = http.request({
-      hostname: 'localhost', port, path, method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) },
-    }, res => { res.resume(); resolve(res.statusCode ?? 0); });
-    req.on('error', () => resolve(0));
-    req.write(data);
-    req.end();
-  });
-}
-
-async function configureJellyfin(port: number, adminPassword: string): Promise<void> {
-  // Wait up to 2 minutes for Jellyfin to be ready
-  for (let i = 0; i < 24; i++) {
-    const status = await jellyfinGet('/health', port);
-    if (status === 200) break;
-    await sleep(5000);
-  }
-  // Skip if wizard already completed (returns 4xx)
-  const check = await jellyfinGet('/Startup/Configuration', port);
-  if (check !== 200) return;
-
-  // Complete all wizard steps in order (Jellyfin requires each step before the next)
-  await jellyfinPost('/Startup/Configuration', port, { UICulture: 'en-US', MetadataCountryCode: 'US', PreferredMetadataLanguage: 'en' });
-  await jellyfinPost('/Startup/RemoteAccess', port, { EnableRemoteAccess: true, EnableAutomaticPortMapping: false });
-  await jellyfinPost('/Startup/User', port, { Name: 'admin', Password: adminPassword, PasswordConf: adminPassword });
-  await jellyfinPost('/Startup/Complete', port, {});
-}
 
 // ── Helpers ───────────────────────────────────────────────────
 
@@ -293,10 +249,10 @@ ipcMain.handle('get-local-ip', () => {
   return '127.0.0.1';
 });
 
-// Reset installation — stops stack and deletes compose dir so wizard runs again
+// Reset installation — stops stack + removes Docker config volumes + deletes compose dir
 ipcMain.handle('reset-install', async () => {
   const dir = composeDir();
-  try { await execAsync('docker compose down', { cwd: dir, env: dockerEnv() }); } catch {}
+  try { await execAsync('docker compose down --volumes', { cwd: dir, env: dockerEnv() }); } catch {}
   await fs.rm(dir, { recursive: true, force: true });
 });
 
@@ -351,13 +307,26 @@ ipcMain.handle('install', async (event, config: {
 
   // Step 2: Pull + start containers
   progress(2);
+
+  // Pre-create qBittorrent config with known password (PBKDF2-HMAC-SHA512)
+  // so we can log in reliably without parsing docker logs
+  const qbitConfigDir = path.join(dataPath, 'qbittorrent', 'qBittorrent');
+  await fs.mkdir(qbitConfigDir, { recursive: true });
+  const qbitConf = path.join(qbitConfigDir, 'qBittorrent.conf');
+  const qbitSalt = crypto.randomBytes(16);
+  const qbitKey = await new Promise<Buffer>((resolve, reject) =>
+    crypto.pbkdf2(adminPassword, qbitSalt, 100000, 64, 'sha512', (err, k) => err ? reject(err) : resolve(k))
+  );
+  const qbitHash = `@ByteArray(${qbitSalt.toString('base64')}:${qbitKey.toString('base64')})`;
+  await fs.writeFile(qbitConf, [
+    '[Preferences]',
+    'WebUI\\Username=admin',
+    `WebUI\\Password_PBKDF2="${qbitHash}"`,
+  ].join('\n'));
+
   await execAsync('docker compose up -d', { cwd: dir, env: dockerEnv() });
 
-  // Step 3 (via autoSetup): Jellyfin wizard
-  progress(3);
-  try { await configureJellyfin(8096, adminPassword); } catch { /* best-effort */ }
-
-  // Steps 4–10: Auto-configure remaining services (with retry + failure tracking)
+  // Steps 3–10: Auto-configure all services (Jellyfin + *arr + qBit + Jellyseerr)
   const stepFailed = (step: number) => {
     try { event.sender.send('install-step-failed', step); } catch { /* window may be closing */ }
   };
