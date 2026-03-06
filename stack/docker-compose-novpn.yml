@@ -38,7 +38,7 @@ services:
           memory: 1G
 
   jellyseerr:
-    image: fallenbagel/jellyseerr:latest
+    image: ghcr.io/seerr-team/seerr:latest
     container_name: media_jellyseerr
     restart: unless-stopped
     networks:

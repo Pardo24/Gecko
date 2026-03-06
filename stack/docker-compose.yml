@@ -42,7 +42,7 @@ services:
 
   # Jellyseerr — Solicitar películas y series    :5055
   jellyseerr:
-    image: fallenbagel/jellyseerr:latest
+    image: ghcr.io/seerr-team/seerr:latest
     container_name: media_jellyseerr
     restart: unless-stopped
     networks:
