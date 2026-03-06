@@ -116,34 +116,43 @@ async function configureJellyfin(port: number, adminPassword: string): Promise<v
   const check = await httpRequest({ hostname: 'localhost', port, path: '/Startup/Configuration' });
   if (check.status !== 200) return;
 
-  // Complete all wizard steps
-  await jsonPost(port, '/Startup/Configuration', {
+  // Complete all wizard steps — throw on failure so withRetry can retry
+  const cfg1 = await jsonPost(port, '/Startup/Configuration', {
     UICulture: 'en-US', MetadataCountryCode: 'US', PreferredMetadataLanguage: 'en',
   });
-  await jsonPost(port, '/Startup/RemoteAccess', {
+  if (cfg1.status < 200 || cfg1.status >= 300) throw new Error(`Startup/Configuration failed: ${cfg1.status}`);
+
+  const cfg2 = await jsonPost(port, '/Startup/RemoteAccess', {
     EnableRemoteAccess: true, EnableAutomaticPortMapping: false,
   });
-  await jsonPost(port, '/Startup/User', {
-    Name: 'admin', Password: adminPassword, PasswordConf: adminPassword,
+  if (cfg2.status < 200 || cfg2.status >= 300) throw new Error(`Startup/RemoteAccess failed: ${cfg2.status}`);
+
+  const cfg3 = await jsonPost(port, '/Startup/User', {
+    Name: 'admin', Password: adminPassword,
   });
-  await jsonPost(port, '/Startup/Complete', {});
+  if (cfg3.status < 200 || cfg3.status >= 300) throw new Error(`Startup/User failed: ${cfg3.status} — ${cfg3.body.slice(0, 200)}`);
+
+  const cfg4 = await jsonPost(port, '/Startup/Complete', {});
+  if (cfg4.status < 200 || cfg4.status >= 300) throw new Error(`Startup/Complete failed: ${cfg4.status}`);
 
   // Short pause while Jellyfin initialises post-wizard
-  await sleep(3000);
+  await sleep(4000);
 
-  // Authenticate and set server name to 'Gecko'
+  // Authenticate using the new Authorization header (required on Jellyfin 10.11+;
+  // X-Emby-Authorization is legacy and disabled by default on 10.12+)
   try {
+    const mediaAuth = 'MediaBrowser Client="Gecko", Device="Setup", DeviceId="gecko-setup-v1", Version="1.0"';
     const authResp = await jsonPost(port, '/Users/AuthenticateByName',
       { Username: 'admin', Pw: adminPassword },
-      { 'X-Emby-Authorization': 'MediaBrowser Client="Gecko", Device="Server", DeviceId="gecko-setup", Version="1.0"' },
+      { 'Authorization': mediaAuth },
     );
     if (authResp.status !== 200) return;
     const { AccessToken } = JSON.parse(authResp.body) as { AccessToken: string };
-    const authHeader = { 'X-Emby-Authorization': `MediaBrowser Token="${AccessToken}"` };
+    const authHeaders = { 'Authorization': `MediaBrowser Token="${AccessToken}"` };
 
+    // Set server name to 'Gecko'
     const cfgResp = await httpRequest({
-      hostname: 'localhost', port, path: '/System/Configuration',
-      headers: authHeader,
+      hostname: 'localhost', port, path: '/System/Configuration', headers: authHeaders,
     });
     if (cfgResp.status === 200) {
       const sysCfg = JSON.parse(cfgResp.body) as Record<string, unknown>;
@@ -151,10 +160,25 @@ async function configureJellyfin(port: number, adminPassword: string): Promise<v
       const body = JSON.stringify(sysCfg);
       await httpRequest({
         hostname: 'localhost', port, path: '/System/Configuration', method: 'POST',
-        headers: { ...authHeader, 'Content-Type': 'application/json', 'Content-Length': String(Buffer.byteLength(body)) },
+        headers: { ...authHeaders, 'Content-Type': 'application/json', 'Content-Length': String(Buffer.byteLength(body)) },
       }, body);
     }
-  } catch { /* server name is best-effort — wizard completion is what matters */ }
+
+    // Enable legacy authorization so Jellyseerr (which still uses X-Emby-Authorization)
+    // can authenticate. Jellyfin 10.12+ disables this by default.
+    const netResp = await httpRequest({
+      hostname: 'localhost', port, path: '/System/Configuration/Network', headers: authHeaders,
+    });
+    if (netResp.status === 200) {
+      const netCfg = JSON.parse(netResp.body) as Record<string, unknown>;
+      netCfg.EnableLegacyAuthorization = true;
+      const body = JSON.stringify(netCfg);
+      await httpRequest({
+        hostname: 'localhost', port, path: '/System/Configuration/Network', method: 'POST',
+        headers: { ...authHeaders, 'Content-Type': 'application/json', 'Content-Length': String(Buffer.byteLength(body)) },
+      }, body);
+    }
+  } catch { /* post-wizard extras are best-effort — wizard completion is what matters */ }
 }
 
 // ── qBittorrent ──────────────────────────────────────────────────
@@ -229,22 +253,23 @@ async function arrAddRootFolder(port: number, apiKey: string, folderPath: string
   await arrPost(port, '/api/v3/rootfolder', apiKey, { path: folderPath });
 }
 
-// Sets Forms-based web UI authentication on a *arr service.
+// Sets Forms-based web UI authentication on a *arr service, then restarts the
+// container so the updated config.xml is read on the next boot.
 // versionPath is '/api/v3' for Radarr/Sonarr/Lidarr, '/api/v1' for Prowlarr.
-// Best-effort — does not throw.
 async function arrSetFormAuth(
   port: number, apiKey: string, versionPath: string,
   username: string, password: string,
+  containerName: string, dockerEnvObj: NodeJS.ProcessEnv,
 ): Promise<void> {
   const current = await arrGet(port, `${versionPath}/config/host`, apiKey);
-  if (current.status !== 200) return;
+  if (current.status !== 200) throw new Error(`GET config/host failed: ${current.status}`);
   const cfg = JSON.parse(current.body) as Record<string, unknown>;
   cfg.authenticationMethod = 'Forms';
   cfg.authenticationRequired = 'Enabled';
   cfg.username = username;
   cfg.password = password;
   const data = JSON.stringify(cfg);
-  await httpRequest({
+  const putResp = await httpRequest({
     hostname: 'localhost', port, path: `${versionPath}/config/host`, method: 'PUT',
     headers: {
       'X-Api-Key': apiKey,
@@ -252,12 +277,20 @@ async function arrSetFormAuth(
       'Content-Length': String(Buffer.byteLength(data)),
     },
   }, data);
+  if (putResp.status < 200 || putResp.status >= 300) {
+    throw new Error(`PUT config/host returned ${putResp.status}: ${putResp.body.slice(0, 300)}`);
+  }
+  // Restart the container so the updated config.xml is read on next boot.
+  // Without restart, v4+ *arr apps can revert AuthenticationMethod to None.
+  await execAsync(`docker restart ${containerName}`, { env: dockerEnvObj });
+  await waitReady(port, `${versionPath}/system/status`, apiKey, 120);
 }
 
 // ── Radarr ───────────────────────────────────────────────────────
 
 async function configureRadarr(
   port: number, apiKey: string, adminPassword: string, qbitHost: string,
+  dockerEnvObj: NodeJS.ProcessEnv,
 ): Promise<void> {
   const ready = await waitReady(port, '/api/v3/system/status', apiKey, 180);
   if (!ready) throw new Error('Radarr not ready');
@@ -265,13 +298,14 @@ async function configureRadarr(
   const client = makeQbitDownloadClient(qbitHost, adminPassword, 'movieCategory', 'radarr');
   await arrAddDownloadClient(port, apiKey, client);
   await arrAddRootFolder(port, apiKey, '/movies');
-  await arrSetFormAuth(port, apiKey, '/api/v3', 'admin', adminPassword);
+  await arrSetFormAuth(port, apiKey, '/api/v3', 'admin', adminPassword, 'media_radarr', dockerEnvObj);
 }
 
 // ── Sonarr ───────────────────────────────────────────────────────
 
 async function configureSonarr(
   port: number, apiKey: string, adminPassword: string, qbitHost: string,
+  dockerEnvObj: NodeJS.ProcessEnv,
 ): Promise<void> {
   const ready = await waitReady(port, '/api/v3/system/status', apiKey, 180);
   if (!ready) throw new Error('Sonarr not ready');
@@ -279,13 +313,14 @@ async function configureSonarr(
   const client = makeQbitDownloadClient(qbitHost, adminPassword, 'tvCategory', 'sonarr');
   await arrAddDownloadClient(port, apiKey, client);
   await arrAddRootFolder(port, apiKey, '/tv');
-  await arrSetFormAuth(port, apiKey, '/api/v3', 'admin', adminPassword);
+  await arrSetFormAuth(port, apiKey, '/api/v3', 'admin', adminPassword, 'media_sonarr', dockerEnvObj);
 }
 
 // ── Lidarr ───────────────────────────────────────────────────────
 
 async function configureLidarr(
   port: number, apiKey: string, adminPassword: string, qbitHost: string,
+  dockerEnvObj: NodeJS.ProcessEnv,
 ): Promise<void> {
   const ready = await waitReady(port, '/api/v3/system/status', apiKey, 180);
   if (!ready) throw new Error('Lidarr not ready');
@@ -293,7 +328,7 @@ async function configureLidarr(
   const client = makeQbitDownloadClient(qbitHost, adminPassword, 'musicCategory', 'lidarr');
   await arrAddDownloadClient(port, apiKey, client);
   await arrAddRootFolder(port, apiKey, '/music');
-  await arrSetFormAuth(port, apiKey, '/api/v3', 'admin', adminPassword);
+  await arrSetFormAuth(port, apiKey, '/api/v3', 'admin', adminPassword, 'media_lidarr', dockerEnvObj);
 }
 
 // ── Prowlarr ─────────────────────────────────────────────────────
@@ -313,6 +348,7 @@ async function configureProwlarr(
   radarrPort: number, radarrKey: string,
   sonarrPort: number, sonarrKey: string,
   lidarrPort: number, lidarrKey: string,
+  dockerEnvObj: NodeJS.ProcessEnv,
 ): Promise<void> {
   const ready = await waitReady(port, '/api/v1/system/status', prowlarrKey, 180);
   if (!ready) throw new Error('Prowlarr not ready');
@@ -368,7 +404,7 @@ async function configureProwlarr(
     tags: [],
   });
 
-  await arrSetFormAuth(port, prowlarrKey, '/api/v1', 'admin', adminPassword);
+  await arrSetFormAuth(port, prowlarrKey, '/api/v1', 'admin', adminPassword, 'media_prowlarr', dockerEnvObj);
 }
 
 // ── Bazarr ───────────────────────────────────────────────────────
@@ -563,14 +599,15 @@ export async function runAutoSetup(cfg: AutoSetupConfig): Promise<{ failedSteps:
 
   await tryStep(3, () => configureJellyfin(ports.jellyfin, adminPassword));
   await tryStep(4, () => configureQbit(ports.qbit, adminPassword));
-  await tryStep(5, () => configureRadarr(ports.radarr, apiKeys.radarr, adminPassword, qbitHost));
-  await tryStep(6, () => configureSonarr(ports.sonarr, apiKeys.sonarr, adminPassword, qbitHost));
-  await tryStep(7, () => configureLidarr(ports.lidarr, apiKeys.lidarr, adminPassword, qbitHost));
+  await tryStep(5, () => configureRadarr(ports.radarr, apiKeys.radarr, adminPassword, qbitHost, dockerEnvObj));
+  await tryStep(6, () => configureSonarr(ports.sonarr, apiKeys.sonarr, adminPassword, qbitHost, dockerEnvObj));
+  await tryStep(7, () => configureLidarr(ports.lidarr, apiKeys.lidarr, adminPassword, qbitHost, dockerEnvObj));
   await tryStep(8, () => configureProwlarr(
     ports.prowlarr, apiKeys.prowlarr, adminPassword,
     ports.radarr, apiKeys.radarr,
     ports.sonarr, apiKeys.sonarr,
     ports.lidarr, apiKeys.lidarr,
+    dockerEnvObj,
   ));
   await tryStep(9, () => configureBazarr(ports.bazarr, apiKeys.radarr, apiKeys.sonarr, subtitleLangs, dockerEnvObj, adminPassword));
   await tryStep(10, () => configureJellyseerr(
