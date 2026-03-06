@@ -504,17 +504,18 @@ export interface AutoSetupConfig {
   onStepFailed?: (step: number) => void;
 }
 
-export async function runAutoSetup(cfg: AutoSetupConfig): Promise<{ failedSteps: number[] }> {
+export async function runAutoSetup(cfg: AutoSetupConfig): Promise<{ failedSteps: Array<{ step: number; error: string }> }> {
   const { adminPassword, subtitleLangs, apiKeys, ports, vpnEnabled, dockerEnvObj, onProgress, onStepFailed } = cfg;
   const qbitHost = vpnEnabled ? 'media_gluetun' : 'media_qbittorrent';
-  const failedSteps: number[] = [];
+  const failedSteps: Array<{ step: number; error: string }> = [];
 
   const tryStep = async (step: number, fn: () => Promise<void>) => {
     onProgress(step);
     try {
       await withRetry(fn);
-    } catch {
-      failedSteps.push(step);
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      failedSteps.push({ step, error });
       onStepFailed?.(step);
     }
   };

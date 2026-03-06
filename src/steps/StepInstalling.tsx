@@ -36,7 +36,7 @@ export default function StepInstalling({ config, next }: Props) {
   const { t } = useT();
   const [step, setStep] = useState(0);
   const [error, setError] = useState('');
-  const [failedSteps, setFailedSteps] = useState<number[]>([]);
+  const [failedSteps, setFailedSteps] = useState<Array<{ step: number; error: string }>>([]);
   const total = t.installing_stages.length;
 
   useEffect(() => {
@@ -118,13 +118,21 @@ export default function StepInstalling({ config, next }: Props) {
           <p className="text-xs font-semibold" style={{ color: '#ca8a04', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             {t.installing_warn_manual}
           </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {failedSteps.map(s => (
-              <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <AlertTriangle size={13} style={{ color: '#ca8a04', flexShrink: 0 }} />
-                <span className="text-sm font-medium" style={{ color: 'var(--text)' }}>
-                  {STEP_SERVICE[s] ?? `Step ${s}`}
-                </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {failedSteps.map(({ step: s, error }) => (
+              <div key={s}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <AlertTriangle size={13} style={{ color: '#ca8a04', flexShrink: 0 }} />
+                  <span className="text-sm font-medium" style={{ color: 'var(--text)' }}>
+                    {STEP_SERVICE[s] ?? `Step ${s}`}
+                  </span>
+                </div>
+                <p className="font-mono text-xs leading-relaxed" style={{
+                  color: 'var(--text-3)', wordBreak: 'break-all',
+                  paddingLeft: 21,
+                }}>
+                  {error}
+                </p>
               </div>
             ))}
           </div>
