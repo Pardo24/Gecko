@@ -191,6 +191,28 @@ services:
           cpus: "1.0"
           memory: 512M
 
+  # Cleanuparr — Limpieza automática de descargas estancadas    :11011
+  cleanuparr:
+    image: ghcr.io/cleanuparr/cleanuparr:latest
+    container_name: media_cleanuparr
+    restart: unless-stopped
+    networks:
+      - media_net
+    ports:
+      - "${CLEANUPARR_PORT:-11011}:11011"
+    volumes:
+      - cleanuparr_config:/config
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ:-Europe/Madrid}
+      PORT: 11011
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
 # ============================================================
 # Volúmenes Docker internos — protegen las DBs SQLite de la
 # corrupción causada por NTFS + WSL2 + Docker Desktop en Windows
@@ -205,3 +227,4 @@ volumes:
   sonarr_config:
   lidarr_config:
   bazarr_config:
+  cleanuparr_config:

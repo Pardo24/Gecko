@@ -281,7 +281,7 @@ ipcMain.handle('install', async (event, config: {
     `TZ=Europe/Madrid`,
     `JELLYFIN_PORT=8096`, `JELLYSEERR_PORT=5055`, `PROWLARR_PORT=9696`,
     `RADARR_PORT=7878`, `SONARR_PORT=8989`, `LIDARR_PORT=8686`,
-    `BAZARR_PORT=6767`, `QBIT_PORT=8090`,
+    `BAZARR_PORT=6767`, `QBIT_PORT=8090`, `CLEANUPARR_PORT=11011`,
     `JELLYFIN_ADMIN_PASSWORD=${adminPassword}`,
     vpnEnabled ? `MULLVAD_PRIVATE_KEY=${mullvadKey}` : '',
     vpnEnabled ? `MULLVAD_ADDRESSES=${mullvadAddress}` : '',
@@ -327,6 +327,7 @@ ipcMain.handle('install', async (event, config: {
     ports: {
       jellyfin: 8096, radarr: 7878, sonarr: 8989, lidarr: 8686,
       prowlarr: 9696, bazarr: 6767, qbit: 8090, jellyseerr: 5055,
+      cleanuparr: 11011,
     },
     vpnEnabled,
     dockerEnvObj: dockerEnv(),

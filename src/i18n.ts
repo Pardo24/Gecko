@@ -76,6 +76,7 @@ const tr = {
       'Connectant indexadors...',
       'Configurant subtítols...',
       'Configurant sol·licituds...',
+      'Arrencant netejador de descàrregues...',
     ],
 
     done_title: 'Gecko ja funciona!',
@@ -295,6 +296,7 @@ const tr = {
       'Conectando indexadores...',
       'Configurando subtítulos...',
       'Configurando solicitudes...',
+      'Iniciando limpiador de descargas...',
     ],
 
     done_title: '¡Gecko ya funciona!',
@@ -508,6 +510,7 @@ const tr = {
       'Connecting indexers...',
       'Configuring subtitles...',
       'Configuring requests...',
+      'Starting download cleaner...',
     ],
 
     done_title: 'Gecko is up and running!',

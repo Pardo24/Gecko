@@ -17,9 +17,10 @@ const SERVICE_STEPS: Record<number, { name: ServiceName | null; emoji?: string }
   8:  { name: 'Prowlarr' },
   9:  { name: 'Bazarr' },
   10: { name: 'Jellyseerr' },
+  11: { name: null, emoji: '🧹' }, // Cleanuparr — no icon available
 };
 
-// Maps autoSetup failed step numbers to service names (steps 4-10)
+// Maps autoSetup failed step numbers to service names (steps 4-11)
 const STEP_SERVICE: Record<number, string> = {
   4: 'qBittorrent',
   5: 'Radarr',
@@ -28,9 +29,10 @@ const STEP_SERVICE: Record<number, string> = {
   8: 'Prowlarr',
   9: 'Bazarr',
   10: 'Jellyseerr',
+  11: 'Cleanuparr',
 };
 
-const SERVICE_STEP_NUMBERS = [3, 4, 5, 6, 7, 8, 9, 10];
+const SERVICE_STEP_NUMBERS = [3, 4, 5, 6, 7, 8, 9, 10, 11];
 
 export default function StepInstalling({ config, next }: Props) {
   const { t } = useT();
@@ -220,7 +222,7 @@ export default function StepInstalling({ config, next }: Props) {
           {/* Label + spinner */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
             <p className="font-bold text-lg" style={{ color: 'var(--text)' }}>
-              {serviceInfo?.name ?? 'Lidarr'}
+              {serviceInfo?.name ?? (step === 7 ? 'Lidarr' : 'Cleanuparr')}
             </p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{
