@@ -181,7 +181,32 @@ async function configureJellyfin(port: number, adminPassword: string): Promise<v
   } catch { /* post-wizard extras are best-effort — wizard completion is what matters */ }
 }
 
+// ── API key reader ───────────────────────────────────────────────
+
+// LinuxServer.io *arr images generate their own API key on first boot.
+// X_API_KEY env var is NOT honoured — we must read the key from config.xml.
+async function readArrApiKey(containerName: string, dockerEnvObj: NodeJS.ProcessEnv): Promise<string> {
+  for (let i = 0; i < 12; i++) {
+    try {
+      const { stdout } = await execAsync(`docker exec ${containerName} cat /config/config.xml`, { env: dockerEnvObj });
+      const m = stdout.match(/<ApiKey>([a-zA-Z0-9]+)<\/ApiKey>/);
+      if (m?.[1]) return m[1];
+    } catch { /* container not ready yet */ }
+    await sleep(5000);
+  }
+  throw new Error(`Could not read API key from ${containerName}`);
+}
+
 // ── qBittorrent ──────────────────────────────────────────────────
+
+// Reads the temporary WebUI password printed by linuxserver/qbittorrent on first boot.
+async function qbitTempPassword(dockerEnvObj: NodeJS.ProcessEnv): Promise<string | null> {
+  try {
+    const { stdout } = await execAsync('docker logs media_qbittorrent 2>&1', { env: dockerEnvObj });
+    const m = stdout.match(/temporary password[^:]*:\s*([A-Za-z0-9]+)/i);
+    return m?.[1] ?? null;
+  } catch { return null; }
+}
 
 async function qbitLogin(port: number, password: string): Promise<string | null> {
   const body = `username=admin&password=${encodeURIComponent(password)}`;
@@ -191,15 +216,29 @@ async function qbitLogin(port: number, password: string): Promise<string | null>
   return cookie?.match(/SID=([^;]+)/)?.[1] ?? null;
 }
 
-// Password is pre-set via PBKDF2 config file created by Gecko before docker compose up
-async function configureQbit(port: number, adminPassword: string): Promise<void> {
+async function configureQbit(port: number, adminPassword: string, dockerEnvObj: NodeJS.ProcessEnv): Promise<void> {
   const ready = await waitReady(port, '/api/v2/app/version', '', 120);
   if (!ready) throw new Error('qBittorrent not ready');
 
-  const sid = await qbitLogin(port, adminPassword);
+  let sid = await qbitLogin(port, adminPassword);
+
+  if (!sid) {
+    // Pre-configured PBKDF2 login failed — fall back to the temporary password
+    // that linuxserver/qbittorrent prints on first boot, then change to adminPassword.
+    const tempPass = await qbitTempPassword(dockerEnvObj);
+    if (tempPass) {
+      sid = await qbitLogin(port, tempPass);
+      if (sid) {
+        const chg = JSON.stringify({ web_ui_password: adminPassword });
+        await formPost(port, '/api/v2/app/setPreferences', `json=${encodeURIComponent(chg)}`, { Cookie: `SID=${sid}` });
+        await sleep(2000);
+        sid = await qbitLogin(port, adminPassword);
+      }
+    }
+  }
+
   if (!sid) throw new Error('qBittorrent login failed');
 
-  // Ensure save path is set
   const json = JSON.stringify({ save_path: '/downloads' });
   await formPost(port, '/api/v2/app/setPreferences', `json=${encodeURIComponent(json)}`, { Cookie: `SID=${sid}` });
 }
@@ -289,46 +328,52 @@ async function arrSetFormAuth(
 // ── Radarr ───────────────────────────────────────────────────────
 
 async function configureRadarr(
-  port: number, apiKey: string, adminPassword: string, qbitHost: string,
+  port: number, adminPassword: string, qbitHost: string,
   dockerEnvObj: NodeJS.ProcessEnv,
-): Promise<void> {
-  const ready = await waitReady(port, '/api/v3/system/status', apiKey, 180);
+): Promise<string> {
+  const ready = await waitReady(port, '/api/v3/system/status', '', 180);
   if (!ready) throw new Error('Radarr not ready');
 
+  const apiKey = await readArrApiKey('media_radarr', dockerEnvObj);
   const client = makeQbitDownloadClient(qbitHost, adminPassword, 'movieCategory', 'radarr');
   await arrAddDownloadClient(port, apiKey, client);
   await arrAddRootFolder(port, apiKey, '/movies');
   await arrSetFormAuth(port, apiKey, '/api/v3', 'admin', adminPassword, 'media_radarr', dockerEnvObj);
+  return apiKey;
 }
 
 // ── Sonarr ───────────────────────────────────────────────────────
 
 async function configureSonarr(
-  port: number, apiKey: string, adminPassword: string, qbitHost: string,
+  port: number, adminPassword: string, qbitHost: string,
   dockerEnvObj: NodeJS.ProcessEnv,
-): Promise<void> {
-  const ready = await waitReady(port, '/api/v3/system/status', apiKey, 180);
+): Promise<string> {
+  const ready = await waitReady(port, '/api/v3/system/status', '', 180);
   if (!ready) throw new Error('Sonarr not ready');
 
+  const apiKey = await readArrApiKey('media_sonarr', dockerEnvObj);
   const client = makeQbitDownloadClient(qbitHost, adminPassword, 'tvCategory', 'sonarr');
   await arrAddDownloadClient(port, apiKey, client);
   await arrAddRootFolder(port, apiKey, '/tv');
   await arrSetFormAuth(port, apiKey, '/api/v3', 'admin', adminPassword, 'media_sonarr', dockerEnvObj);
+  return apiKey;
 }
 
 // ── Lidarr ───────────────────────────────────────────────────────
 
 async function configureLidarr(
-  port: number, apiKey: string, adminPassword: string, qbitHost: string,
+  port: number, adminPassword: string, qbitHost: string,
   dockerEnvObj: NodeJS.ProcessEnv,
-): Promise<void> {
-  const ready = await waitReady(port, '/api/v3/system/status', apiKey, 180);
+): Promise<string> {
+  const ready = await waitReady(port, '/api/v3/system/status', '', 180);
   if (!ready) throw new Error('Lidarr not ready');
 
+  const apiKey = await readArrApiKey('media_lidarr', dockerEnvObj);
   const client = makeQbitDownloadClient(qbitHost, adminPassword, 'musicCategory', 'lidarr');
   await arrAddDownloadClient(port, apiKey, client);
   await arrAddRootFolder(port, apiKey, '/music');
   await arrSetFormAuth(port, apiKey, '/api/v3', 'admin', adminPassword, 'media_lidarr', dockerEnvObj);
+  return apiKey;
 }
 
 // ── Prowlarr ─────────────────────────────────────────────────────
@@ -344,14 +389,17 @@ async function prowlarrAddApp(port: number, prowlarrKey: string, body: object): 
 }
 
 async function configureProwlarr(
-  port: number, prowlarrKey: string, adminPassword: string,
-  radarrPort: number, radarrKey: string,
-  sonarrPort: number, sonarrKey: string,
-  lidarrPort: number, lidarrKey: string,
+  port: number, adminPassword: string,
+  radarrPort: number, sonarrPort: number, lidarrPort: number,
   dockerEnvObj: NodeJS.ProcessEnv,
-): Promise<void> {
-  const ready = await waitReady(port, '/api/v1/system/status', prowlarrKey, 180);
+): Promise<string> {
+  const ready = await waitReady(port, '/api/v1/system/status', '', 180);
   if (!ready) throw new Error('Prowlarr not ready');
+
+  const prowlarrKey = await readArrApiKey('media_prowlarr', dockerEnvObj);
+  const radarrKey   = await readArrApiKey('media_radarr',   dockerEnvObj);
+  const sonarrKey   = await readArrApiKey('media_sonarr',   dockerEnvObj);
+  const lidarrKey   = await readArrApiKey('media_lidarr',   dockerEnvObj);
 
   await prowlarrAddApp(port, prowlarrKey, {
     syncLevel: 'fullSync',
@@ -405,14 +453,16 @@ async function configureProwlarr(
   });
 
   await arrSetFormAuth(port, prowlarrKey, '/api/v1', 'admin', adminPassword, 'media_prowlarr', dockerEnvObj);
+  return prowlarrKey;
 }
 
 // ── Bazarr ───────────────────────────────────────────────────────
 
 async function configureBazarr(
-  port: number, radarrApiKey: string, sonarrApiKey: string,
-  subtitleLangs: string[], dockerEnvObj: NodeJS.ProcessEnv, adminPassword: string,
+  port: number, subtitleLangs: string[], dockerEnvObj: NodeJS.ProcessEnv, adminPassword: string,
 ): Promise<void> {
+  const radarrApiKey = await readArrApiKey('media_radarr', dockerEnvObj);
+  const sonarrApiKey = await readArrApiKey('media_sonarr', dockerEnvObj);
   const ready = await waitReady(port, '/api/system/status', '', 120);
   if (!ready) throw new Error('Bazarr not ready');
 
@@ -489,9 +539,11 @@ function extractCookie(cookies: string[], name: string): string {
 
 async function configureJellyseerr(
   port: number, jellyfinPort: number, adminPassword: string,
-  radarrKey: string, sonarrKey: string,
   radarrPort: number, sonarrPort: number,
+  dockerEnvObj: NodeJS.ProcessEnv,
 ): Promise<void> {
+  const radarrKey = await readArrApiKey('media_radarr', dockerEnvObj);
+  const sonarrKey = await readArrApiKey('media_sonarr', dockerEnvObj);
   const ready = await waitReady(port, '/api/v1/status', '', 120);
   if (!ready) throw new Error('Jellyseerr not ready');
 
@@ -570,7 +622,6 @@ async function configureJellyseerr(
 export interface AutoSetupConfig {
   adminPassword: string;
   subtitleLangs: string[];
-  apiKeys: { radarr: string; sonarr: string; lidarr: string; prowlarr: string };
   ports: {
     jellyfin: number; radarr: number; sonarr: number; lidarr: number;
     prowlarr: number; bazarr: number; qbit: number; jellyseerr: number;
@@ -581,10 +632,14 @@ export interface AutoSetupConfig {
   onStepFailed?: (step: number) => void;
 }
 
-export async function runAutoSetup(cfg: AutoSetupConfig): Promise<{ failedSteps: Array<{ step: number; error: string }> }> {
-  const { adminPassword, subtitleLangs, apiKeys, ports, vpnEnabled, dockerEnvObj, onProgress, onStepFailed } = cfg;
+export async function runAutoSetup(cfg: AutoSetupConfig): Promise<{
+  failedSteps: Array<{ step: number; error: string }>;
+  apiKeys: { radarr: string; sonarr: string; lidarr: string; prowlarr: string };
+}> {
+  const { adminPassword, subtitleLangs, ports, vpnEnabled, dockerEnvObj, onProgress, onStepFailed } = cfg;
   const qbitHost = vpnEnabled ? 'media_gluetun' : 'media_qbittorrent';
   const failedSteps: Array<{ step: number; error: string }> = [];
+  const actualKeys = { radarr: '', sonarr: '', lidarr: '', prowlarr: '' };
 
   const tryStep = async (step: number, fn: () => Promise<void>) => {
     onProgress(step);
@@ -598,23 +653,18 @@ export async function runAutoSetup(cfg: AutoSetupConfig): Promise<{ failedSteps:
   };
 
   await tryStep(3, () => configureJellyfin(ports.jellyfin, adminPassword));
-  await tryStep(4, () => configureQbit(ports.qbit, adminPassword));
-  await tryStep(5, () => configureRadarr(ports.radarr, apiKeys.radarr, adminPassword, qbitHost, dockerEnvObj));
-  await tryStep(6, () => configureSonarr(ports.sonarr, apiKeys.sonarr, adminPassword, qbitHost, dockerEnvObj));
-  await tryStep(7, () => configureLidarr(ports.lidarr, apiKeys.lidarr, adminPassword, qbitHost, dockerEnvObj));
-  await tryStep(8, () => configureProwlarr(
-    ports.prowlarr, apiKeys.prowlarr, adminPassword,
-    ports.radarr, apiKeys.radarr,
-    ports.sonarr, apiKeys.sonarr,
-    ports.lidarr, apiKeys.lidarr,
-    dockerEnvObj,
-  ));
-  await tryStep(9, () => configureBazarr(ports.bazarr, apiKeys.radarr, apiKeys.sonarr, subtitleLangs, dockerEnvObj, adminPassword));
+  await tryStep(4, () => configureQbit(ports.qbit, adminPassword, dockerEnvObj));
+  await tryStep(5, async () => { actualKeys.radarr  = await configureRadarr(ports.radarr,  adminPassword, qbitHost, dockerEnvObj); });
+  await tryStep(6, async () => { actualKeys.sonarr  = await configureSonarr(ports.sonarr,  adminPassword, qbitHost, dockerEnvObj); });
+  await tryStep(7, async () => { actualKeys.lidarr  = await configureLidarr(ports.lidarr,  adminPassword, qbitHost, dockerEnvObj); });
+  await tryStep(8, async () => { actualKeys.prowlarr = await configureProwlarr(
+    ports.prowlarr, adminPassword, ports.radarr, ports.sonarr, ports.lidarr, dockerEnvObj,
+  ); });
+  await tryStep(9,  () => configureBazarr(ports.bazarr, subtitleLangs, dockerEnvObj, adminPassword));
   await tryStep(10, () => configureJellyseerr(
     ports.jellyseerr, ports.jellyfin, adminPassword,
-    apiKeys.radarr, apiKeys.sonarr,
-    ports.radarr, ports.sonarr,
+    ports.radarr, ports.sonarr, dockerEnvObj,
   ));
 
-  return { failedSteps };
+  return { failedSteps, apiKeys: actualKeys };
 }
