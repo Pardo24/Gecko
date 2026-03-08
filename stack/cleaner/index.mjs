@@ -9,6 +9,8 @@ const SERVICES = [
   { name: 'Lidarr', host: process.env.LIDARR_HOST, apiKey: process.env.LIDARR_API_KEY, version: 'v1' },
 ];
 
+const REQUEST_TIMEOUT_MS = 10000;
+
 // Tracker messages that indicate a torrent will never recover
 const BAD_TRACKER_KEYWORDS = [
   'unregistered', 'not registered', 'torrent not found', 'unknown torrent',
@@ -19,7 +21,7 @@ const BAD_TRACKER_KEYWORDS = [
 async function getQueue(host, apiKey, version) {
   const res = await fetch(`${host}/api/${version}/queue?pageSize=200`, {
     headers: { 'X-Api-Key': apiKey },
-    signal: AbortSignal.timeout(10000),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
@@ -29,9 +31,9 @@ async function getQueue(host, apiKey, version) {
 async function removeItem(host, apiKey, version, id) {
   const res = await fetch(
     `${host}/api/${version}/queue/${id}?blocklist=true&removeFromClient=true`,
-    { method: 'DELETE', headers: { 'X-Api-Key': apiKey }, signal: AbortSignal.timeout(10000) },
+    { method: 'DELETE', headers: { 'X-Api-Key': apiKey }, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) },
   );
-  return res.status;
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }
 
 function hasBadTrackerMessage(statusMessages) {
