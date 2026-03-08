@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Sparkles, Lock, ChevronUp, ChevronDown, HelpCircle, Lightbulb, BookOpen, ExternalLink, Copy, Check } from 'lucide-react';
+import { useState } from 'react';
+import { Sparkles, Lock, ChevronUp, ChevronDown, HelpCircle, Lightbulb, BookOpen, ExternalLink } from 'lucide-react';
 import type { Config } from '../App';
 import { useT } from '../LangContext';
 import ServiceIcon from '../components/ServiceIcon';
@@ -15,22 +15,6 @@ export default function StepDone({ config, next }: Props) {
   const [vpnKey, setVpnKey] = useState('');
   const [vpnAddress, setVpnAddress] = useState('');
   const [vpnState, setVpnState] = useState<VpnState>('idle');
-
-  const [showClean, setShowClean] = useState(false);
-  const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
-  const [copiedKey, setCopiedKey] = useState('');
-
-  useEffect(() => {
-    window.electron.getConfig().then((cfg: Record<string, string> | null) => {
-      if (cfg) setApiKeys(cfg);
-    });
-  }, []);
-
-  const copyValue = (value: string, id: string) => {
-    navigator.clipboard.writeText(value);
-    setCopiedKey(id);
-    setTimeout(() => setCopiedKey(''), 2000);
-  };
 
   const handleAddVpn = async () => {
     setVpnState('loading');
@@ -121,66 +105,6 @@ export default function StepDone({ config, next }: Props) {
 
           <p style={{ fontSize: '0.68rem', color: 'var(--text-3)', lineHeight: 1.5 }}>{t.done_indexer_disclaimer}</p>
         </div>
-      </div>
-
-      {/* Cleanuparr setup card */}
-      <div className="card w-full max-w-md p-4 text-left space-y-3">
-        <button onClick={() => setShowClean(v => !v)} className="w-full flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span style={{ fontSize: '1.1rem' }}>🧹</span>
-            <span className="font-semibold text-sm">{t.done_cleanuparr_title}</span>
-          </div>
-          {showClean ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        </button>
-
-        {showClean && (() => {
-          const qbitHost = config.vpnEnabled ? 'http://media_gluetun:8080' : 'http://media_qbittorrent:8080';
-          const rows: { label: string; id: string; sub: string; value: string }[] = [
-            { label: 'qBittorrent', id: 'qbit-host', sub: t.done_cleanuparr_host, value: qbitHost },
-            { label: 'qBittorrent', id: 'qbit-user', sub: t.done_cleanuparr_user, value: 'admin' },
-            { label: 'qBittorrent', id: 'qbit-pass', sub: t.done_cleanuparr_pass, value: apiKeys.JELLYFIN_ADMIN_PASSWORD ?? config.adminPassword ?? '' },
-            { label: 'Radarr',      id: 'radarr-host', sub: t.done_cleanuparr_host, value: 'http://media_radarr:7878' },
-            { label: 'Radarr',      id: 'radarr-key',  sub: t.done_cleanuparr_key,  value: apiKeys.RADARR_API_KEY ?? '' },
-            { label: 'Sonarr',      id: 'sonarr-host', sub: t.done_cleanuparr_host, value: 'http://media_sonarr:8989' },
-            { label: 'Sonarr',      id: 'sonarr-key',  sub: t.done_cleanuparr_key,  value: apiKeys.SONARR_API_KEY ?? '' },
-            { label: 'Lidarr',      id: 'lidarr-host', sub: t.done_cleanuparr_host, value: 'http://media_lidarr:8686' },
-            { label: 'Lidarr',      id: 'lidarr-key',  sub: t.done_cleanuparr_key,  value: apiKeys.LIDARR_API_KEY ?? '' },
-          ];
-          return (
-            <div className="space-y-2 pt-1">
-              <p className="text-xs leading-relaxed" style={{ color: 'var(--text-2)' }}>{t.done_cleanuparr_desc}</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {rows.map(row => row.value && (
-                  <div key={row.id} style={{
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    background: 'var(--surface-2, rgba(0,0,0,0.04))',
-                    borderRadius: 8, padding: '6px 10px',
-                  }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                        {row.label} · {row.sub}
-                      </span>
-                      <p className="font-mono text-xs truncate" style={{ color: 'var(--text)', marginTop: 1 }}>{row.value}</p>
-                    </div>
-                    <button
-                      onClick={() => copyValue(row.value, row.id)}
-                      style={{ flexShrink: 0, color: 'var(--accent)', padding: '2px 4px' }}
-                      title={t.done_cleanuparr_copy}
-                    >
-                      {copiedKey === row.id
-                        ? <Check size={13} />
-                        : <Copy size={13} />}
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <button onClick={() => open('http://localhost:11011')} className="btn-primary w-full" style={{ justifyContent: 'center', minWidth: 'unset' }}>
-                <ExternalLink size={13} />{t.done_cleanuparr_btn}
-              </button>
-              <p className="text-xs" style={{ color: 'var(--text-3)' }}>{t.done_cleanuparr_note}</p>
-            </div>
-          );
-        })()}
       </div>
 
       {/* Add VPN section (shown if not enabled) */}

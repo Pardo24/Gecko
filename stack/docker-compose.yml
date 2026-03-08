@@ -234,27 +234,27 @@ services:
           cpus: "1.0"
           memory: 512M
 
-  # Cleanuparr — Limpieza automática de descargas estancadas    :11011
-  cleanuparr:
-    image: ghcr.io/cleanuparr/cleanuparr:latest
-    container_name: media_cleanuparr
+  # Gecko Cleaner — limpieza automática de descargas estancadas/fallidas
+  gecko-cleaner:
+    build: ./cleaner
+    container_name: media_cleaner
     restart: unless-stopped
     networks:
       - media_net
-    ports:
-      - "${CLEANUPARR_PORT:-11011}:11011"
-    volumes:
-      - cleanuparr_config:/config
     environment:
-      PUID: 1000
-      PGID: 1000
+      RADARR_HOST: http://media_radarr:7878
+      RADARR_API_KEY: ${RADARR_API_KEY}
+      SONARR_HOST: http://media_sonarr:8989
+      SONARR_API_KEY: ${SONARR_API_KEY}
+      LIDARR_HOST: http://media_lidarr:8686
+      LIDARR_API_KEY: ${LIDARR_API_KEY}
+      INTERVAL_MINUTES: 10
       TZ: ${TZ:-Europe/Madrid}
-      PORT: 11011
     deploy:
       resources:
         limits:
-          cpus: "0.5"
-          memory: 256M
+          cpus: "0.1"
+          memory: 64M
 
 # ============================================================
 # Volúmenes Docker internos — protegen las DBs SQLite de la

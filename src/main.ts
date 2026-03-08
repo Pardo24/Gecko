@@ -281,7 +281,7 @@ ipcMain.handle('install', async (event, config: {
     `TZ=Europe/Madrid`,
     `JELLYFIN_PORT=8096`, `JELLYSEERR_PORT=5055`, `PROWLARR_PORT=9696`,
     `RADARR_PORT=7878`, `SONARR_PORT=8989`, `LIDARR_PORT=8686`,
-    `BAZARR_PORT=6767`, `QBIT_PORT=8090`, `CLEANUPARR_PORT=11011`,
+    `BAZARR_PORT=6767`, `QBIT_PORT=8090`,
     `JELLYFIN_ADMIN_PASSWORD=${adminPassword}`,
     vpnEnabled ? `MULLVAD_PRIVATE_KEY=${mullvadKey}` : '',
     vpnEnabled ? `MULLVAD_ADDRESSES=${mullvadAddress}` : '',
@@ -290,10 +290,9 @@ ipcMain.handle('install', async (event, config: {
   await fs.writeFile(path.join(dir, '.env'), envLines);
 
   const composeFile = vpnEnabled ? 'docker-compose.yml' : 'docker-compose-novpn.yml';
-  const src = app.isPackaged
-    ? path.join(process.resourcesPath, 'stack', composeFile)
-    : path.join(__dirname, `../../stack/${composeFile}`);
-  await fs.copyFile(src, path.join(dir, 'docker-compose.yml'));
+  const stackBase = app.isPackaged ? path.join(process.resourcesPath, 'stack') : path.join(__dirname, '../../stack');
+  await fs.copyFile(path.join(stackBase, composeFile), path.join(dir, 'docker-compose.yml'));
+  await fs.cp(path.join(stackBase, 'cleaner'), path.join(dir, 'cleaner'), { recursive: true });
 
   // Step 2: Pull + start containers
   progress(2);
@@ -314,7 +313,7 @@ ipcMain.handle('install', async (event, config: {
     `WebUI\\Password_PBKDF2="${qbitHash}"`,
   ].join('\n'));
 
-  await execAsync('docker compose up -d', { cwd: dir, env: dockerEnv() });
+  await execAsync('docker compose up -d --build', { cwd: dir, env: dockerEnv() });
 
   // Steps 3–10: Auto-configure all services (Jellyfin + *arr + qBit + Jellyseerr)
   const stepFailed = (step: number) => {
@@ -327,7 +326,6 @@ ipcMain.handle('install', async (event, config: {
     ports: {
       jellyfin: 8096, radarr: 7878, sonarr: 8989, lidarr: 8686,
       prowlarr: 9696, bazarr: 6767, qbit: 8090, jellyseerr: 5055,
-      cleanuparr: 11011,
     },
     vpnEnabled,
     dockerEnvObj: dockerEnv(),
@@ -350,6 +348,8 @@ ipcMain.handle('install', async (event, config: {
     envContent = setKey(envContent, 'LIDARR_API_KEY',   apiKeys.lidarr);
     envContent = setKey(envContent, 'PROWLARR_API_KEY', apiKeys.prowlarr);
     await fs.writeFile(envPath, envContent);
+    // Restart cleaner so it picks up the freshly written API keys
+    try { await execAsync('docker compose up -d --no-deps gecko-cleaner', { cwd: dir, env: dockerEnv() }); } catch { /* best-effort */ }
   }
 
   return { failedSteps };

@@ -76,7 +76,6 @@ const tr = {
       'Connectant indexadors...',
       'Configurant subtítols...',
       'Configurant sol·licituds...',
-      'Arrencant netejador de descàrregues...',
     ],
 
     done_title: 'Gecko ja funciona!',
@@ -98,17 +97,6 @@ const tr = {
     done_indexer_tip_3: 'La wiki oficial de Prowlarr té la llista completa d\'indexadors suportats.',
     done_indexer_wiki_btn: 'Wiki de Prowlarr',
     done_indexer_disclaimer: "⚠️ Gecko no inclou ni recomana cap indexador. L'usuari és l'únic responsable del contingut al qual accedeix i de complir la legislació vigent al seu país.",
-
-    done_cleanuparr_title: 'Configura el netejador automàtic',
-    done_cleanuparr_desc: 'Cleanuparr detecta torrents encallats, els elimina de qBittorrent i llança una nova cerca automàticament. Connecta\'l als teus serveis:',
-    done_cleanuparr_host: 'Host',
-    done_cleanuparr_user: 'Usuari',
-    done_cleanuparr_pass: 'Contrasenya',
-    done_cleanuparr_key: 'API Key',
-    done_cleanuparr_copied: '¡Copiat!',
-    done_cleanuparr_copy: 'Copiar',
-    done_cleanuparr_btn: 'Obrir Cleanuparr →',
-    done_cleanuparr_note: 'Després d\'obrir Cleanuparr, ves a Settings i afegeix cada servei amb les dades de dalt.',
 
     done_network: 'Accedeix a tots els serveis des de qualsevol dispositiu de la xarxa local.',
     done_vpn_title: 'Afegir VPN (Mullvad)',
@@ -308,7 +296,6 @@ const tr = {
       'Conectando indexadores...',
       'Configurando subtítulos...',
       'Configurando solicitudes...',
-      'Iniciando limpiador de descargas...',
     ],
 
     done_title: '¡Gecko ya funciona!',
@@ -330,17 +317,6 @@ const tr = {
     done_indexer_tip_3: 'La wiki oficial de Prowlarr tiene la lista completa de indexadores soportados.',
     done_indexer_wiki_btn: 'Wiki de Prowlarr',
     done_indexer_disclaimer: '⚠️ Gecko no incluye ni recomienda ningún indexador. El usuario es el único responsable del contenido al que accede y de cumplir la legislación vigente en su país.',
-
-    done_cleanuparr_title: 'Configura el limpiador automático',
-    done_cleanuparr_desc: 'Cleanuparr detecta torrents estancados, los elimina de qBittorrent y lanza una nueva búsqueda automáticamente. Conéctalo a tus servicios:',
-    done_cleanuparr_host: 'Host',
-    done_cleanuparr_user: 'Usuario',
-    done_cleanuparr_pass: 'Contraseña',
-    done_cleanuparr_key: 'API Key',
-    done_cleanuparr_copied: '¡Copiado!',
-    done_cleanuparr_copy: 'Copiar',
-    done_cleanuparr_btn: 'Abrir Cleanuparr →',
-    done_cleanuparr_note: 'Tras abrir Cleanuparr, ve a Settings y añade cada servicio con los datos de arriba.',
 
     done_network: 'Accede a todos los servicios desde cualquier dispositivo de la red local.',
     done_vpn_title: 'Añadir VPN (Mullvad)',
@@ -534,7 +510,6 @@ const tr = {
       'Connecting indexers...',
       'Configuring subtitles...',
       'Configuring requests...',
-      'Starting download cleaner...',
     ],
 
     done_title: 'Gecko is up and running!',
@@ -556,17 +531,6 @@ const tr = {
     done_indexer_tip_3: 'The official Prowlarr wiki lists every supported indexer.',
     done_indexer_wiki_btn: 'Prowlarr Wiki',
     done_indexer_disclaimer: '⚠️ Gecko does not include or recommend any indexer. The user is solely responsible for the content they access and for complying with applicable law.',
-
-    done_cleanuparr_title: 'Set up the automatic cleaner',
-    done_cleanuparr_desc: 'Cleanuparr detects stalled torrents, removes them from qBittorrent and triggers a new search automatically. Connect it to your services:',
-    done_cleanuparr_host: 'Host',
-    done_cleanuparr_user: 'Username',
-    done_cleanuparr_pass: 'Password',
-    done_cleanuparr_key: 'API Key',
-    done_cleanuparr_copied: 'Copied!',
-    done_cleanuparr_copy: 'Copy',
-    done_cleanuparr_btn: 'Open Cleanuparr →',
-    done_cleanuparr_note: 'After opening Cleanuparr, go to Settings and add each service with the details above.',
 
     done_network: 'Access all services from any device on your local network.',
     done_vpn_title: 'Add VPN (Mullvad)',

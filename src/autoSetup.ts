@@ -618,14 +618,6 @@ async function configureJellyseerr(
   }, { Cookie: sessionCookie });
 }
 
-// ── Cleanuparr ───────────────────────────────────────────────────
-// Cleanuparr has no configuration REST API — connections to Radarr/Sonarr/qBittorrent
-// are set up via its web UI after installation. This step just waits until it's ready.
-async function configureCleanupArr(port: number): Promise<void> {
-  const ready = await waitReady(port, '/', '', 120);
-  if (!ready) throw new Error('Cleanuparr not ready');
-}
-
 // ── Main export ──────────────────────────────────────────────────
 
 export interface AutoSetupConfig {
@@ -634,7 +626,6 @@ export interface AutoSetupConfig {
   ports: {
     jellyfin: number; radarr: number; sonarr: number; lidarr: number;
     prowlarr: number; bazarr: number; qbit: number; jellyseerr: number;
-    cleanuparr: number;
   };
   vpnEnabled: boolean;
   dockerEnvObj: NodeJS.ProcessEnv;
@@ -675,7 +666,5 @@ export async function runAutoSetup(cfg: AutoSetupConfig): Promise<{
     ports.jellyseerr, ports.jellyfin, adminPassword,
     ports.radarr, ports.sonarr, dockerEnvObj,
   ));
-  await tryStep(11, () => configureCleanupArr(ports.cleanuparr));
-
   return { failedSteps, apiKeys: actualKeys };
 }
