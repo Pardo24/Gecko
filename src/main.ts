@@ -38,14 +38,7 @@ const createWindow = () => {
   }
 };
 
-app.on('ready', async () => {
-  createWindow();
-  // If the stack was already running when Gecko opens, start the monitor
-  try {
-    const { stdout } = await execAsync('docker compose ps -q', { cwd: composeDir(), env: dockerEnv() });
-    if (stdout.trim().split('\n').filter(Boolean).length > 0) startStallMonitor();
-  } catch { /* stack not yet installed */ }
-});
+app.on('ready', () => { createWindow(); });
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
 
@@ -81,86 +74,6 @@ function parseEnv(content: string): Record<string, string> {
         return [l.slice(0, idx).trim(), l.slice(idx + 1).trim()];
       })
   );
-}
-
-// ── Stall monitor ─────────────────────────────────────────────
-// Periodically checks Radarr and Sonarr queues.
-// Any item with trackedDownloadStatus 'warning' or 'error' that has been
-// in the queue for more than STALL_THRESHOLD_MS is auto-blocklisted so
-// the *arr service immediately searches for an alternative release.
-
-const STALL_THRESHOLD_MS = 60 * 60 * 1000; // 60 minutes
-const STALL_CHECK_INTERVAL_MS = 30 * 60 * 1000; // check every 30 minutes
-let stallMonitorTimer: ReturnType<typeof setInterval> | null = null;
-
-function arrHttpGet(port: number, urlPath: string, apiKey: string): Promise<{ status: number; body: string }> {
-  return new Promise(resolve => {
-    const req = http.request(
-      { hostname: 'localhost', port, path: urlPath, headers: { 'X-Api-Key': apiKey } },
-      res => {
-        let data = '';
-        res.on('data', (d: Buffer) => data += d);
-        res.on('end', () => resolve({ status: res.statusCode ?? 0, body: data }));
-      },
-    );
-    req.on('error', () => resolve({ status: 0, body: '' }));
-    req.setTimeout(8000, () => { req.destroy(); resolve({ status: 0, body: '' }); });
-    req.end();
-  });
-}
-
-function arrHttpDelete(port: number, urlPath: string, apiKey: string): Promise<void> {
-  return new Promise(resolve => {
-    const req = http.request(
-      { hostname: 'localhost', port, path: urlPath, method: 'DELETE', headers: { 'X-Api-Key': apiKey } },
-      res => { res.resume(); res.on('end', resolve); },
-    );
-    req.on('error', () => resolve());
-    req.setTimeout(8000, () => { req.destroy(); resolve(); });
-    req.end();
-  });
-}
-
-async function blocklistStalledInService(
-  port: number, apiKey: string, apiVersion: string,
-): Promise<void> {
-  const resp = await arrHttpGet(port, `${apiVersion}/queue?pageSize=200&includeUnknownMovieItems=true`, apiKey);
-  if (resp.status !== 200) return;
-  const queue = JSON.parse(resp.body) as {
-    records: Array<{ id: number; added: string; trackedDownloadStatus: string }>;
-  };
-  const now = Date.now();
-  for (const item of queue.records ?? []) {
-    if (item.trackedDownloadStatus !== 'warning' && item.trackedDownloadStatus !== 'error') continue;
-    const age = now - new Date(item.added).getTime();
-    if (age < STALL_THRESHOLD_MS) continue;
-    // blocklist=true + skipRequeue=false → removes, blocklists, and triggers a new search
-    await arrHttpDelete(
-      port,
-      `${apiVersion}/queue/${item.id}?removeFromClient=true&blocklist=true&skipRequeue=false`,
-      apiKey,
-    );
-  }
-}
-
-async function runStallCheck(): Promise<void> {
-  try {
-    const envContent = await fs.readFile(path.join(composeDir(), '.env'), 'utf8');
-    const env = parseEnv(envContent);
-    const radarrPort = parseInt(env.RADARR_PORT ?? '7878');
-    const sonarrPort = parseInt(env.SONARR_PORT ?? '8989');
-    if (env.RADARR_API_KEY) await blocklistStalledInService(radarrPort, env.RADARR_API_KEY, '/api/v3');
-    if (env.SONARR_API_KEY) await blocklistStalledInService(sonarrPort, env.SONARR_API_KEY, '/api/v3');
-  } catch { /* stack not running or no config */ }
-}
-
-function startStallMonitor(): void {
-  if (stallMonitorTimer) return;
-  stallMonitorTimer = setInterval(() => { runStallCheck(); }, STALL_CHECK_INTERVAL_MS);
-}
-
-function stopStallMonitor(): void {
-  if (stallMonitorTimer) { clearInterval(stallMonitorTimer); stallMonitorTimer = null; }
 }
 
 // ── IPC Handlers ─────────────────────────────────────────────
@@ -222,12 +135,10 @@ ipcMain.handle('get-status', async () => {
 
 ipcMain.handle('start-stack', async () => {
   await execAsync('docker compose up -d', { cwd: composeDir(), env: dockerEnv() });
-  startStallMonitor();
 });
 
 ipcMain.handle('stop-stack', async () => {
   await execAsync('docker compose down', { cwd: composeDir(), env: dockerEnv() });
-  stopStallMonitor();
 });
 
 ipcMain.handle('get-disk-stats', async (_e, folderPath: string) => {
