@@ -18,6 +18,8 @@ declare global {
       removeVpn:      () => Promise<void>;
       getVersion:     () => Promise<string>;
       getDiskStats:      (path: string) => Promise<{ freeBytes: number; totalBytes: number } | null>;
+      getMediaList:      () => Promise<Array<{ id: number; title: string; year: number; type: 'movie' | 'series'; sizeOnDisk: number }>>;
+      deleteMedia:       (args: { id: number; type: 'movie' | 'series'; searchAfter: boolean }) => Promise<void>;
       onInstallProgress: (cb: (step: number) => void) => void;
     };
   }

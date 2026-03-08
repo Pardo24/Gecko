@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { RefreshCw, FolderOpen, Settings, ChevronDown, ChevronUp, Download, Coffee, ShieldCheck, Power, Square } from 'lucide-react';
 import { useT } from '../LangContext';
 import ServiceIcon from '../components/ServiceIcon';
+import SpaceManager from '../components/SpaceManager';
 
 type Status = 'checking' | 'running' | 'stopped';
 type Action  = 'idle' | 'starting' | 'stopping';
@@ -35,6 +36,7 @@ export default function PageHome({ config, onGoToVpn }: Props) {
     () => localStorage.getItem(CONFIG_DISMISSED_KEY) === 'true'
   );
   const [diskStats, setDiskStats] = useState<{ freeBytes: number; totalBytes: number } | null>(null);
+  const [showSpaceManager, setShowSpaceManager] = useState(false);
 
   const checkStatus = async () => {
     const s = await window.electron.getStatus();
@@ -217,7 +219,14 @@ export default function PageHome({ config, onGoToVpn }: Props) {
         <div className="card-sm" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div className="flex items-center gap-2">
             <FolderOpen size={14} strokeWidth={1.75} style={{ color: 'var(--accent)', flexShrink: 0 }} />
-            <span className="text-xs truncate font-medium" style={{ color: 'var(--text-2)' }}>{config.DATA_PATH}</span>
+            <span className="text-xs truncate font-medium flex-1" style={{ color: 'var(--text-2)' }}>{config.DATA_PATH}</span>
+            <button
+              onClick={() => setShowSpaceManager(true)}
+              className="btn-ghost"
+              style={{ padding: '2px 8px', fontSize: '0.7rem', fontWeight: 600, color: 'var(--accent)', flexShrink: 0 }}
+            >
+              Manage
+            </button>
           </div>
           {diskStats ? (
             <>
@@ -238,6 +247,8 @@ export default function PageHome({ config, onGoToVpn }: Props) {
           )}
         </div>
       )}
+
+      {showSpaceManager && <SpaceManager onClose={() => setShowSpaceManager(false)} />}
 
       {/* Buy Me a Coffee */}
       <button

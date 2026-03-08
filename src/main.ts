@@ -154,6 +154,87 @@ ipcMain.handle('get-disk-stats', async (_e, folderPath: string) => {
   }
 });
 
+ipcMain.handle('get-media-list', async () => {
+  try {
+    const content = await fs.readFile(path.join(composeDir(), '.env'), 'utf8');
+    const cfg = parseEnv(content);
+    const { RADARR_API_KEY: radarrKey, SONARR_API_KEY: sonarrKey } = cfg;
+    const radarrPort = cfg.RADARR_PORT ?? '7878';
+    const sonarrPort = cfg.SONARR_PORT ?? '8989';
+
+    const get = async (url: string, apiKey: string) => {
+      const res = await fetch(url, { headers: { 'X-Api-Key': apiKey }, signal: AbortSignal.timeout(10000) });
+      if (!res.ok) return [];
+      return res.json();
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [movies, series]: [any[], any[]] = await Promise.all([
+      radarrKey ? get(`http://localhost:${radarrPort}/api/v3/movie`, radarrKey) : Promise.resolve([]),
+      sonarrKey ? get(`http://localhost:${sonarrPort}/api/v3/series`, sonarrKey) : Promise.resolve([]),
+    ]);
+
+    return [
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...movies.filter((m: any) => m.sizeOnDisk > 0).map((m: any) => ({
+        id: m.id, title: m.title, year: m.year, type: 'movie', sizeOnDisk: m.sizeOnDisk,
+      })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...series.filter((s: any) => (s.statistics?.sizeOnDisk ?? 0) > 0).map((s: any) => ({
+        id: s.id, title: s.title, year: s.year, type: 'series', sizeOnDisk: s.statistics.sizeOnDisk,
+      })),
+    ].sort((a, b) => b.sizeOnDisk - a.sizeOnDisk);
+  } catch {
+    return [];
+  }
+});
+
+ipcMain.handle('delete-media', async (_e, { id, type, searchAfter }: { id: number; type: 'movie' | 'series'; searchAfter: boolean }) => {
+  const content = await fs.readFile(path.join(composeDir(), '.env'), 'utf8');
+  const cfg = parseEnv(content);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const doFetch = async (url: string, method: string, apiKey: string, body?: any) => {
+    const res = await fetch(url, {
+      method,
+      headers: { 'X-Api-Key': apiKey, ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      body: body ? JSON.stringify(body) : undefined,
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res;
+  };
+
+  if (type === 'movie') {
+    const key = cfg.RADARR_API_KEY;
+    const base = `http://localhost:${cfg.RADARR_PORT ?? '7878'}`;
+    if (searchAfter) {
+      const movie = await (await doFetch(`${base}/api/v3/movie/${id}`, 'GET', key)).json();
+      if (movie.movieFile?.id) await doFetch(`${base}/api/v3/movieFile/${movie.movieFile.id}`, 'DELETE', key);
+      await doFetch(`${base}/api/v3/command`, 'POST', key, { name: 'MoviesSearch', movieIds: [id] });
+    } else {
+      await doFetch(`${base}/api/v3/movie/${id}?deleteFiles=true`, 'DELETE', key);
+    }
+  } else {
+    const key = cfg.SONARR_API_KEY;
+    const base = `http://localhost:${cfg.SONARR_PORT ?? '8989'}`;
+    if (searchAfter) {
+      const files = await (await doFetch(`${base}/api/v3/episodeFile?seriesId=${id}`, 'GET', key)).json();
+      if (Array.isArray(files) && files.length > 0) {
+        await fetch(`${base}/api/v3/episodeFile/bulk`, {
+          method: 'DELETE',
+          headers: { 'X-Api-Key': key, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ episodeFileIds: files.map((f: { id: number }) => f.id) }),
+          signal: AbortSignal.timeout(15000),
+        });
+      }
+      await doFetch(`${base}/api/v3/command`, 'POST', key, { name: 'SeriesSearch', seriesId: id });
+    } else {
+      await doFetch(`${base}/api/v3/series/${id}?deleteFiles=true`, 'DELETE', key);
+    }
+  }
+});
+
 // Returns machine's local IPv4 address
 ipcMain.handle('get-local-ip', () => {
   for (const ifaces of Object.values(os.networkInterfaces())) {

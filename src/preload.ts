@@ -16,6 +16,8 @@ contextBridge.exposeInMainWorld('electron', {
   openExternal:      (url: string)       => ipcRenderer.invoke('open-external', url),
   getVersion:        ()                  => ipcRenderer.invoke('get-version'),
   getDiskStats:      (p: string)         => ipcRenderer.invoke('get-disk-stats', p),
+  getMediaList:      ()                  => ipcRenderer.invoke('get-media-list'),
+  deleteMedia:       (args: unknown)     => ipcRenderer.invoke('delete-media', args),
   onInstallProgress: (cb: (step: number) => void) => {
     ipcRenderer.on('install-progress', (_e, step: number) => cb(step));
   },

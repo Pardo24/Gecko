@@ -1,7 +1,7 @@
 {
   "name": "gecko",
   "productName": "Gecko",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Your wild home media server",
   "main": ".vite/build/main.js",
   "private": true,
