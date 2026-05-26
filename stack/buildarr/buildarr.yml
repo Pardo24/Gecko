@@ -1,0 +1,43 @@
+# Buildarr — declarative config for Prowlarr.
+#
+# Why only Prowlarr? buildarr-sonarr (0.6.4) and buildarr-radarr (0.2.6) are
+# only compatible with Sonarr v3 / Radarr v4. The Nubul stack uses v4 / v5,
+# where the field schema has changed (`preferred`, `colonReplacementFormat`).
+# Those services are handled by Recyclarr (quality/CFs) and gecko-init.py
+# (root folders, download clients, app sync, connections).
+#
+# Buildarr docs: https://buildarr.github.io/
+
+buildarr:
+  watch_config: false
+  update_days:
+    - "monday"
+  update_times:
+    - "03:00"
+
+prowlarr:
+  hostname: media_prowlarr
+  port: 9696
+  protocol: http
+  # API key is provided via env var BUILDARR_PROWLARR_API_KEY (Buildarr resolves
+  # `!secret` / env vars). Keep it out of this file so the YAML stays committed-safe.
+  api_key: !env_var PROWLARR_API_KEY
+
+  settings:
+    general:
+      authentication:
+        method: "form"
+        required: "enabled"
+      ui:
+        theme: "auto"
+
+    apps:
+      # Sync settings: how Prowlarr should push indexers to *arrs.
+      # The actual links (Sonarr/Radarr/Lidarr) are created by gecko-init.py
+      # because the *arr API keys need to be wired up dynamically.
+      sync_profiles:
+        gecko_default:
+          enable_rss: true
+          enable_interactive_search: true
+          enable_automatic_search: true
+          minimum_seeders: 1

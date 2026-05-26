@@ -234,6 +234,33 @@ services:
           cpus: "1.0"
           memory: 512M
 
+  # Gluetun autoheal — keeps qBittorrent alive across Gluetun restarts/VPN drops.
+  # When the VPN namespace breaks (suspend, gluetun restart, ISP hiccup),
+  # `docker restart qbittorrent` is not enough — compose must recreate the
+  # container to re-attach the namespace. Also runs autoheal for any container
+  # labeled autoheal=true. Image: https://hub.docker.com/r/danipal/gluetun-autoheal
+  gluetun-autoheal:
+    image: danipal/gluetun-autoheal:latest
+    container_name: media_watchdog
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/workspace:ro
+    environment:
+      TZ: ${TZ:-Europe/Madrid}
+      GLUETUN_CONTAINER: media_gluetun
+      GLUETUN_DEPS: qbittorrent
+      GLUETUN_DEP_CONTAINERS: media_qbittorrent
+      COMPOSE_FILE: /workspace/docker-compose.yml
+      ENV_FILE: /workspace/.env
+      CHECK_INTERVAL: "60"
+      AUTOHEAL_INTERVAL: "30"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 64M
+
   # Gecko Cleaner — limpieza automática de descargas estancadas/fallidas
   gecko-cleaner:
     build: ./cleaner
@@ -256,6 +283,84 @@ services:
           cpus: "0.1"
           memory: 64M
 
+  # Gecko Init — one-shot configurator (root folders, qBit, Prowlarr↔apps,
+  # Bazarr↔Sonarr/Radarr, Jellyseerr setup). Idempotent — safe to re-run.
+  # Replaces ~500 lines of TS in src/autoSetup.ts.
+  gecko-init:
+    build: ./gecko-init
+    container_name: media_gecko_init
+    restart: "no"
+    networks:
+      - media_net
+    profiles: ["init"]      # only runs when explicitly invoked: `docker compose --profile init up gecko-init`
+    environment:
+      SONARR_URL: http://media_sonarr:8989
+      SONARR_API_KEY: ${SONARR_API_KEY}
+      RADARR_URL: http://media_radarr:7878
+      RADARR_API_KEY: ${RADARR_API_KEY}
+      LIDARR_URL: http://media_lidarr:8686
+      LIDARR_API_KEY: ${LIDARR_API_KEY}
+      PROWLARR_URL: http://media_prowlarr:9696
+      PROWLARR_API_KEY: ${PROWLARR_API_KEY}
+      BAZARR_URL: http://media_bazarr:6767
+      BAZARR_API_KEY: ${BAZARR_API_KEY}
+      JELLYSEERR_URL: http://media_jellyseerr:5055
+      JELLYFIN_URL: http://media_jellyfin:8096
+      QBIT_HOST: ${QBIT_HOST:-media_gluetun}    # gluetun if VPN, media_qbittorrent otherwise
+      QBIT_PORT: "8080"                         # qBit's internal port; QBIT_PORT in .env is the external mapping
+      QBIT_USER: admin
+      QBIT_PASS: ${ADMIN_PASSWORD}
+      TV_PATH: /tv
+      MOVIES_PATH: /movies
+      MUSIC_PATH: /music
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SUBTITLE_LANGS: ${SUBTITLE_LANGS:-spa,eng}
+
+  # Recyclarr — syncs TRaSH Guides quality profiles & custom formats.
+  # Runs once at startup + weekly cron. Compatible with Sonarr v4 / Radarr v5.
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr:latest
+    container_name: media_recyclarr
+    restart: unless-stopped
+    user: "1000:1000"
+    networks:
+      - media_net
+    volumes:
+      - ./recyclarr:/config
+    environment:
+      TZ: ${TZ:-Europe/Madrid}
+      CRON_SCHEDULE: "@daily"
+      SONARR_API_KEY: ${SONARR_API_KEY}
+      RADARR_API_KEY: ${RADARR_API_KEY}
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128M
+
+  # Buildarr — declarative config for Prowlarr (indexers, app sync).
+  # Skipped for Sonarr/Radarr because plugins are not compatible with v4/v5.
+  buildarr:
+    image: callum027/buildarr:0.7.1
+    container_name: media_buildarr
+    restart: "no"
+    networks:
+      - media_net
+    volumes:
+      - ./buildarr:/config
+      - buildarr_state:/state
+    environment:
+      TZ: ${TZ:-Europe/Madrid}
+      PUID: 1000
+      PGID: 1000
+      PROWLARR_API_KEY: ${PROWLARR_API_KEY}
+    command: ["run", "/config/buildarr.yml"]
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 256M
+
 # ============================================================
 # Volúmenes Docker internos — protegen las DBs SQLite de la
 # corrupción causada por NTFS + WSL2 + Docker Desktop en Windows
@@ -271,3 +376,4 @@ volumes:
   lidarr_config:
   bazarr_config:
   cleanuparr_config:
+  buildarr_state:

@@ -1,3 +1,6 @@
+# Local IDE / agent state
+.claude/
+
 # Logs
 logs
 *.log

@@ -7,30 +7,26 @@ import type { ServiceName } from '../components/ServiceIcon';
 
 type Props = { config: Config; updateConfig: (p: Partial<Config>) => void; next: () => void };
 
-// Maps step number → service card info
+// Maps step number → service card info.
+// Steps 5-7 are container-driven (gecko-init.py + Recyclarr); each card
+// represents the user-facing outcome rather than a single API call.
 const SERVICE_STEPS: Record<number, { name: ServiceName | null; emoji?: string }> = {
-  3:  { name: 'Jellyfin' },
-  4:  { name: 'qBittorrent' },
-  5:  { name: 'Radarr' },
-  6:  { name: 'Sonarr' },
-  7:  { name: null, emoji: '🎵' }, // Lidarr — no icon available
-  8:  { name: 'Prowlarr' },
-  9:  { name: 'Bazarr' },
-  10: { name: 'Jellyseerr' },
+  3: { name: 'Jellyfin' },
+  4: { name: 'qBittorrent' },
+  5: { name: null, emoji: '🔑' },          // Reading API keys from each *arr's config.xml
+  6: { name: null, emoji: '🔗' },          // gecko-init: root folders, qBit, Prowlarr↔apps, Bazarr, Jellyseerr
+  7: { name: null, emoji: '✨' },          // Recyclarr: TRaSH Guides quality profiles
 };
 
-// Maps autoSetup failed step numbers to service names (steps 4-11)
 const STEP_SERVICE: Record<number, string> = {
+  3: 'Jellyfin',
   4: 'qBittorrent',
-  5: 'Radarr',
-  6: 'Sonarr',
-  7: 'Lidarr',
-  8: 'Prowlarr',
-  9: 'Bazarr',
-  10: 'Jellyseerr',
+  5: 'API keys (Radarr/Sonarr/Lidarr/Prowlarr/Bazarr)',
+  6: 'Stack wiring (gecko-init)',
+  7: 'Quality profiles (Recyclarr)',
 };
 
-const SERVICE_STEP_NUMBERS = [3, 4, 5, 6, 7, 8, 9, 10];
+const SERVICE_STEP_NUMBERS = [3, 4, 5, 6, 7];
 
 export default function StepInstalling({ config, next }: Props) {
   const { t } = useT();
@@ -189,7 +185,7 @@ export default function StepInstalling({ config, next }: Props) {
           </div>
         </div>
       ) : (
-        /* Service configuration steps 3–10 */
+        /* Service configuration steps 3–7 (Jellyfin, qBit, keys, gecko-init, recyclarr) */
         <div
           key={step}
           style={{

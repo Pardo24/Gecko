@@ -1,7 +1,6 @@
 import { app, BrowserWindow, ipcMain, dialog, shell, Menu } from 'electron';
 import path from 'node:path';
 import os from 'node:os';
-import http from 'node:http';
 import crypto from 'node:crypto';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -288,6 +287,12 @@ ipcMain.handle('install', async (event, config: {
   const composeFile = vpnEnabled ? 'docker-compose.yml' : 'docker-compose-novpn.yml';
   await fs.copyFile(path.join(stackBase(), composeFile), path.join(dir, 'docker-compose.yml'));
   await fs.cp(path.join(stackBase(), 'cleaner'), path.join(dir, 'cleaner'), { recursive: true });
+  // Container-side configurators added in the Recyclarr/Buildarr/gecko-init refactor.
+  // If you're upgrading from an older install dir, these will appear next install.
+  for (const sub of ['gecko-init', 'recyclarr', 'buildarr']) {
+    const src = path.join(stackBase(), sub);
+    try { await fs.cp(src, path.join(dir, sub), { recursive: true }); } catch { /* not present in legacy bundles */ }
+  }
 
   // Step 2: Pull + start containers
   progress(2);
@@ -323,6 +328,7 @@ ipcMain.handle('install', async (event, config: {
       prowlarr: 9696, bazarr: 6767, qbit: 8090, jellyseerr: 5055,
     },
     vpnEnabled,
+    stackDir: dir,
     dockerEnvObj: dockerEnv(),
     onProgress: progress,
     onStepFailed: stepFailed,
