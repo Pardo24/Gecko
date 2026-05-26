@@ -10,7 +10,9 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint --ext .ts,.tsx .",
+    "build:headless:ui": "vite build --config vite.renderer.config.mts",
+    "start:headless": "tsx src/server.ts"
   },
   "keywords": [],
   "author": {
@@ -34,6 +36,7 @@
     "@types/electron-squirrel-startup": "^1.0.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@types/express": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vitejs/plugin-react": "^5.1.4",
@@ -42,11 +45,13 @@
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.32.0",
     "tailwindcss": "^4.2.1",
+    "tsx": "^4.19.2",
     "typescript": "~4.5.4",
     "vite": "^5.4.21"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",
+    "express": "^4.21.1",
     "lucide-react": "^0.576.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

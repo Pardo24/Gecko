@@ -1,6 +1,10 @@
 # Local IDE / agent state
 .claude/
 
+# Build output (vite + electron-forge)
+dist/
+.vite/
+
 # Logs
 logs
 *.log
