@@ -1,0 +1,16 @@
+[Unit]
+Description=Gecko OS first-boot setup
+Documentation=https://github.com/Pardo24/Gecko
+ConditionPathExists=!/var/lib/gecko/first-boot-done
+After=network-online.target docker.service
+Wants=network-online.target docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/gecko/first-boot.sh
+RemainAfterExit=yes
+StandardOutput=journal+console
+StandardError=journal+console
+
+[Install]
+WantedBy=multi-user.target

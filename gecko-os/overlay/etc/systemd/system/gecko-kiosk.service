@@ -1,0 +1,21 @@
+[Unit]
+Description=Gecko kiosk UI (full-screen Chromium pointed at the wizard / dashboard)
+After=graphical.target network-online.target
+Wants=network-online.target
+
+[Service]
+User=gecko
+Group=gecko
+PAMName=login
+WorkingDirectory=/home/gecko
+Environment=DISPLAY=:0
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+ExecStartPre=/bin/sh -c 'until pgrep -x Xorg >/dev/null; do sleep 1; done'
+ExecStart=/opt/gecko/kiosk-launch.sh
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=graphical.target

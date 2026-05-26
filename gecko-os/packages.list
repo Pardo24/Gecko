@@ -1,0 +1,56 @@
+# APT packages installed in the chroot during build.
+# One package per line. Lines starting with # are ignored.
+# Keep this small — every package is more attack surface and more disk space.
+
+# ── Stage 1: minimum for a bootable Debian ─────────────────────────
+# Kernel + GRUB binaries. We need 4 packages for hybrid BIOS+UEFI boot:
+#   - linux-image-amd64        ← the kernel
+#   - grub2-common             ← provides grub-install + grub-mkconfig
+#                                (NOT pulled as a Depends by the -bin pkgs)
+#   - grub-pc-bin              ← BIOS (MBR) modules
+#   - grub-efi-amd64-bin       ← UEFI modules
+# The metapackages `grub-pc` and `grub-efi-amd64` conflict with each other —
+# don't install either of them.
+linux-image-amd64
+grub2-common
+grub-pc-bin
+grub-efi-amd64-bin
+firmware-linux-free
+
+# Networking — ethernet via systemd-networkd, WiFi via NetworkManager+iwd
+network-manager      # wizard talks to nmcli for WiFi scan + connect
+
+# Core utilities
+sudo
+htop
+nano
+less
+git
+jq
+sqlite3              # seed inspection / first-boot manipulation
+parted               # install-to-disk wizard step
+rsync                # install-to-disk wizard step
+gdisk
+cloud-guest-utils    # provides growpart (used by first-boot rootfs expand)
+ca-certificates
+curl
+openssh-server
+
+# ── Stage 2 (uncomment when implementing kiosk) ─────────────────────
+# Display stack for Chromium kiosk
+#xserver-xorg
+#xserver-xorg-video-all
+#xinit
+#openbox
+#chromium
+#unclutter
+
+# Audio for Jellyfin HDMI output
+#pipewire
+#pipewire-pulse
+#wireplumber
+
+# ── Stage 2 (codecs, hardware accel) — needs non-free repo ─────────
+# Intel iGPU hardware acceleration for Jellyfin (covers most cheap mini PCs)
+#intel-media-va-driver-non-free
+#vainfo

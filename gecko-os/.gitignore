@@ -1,0 +1,7 @@
+# Build output — large, regeneratable, never commit
+dist/
+*.img
+*.img.xz
+
+# Cached debootstrap state
+.cache/
