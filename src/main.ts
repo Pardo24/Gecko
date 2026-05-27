@@ -235,6 +235,18 @@ ipcMain.handle('delete-media', async (_e, { id, type, searchAfter }: { id: numbe
   }
 });
 
+// ── Capability + WiFi handlers ───────────────────────────────────────
+// Electron desktop has native dialogs but no WiFi management — these
+// return safe defaults so the wizard skips the kiosk-only steps.
+ipcMain.handle('capabilities', () => ({
+  wifi: false,
+  installToDisk: false,
+  nativeDialog: true,
+}));
+ipcMain.handle('wifi-scan', () => []);
+ipcMain.handle('wifi-connect', () => ({ ok: false, error: 'not supported on desktop' }));
+ipcMain.handle('wifi-status', () => ({ connected: true, wifi: null, ethernet: null }));
+
 // Returns machine's local IPv4 address
 ipcMain.handle('get-local-ip', () => {
   for (const ifaces of Object.values(os.networkInterfaces())) {

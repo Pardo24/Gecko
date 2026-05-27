@@ -4,6 +4,7 @@ import { LangProvider, useT } from './LangContext';
 import type { Lang } from './i18n';
 import appIcon from '../assets/icons/icons/png/64x64.png';
 import StepWelcome from './steps/StepWelcome';
+import StepWifi from './steps/StepWifi';
 import StepDocker from './steps/StepDocker';
 import StepStorage from './steps/StepStorage';
 import StepAdmin from './steps/StepAdmin';
@@ -21,7 +22,7 @@ export type Config = {
   mullvadAddress: string;
 };
 
-const STEPS = ['welcome', 'docker', 'storage', 'admin', 'vpn', 'installing', 'done'] as const;
+const STEPS = ['welcome', 'wifi', 'docker', 'storage', 'admin', 'vpn', 'installing', 'done'] as const;
 type Step = typeof STEPS[number];
 
 const SETUP_STEPS = ['docker', 'storage', 'admin', 'vpn'] as const;
@@ -49,14 +50,24 @@ function LangBar() {
 function Wizard({ onInstalled }: { onInstalled: () => void }) {
   const { t } = useT();
   const [step, setStep] = useState<Step>('welcome');
+  const [hasWifi, setHasWifi] = useState(false);
   const [config, setConfig] = useState<Config>({
     dataPath: '', adminPassword: '', subtitleLangs: [], vpnEnabled: false, mullvadKey: '', mullvadAddress: '',
   });
 
+  // Capability detection: only show the WiFi step where it makes sense
+  // (Gecko OS kiosk has nmcli; Electron desktop returns wifi:false).
+  useEffect(() => {
+    window.electron.capabilities().then(c => setHasWifi(c.wifi)).catch(() => {});
+  }, []);
+
   const next = () => {
     const idx = STEPS.indexOf(step);
     if (step === 'done') { onInstalled(); return; }
-    if (idx < STEPS.length - 1) setStep(STEPS[idx + 1]);
+    let nextStep = STEPS[idx + 1];
+    // Skip wifi step if the host doesn't support it
+    if (nextStep === 'wifi' && !hasWifi) nextStep = STEPS[idx + 2];
+    if (nextStep) setStep(nextStep);
   };
 
   const updateConfig = (partial: Partial<Config>) => setConfig(prev => ({ ...prev, ...partial }));
@@ -106,6 +117,7 @@ function Wizard({ onInstalled }: { onInstalled: () => void }) {
         )}
         <div className="flex-1 overflow-y-auto">
           {step === 'welcome'    && <StepWelcome    {...stepProps} />}
+          {step === 'wifi'       && <StepWifi       next={next} />}
           {step === 'docker'     && <StepDocker     {...stepProps} />}
           {step === 'storage'    && <StepStorage    {...stepProps} />}
           {step === 'admin'      && <StepAdmin      {...stepProps} />}

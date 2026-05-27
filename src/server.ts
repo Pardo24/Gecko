@@ -95,6 +95,86 @@ app.post('/api/open-external', (_req, res) => {
   res.status(204).end();
 });
 
+// ── Capabilities probe — drives conditional wizard steps ─────────────
+// The wizard pings this on mount and shows/hides steps based on what the
+// host actually supports. WiFi on Gecko OS (nmcli available); install-to-
+// disk on Gecko OS (parted+dd available); native folder picker on Electron.
+app.post('/api/capabilities', async (_req, res) => {
+  const has = async (cmd: string) => {
+    try { await execAsync(`command -v ${cmd}`, { env: dockerEnv() }); return true; }
+    catch { return false; }
+  };
+  res.json({
+    wifi:           await has('nmcli'),
+    installToDisk:  await has('parted') && await has('dd'),
+    nativeDialog:   false,                            // headless never has one
+  });
+});
+
+// ── WiFi (nmcli-backed; Gecko OS only) ───────────────────────────────
+app.post('/api/wifi-scan', async (_req, res) => {
+  try {
+    // Force a rescan so we get fresh APs (otherwise nmcli returns stale cache)
+    await execAsync('nmcli device wifi rescan', { env: dockerEnv() }).catch(() => undefined);
+    const { stdout } = await execAsync(
+      'nmcli -t -e no -f SSID,SIGNAL,SECURITY device wifi list',
+      { env: dockerEnv() },
+    );
+    const seen = new Set<string>();
+    const networks = stdout.trim().split('\n').filter(Boolean).flatMap(line => {
+      const [ssid, signalStr, security] = line.split(':');
+      if (!ssid || seen.has(ssid)) return [];
+      seen.add(ssid);
+      return [{
+        ssid,
+        signal: parseInt(signalStr, 10) || 0,
+        secured: !!security && security !== '--',
+      }];
+    });
+    // Strongest first
+    networks.sort((a, b) => b.signal - a.signal);
+    res.json(networks);
+  } catch {
+    res.json([]);
+  }
+});
+
+app.post('/api/wifi-connect', async (req, res) => {
+  const { ssid, password } = req.body ?? {};
+  if (!ssid) return res.status(400).json({ ok: false, error: 'ssid required' });
+  // nmcli quotes are tricky; spawn the safe way with exec + escaped args
+  const escape = (s: string) => `'${String(s).replace(/'/g, `'\\''`)}'`;
+  const cmd = password
+    ? `nmcli device wifi connect ${escape(ssid)} password ${escape(password)}`
+    : `nmcli device wifi connect ${escape(ssid)}`;
+  try {
+    await execAsync(cmd, { env: dockerEnv(), timeout: 30_000 });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err instanceof Error ? err.message : String(err) });
+  }
+});
+
+app.post('/api/wifi-status', async (_req, res) => {
+  try {
+    const { stdout } = await execAsync(
+      "nmcli -t -f NAME,TYPE,DEVICE connection show --active",
+      { env: dockerEnv() },
+    );
+    const lines = stdout.trim().split('\n').filter(Boolean);
+    const wifi = lines.find(l => l.split(':')[1] === '802-11-wireless');
+    const eth = lines.find(l => l.split(':')[1] === '802-3-ethernet');
+    res.json({
+      connected: !!(wifi || eth),
+      wifi: wifi ? wifi.split(':')[0] : null,
+      ethernet: eth ? eth.split(':')[0] : null,
+    });
+  } catch {
+    // No nmcli (Electron desktop, or a Gecko OS that hasn't installed it)
+    res.json({ connected: true, wifi: null, ethernet: null });
+  }
+});
+
 app.post('/api/get-disk-stats', async (req, res) => {
   const { path: folderPath } = req.body ?? {};
   try {

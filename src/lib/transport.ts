@@ -16,6 +16,18 @@
 
 type ProgressCallback = (step: number) => void;
 
+export interface Capabilities {
+  wifi: boolean;            // nmcli available — show the WiFi wizard step
+  installToDisk: boolean;   // parted+dd available — show the install-to-disk step
+  nativeDialog: boolean;    // native folder picker (Electron-only)
+}
+
+export interface WifiNetwork {
+  ssid: string;
+  signal: number;           // 0-100
+  secured: boolean;
+}
+
 interface ElectronAPI {
   checkDocker:       () => Promise<string>;
   startDocker:       () => Promise<void>;
@@ -35,6 +47,11 @@ interface ElectronAPI {
   getMediaList:      () => Promise<unknown[]>;
   deleteMedia:       (args: unknown) => Promise<void>;
   onInstallProgress: (cb: ProgressCallback) => void;
+  // Kiosk-context (Gecko OS) — may return no-op values in desktop Electron
+  capabilities:      () => Promise<Capabilities>;
+  wifiScan:          () => Promise<WifiNetwork[]>;
+  wifiConnect:       (args: { ssid: string; password?: string }) => Promise<{ ok: boolean; error?: string }>;
+  wifiStatus:        () => Promise<{ connected: boolean; wifi: string | null; ethernet: string | null }>;
 }
 
 declare global {
@@ -88,6 +105,10 @@ function buildHttpShim(): ElectronAPI {
         cb(data.step);
       });
     },
+    capabilities:      () => call('capabilities'),
+    wifiScan:          () => call('wifi-scan'),
+    wifiConnect:       (args) => call('wifi-connect', args),
+    wifiStatus:        () => call('wifi-status'),
   };
 }
 

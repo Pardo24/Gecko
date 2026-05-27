@@ -21,4 +21,9 @@ contextBridge.exposeInMainWorld('electron', {
   onInstallProgress: (cb: (step: number) => void) => {
     ipcRenderer.on('install-progress', (_e, step: number) => cb(step));
   },
+  // Kiosk-context APIs (no-op on Electron desktop — handled by Gecko OS)
+  capabilities:      ()              => ipcRenderer.invoke('capabilities'),
+  wifiScan:          ()              => ipcRenderer.invoke('wifi-scan'),
+  wifiConnect:       (args: unknown) => ipcRenderer.invoke('wifi-connect', args),
+  wifiStatus:        ()              => ipcRenderer.invoke('wifi-status'),
 });
