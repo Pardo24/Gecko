@@ -58,6 +58,8 @@ function Wizard({ onInstalled }: { onInstalled: () => void }) {
   // Capability detection: only show the WiFi step where it makes sense
   // (Gecko OS kiosk has nmcli; Electron desktop returns wifi:false).
   useEffect(() => {
+    // Silently ignore errors — we keep wifi step hidden in that case.
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     window.electron.capabilities().then(c => setHasWifi(c.wifi)).catch(() => {});
   }, []);
 

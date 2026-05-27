@@ -3,7 +3,10 @@ import { tr, type Lang, type Tr } from './i18n';
 
 type LangCtx = { lang: Lang; setLang: (l: Lang) => void; t: Tr };
 
-const LangContext = createContext<LangCtx>({ lang: 'ca', setLang: () => {}, t: tr.ca });
+// Default no-op setLang — only used before <LangProvider> mounts.
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+const LangContext = createContext<LangCtx>({ lang: 'ca', setLang: noop, t: tr.ca });
 
 export function LangProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(

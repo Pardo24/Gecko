@@ -47,6 +47,7 @@ export default function PageHome({ config, onGoToVpn }: Props) {
 
   useEffect(() => {
     if (config.DATA_PATH) {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       window.electron.getDiskStats(config.DATA_PATH).then(setDiskStats).catch(() => {});
     }
   }, [config.DATA_PATH]);
