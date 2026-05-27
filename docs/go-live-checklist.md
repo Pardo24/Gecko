@@ -58,7 +58,7 @@ more setup). For first 100 sales, Gumroad is fine.
 If you don't have one:
 1. **Cloudflare Registrar** at-cost prices: <https://www.cloudflare.com/products/registrar/>
 2. Suggest: `gecko.os` (~€30/yr), `gecko.app` (~€18/yr), `gecko.cat` (~€10/yr, .cat needs Catalan-relevance check)
-3. After purchase: point at your Nubul IP via A record
+3. After purchase: point at your hosting IP via A record
 4. Caddy already serves the static files; just add the domain to
    `Caddyfile`
 
@@ -75,7 +75,7 @@ Edit `gecko-web/index.html` line ~824 (the USB button):
 + <a href="https://gumroad.com/l/YOUR_PRODUCT_ID" target="_blank" class="btn btn-outline" style="width:100%;justify-content:center;">
 ```
 
-Then `scp` to Nubul.
+Then `scp` to your web host.
 
 ### Document your "flash + ship" workflow
 

@@ -1,7 +1,7 @@
 # Buildarr — declarative config for Prowlarr.
 #
 # Why only Prowlarr? buildarr-sonarr (0.6.4) and buildarr-radarr (0.2.6) are
-# only compatible with Sonarr v3 / Radarr v4. The Nubul stack uses v4 / v5,
+# only compatible with Sonarr v3 / Radarr v4. The Gecko stack uses v4 / v5,
 # where the field schema has changed (`preferred`, `colonReplacementFormat`).
 # Those services are handled by Recyclarr (quality/CFs) and gecko-init.py
 # (root folders, download clients, app sync, connections).

@@ -73,7 +73,7 @@ Un cop instal·lat, veuràs els accessos directes a tots els serveis:
 1. Descarrega l'app **Jellyfin** al teu dispositiu
 2. Afegeix el servidor: `http://IP_DE_L_ORDINADOR:8096`
    - Per saber la IP: a l'ordinador, obre el símbol del sistema i escriu `ipconfig`
-   - Busca "Adreça IPv4", p. ex: `192.168.1.55`
+   - Busca "Adreça IPv4", p. ex: `192.168.1.42`
 3. Inicia sessió amb l'usuari i contrasenya que has creat
 
 ---
