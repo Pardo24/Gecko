@@ -23,5 +23,5 @@ if [[ ! -f "${PROJECT_ROOT}/dist-server/server.js" ]] || [[ ! -d "${PROJECT_ROOT
   exit 1
 fi
 
-# Run the actual image builder
-exec "${HERE}/build.sh"
+# Run the actual image builder (via bash — files lose +x on Windows checkouts)
+exec bash "${HERE}/build.sh"
