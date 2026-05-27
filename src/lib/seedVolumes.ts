@@ -22,8 +22,10 @@ interface SeedSpec {
 }
 
 const SEEDS: SeedSpec[] = [
-  // Bazarr — 3 pre-built language profiles (the API is GET-only, can't be
-  // done at runtime). See gecko-os/scripts/regen-bazarr-seed.sh.
+  // Bazarr — 15 pre-built language profiles (one per wizard option ×
+  // {alone, +english}). The Bazarr API is GET-only for profiles, so they
+  // must exist before first start. Regenerate via
+  // `node stack/seeds/build-bazarr-seed.mjs`.
   { name: 'bazarr', volume: 'bazarr_config' },
   // Future: more here as seeds are added.
 ];

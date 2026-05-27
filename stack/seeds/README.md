@@ -10,7 +10,9 @@ profiles, where the API is GET-only).
 ```
 stack/seeds/
 ├── bazarr/
-│   └── bazarr.db        ← SQLite with 3 language profiles pre-inserted
+│   └── bazarr.db        ← SQLite with 15 language profiles pre-inserted
+│                          ("English only" + each of cat/spa/fre/ger/por/ita/jpn
+│                          × {alone, +english}). Regen: `node ../build-bazarr-seed.mjs`.
 ├── jellyseerr/
 │   └── settings.json    ← Initialized config with __API_KEY__ placeholders
 │                          that gecko-init substitutes at first boot

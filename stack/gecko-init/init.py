@@ -38,7 +38,28 @@ MOVIES_PATH = os.environ.get("MOVIES_PATH", "/movies")
 MUSIC_PATH = os.environ.get("MUSIC_PATH", "/music")
 
 ADMIN_PASSWORD = os.environ["ADMIN_PASSWORD"]
-SUBTITLE_LANGS = os.environ.get("SUBTITLE_LANGS", "spa,eng").split(",")
+SUBTITLE_LANGS = os.environ.get("SUBTITLE_LANGS", "es,en").split(",")
+
+# Wizard codes are 2-letter (StepAdmin.tsx); Bazarr's language IDs are
+# 3-letter (ISO 639-2/B). Keep this map in sync with the wizard choices
+# AND with stack/seeds/build-bazarr-seed.mjs (each entry must have a
+# seeded profile to match against).
+LANG_2_TO_3 = {
+    "ca": "cat", "es": "spa", "en": "eng",
+    "fr": "fre", "de": "ger", "pt": "por",
+    "it": "ita", "ja": "jpn",
+}
+# Display name used in seeded profile names. Stays in source-language form.
+LANG_3_TO_DISPLAY = {
+    "cat": "Català",
+    "spa": "Castellano",
+    "fre": "Français",
+    "ger": "Deutsch",
+    "por": "Português",
+    "ita": "Italiano",
+    "jpn": "日本語",
+    "eng": "English",
+}
 
 
 # ── HTTP helpers ─────────────────────────────────────────────────────
@@ -190,28 +211,47 @@ def ensure_bazarr_language_profile():
     """
     Pick which pre-seeded language profile becomes the default.
 
-    The 3 profiles ('Català + English', 'Castellano + English', 'English
-    only') are inserted into Bazarr's SQLite by the install handler before
-    Bazarr first starts — see src/lib/seedVolumes.ts +
-    stack/seeds/bazarr/bazarr.db. We just match SUBTITLE_LANGS against the
-    expected profile name and mark it default.
+    15 profiles ('English only', and for each of cat/spa/fre/ger/por/ita/jpn
+    both '<Lang> + English' and '<Lang> only') are inserted into Bazarr's
+    SQLite by the install handler before Bazarr first starts — see
+    src/lib/seedVolumes.ts + stack/seeds/bazarr/bazarr.db (regenerate via
+    stack/seeds/build-bazarr-seed.mjs).
 
-    Bazarr's API can't CREATE profiles (GET-only). If the seed wasn't
-    copied (e.g. user pre-existing volume) or SUBTITLE_LANGS doesn't match
-    one of the seeded sets, we report SKIP cleanly.
+    We map the wizard's 2-letter codes (ca/es/en/fr/de/pt/it/ja) to
+    Bazarr's 3-letter codes, then derive a profile name to match against
+    the seeded set. Bazarr's API can't CREATE profiles (GET-only), so a
+    user picking >2 langs or an unsupported lang falls back cleanly to
+    SKIP and they can pick manually in the Bazarr UI.
     """
     headers = {"X-API-KEY": BAZARR["key"], "Content-Type": "application/json"}
 
-    langs = set(SUBTITLE_LANGS)
-    profile_name = (
-        "Català + English"     if langs == {"cat", "eng"} else
-        "Castellano + English" if langs == {"spa", "eng"} else
-        "English only"         if langs == {"eng"} else
-        None
-    )
+    # Normalise: wizard ships 2-letter codes; legacy/manual installs may
+    # already ship 3-letter codes. Accept either.
+    langs3 = set()
+    for code in SUBTITLE_LANGS:
+        code = code.strip().lower()
+        if not code:
+            continue
+        langs3.add(LANG_2_TO_3.get(code, code))
+
+    profile_name = None
+    if langs3 == {"eng"}:
+        profile_name = "English only"
+    elif len(langs3) == 1:
+        only = next(iter(langs3))
+        display = LANG_3_TO_DISPLAY.get(only)
+        if display and only != "eng":
+            profile_name = f"{display} only"
+    elif len(langs3) == 2 and "eng" in langs3:
+        other = next(c for c in langs3 if c != "eng")
+        display = LANG_3_TO_DISPLAY.get(other)
+        if display:
+            profile_name = f"{display} + English"
+
     if profile_name is None:
         return ("[Bazarr] lang profile: SKIP — SUBTITLE_LANGS "
-                f"{sorted(langs)} doesn't match any seeded profile; "
+                f"{sorted(langs3)} doesn't match a seeded profile (we ship "
+                "<Lang> only and <Lang> + English for ca/es/fr/de/pt/it/ja); "
                 "pick one manually in Bazarr UI")
 
     r = requests.get(BAZARR["url"] + "/api/system/languages/profiles",
