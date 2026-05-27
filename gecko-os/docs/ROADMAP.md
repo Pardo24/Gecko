@@ -85,9 +85,15 @@ Hardware compat doc + pre-install checks:
       RAM ≥ 4 GB, free disk ≥ 100 GB, CPU supports HW-accel (VAAPI),
       network ready.
 - 2.4 Finish wizard kiosk improvements:
-      - F2.2 install-to-disk picker (lsblk + dd + reboot)
-      - F2.3 D-pad/keyboard navigation, responsive 1080p/4K
-      - F2.4 passcode auth (LAN UI not open)
+      - F2.2 install-to-disk picker (lsblk + dd + reboot) ✅
+      - F2.3 D-pad/keyboard navigation, responsive 1080p/4K ✅
+      - ~~F2.4 passcode auth~~ — **DROPPED for v1.0** (2026-05-27 decision):
+        Gecko's LAN trust model matches Plex, Jellyfin, Sonarr, Radarr
+        (none ship auth by default). Adding auth adds wizard complexity
+        + lock-out bug surface + UX cost, for benefit only on hostile-LAN
+        cases (shared flat, office). Documented in
+        docs/TRUST_MODEL.md. If user demand justifies it post-launch,
+        reconsider with a "Settings → Enable LAN passcode" toggle.
 
 ### Phase 3 — Error prevention + recovery — 2 weeks
 
