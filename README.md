@@ -29,7 +29,7 @@ A complete media stack, pre-wired:
 | [qBittorrent](https://qbittorrent.org) | Download client |
 | [Bazarr](https://bazarr.media) | Subtitle manager — 3 language profiles pre-built |
 | [Jellyseerr](https://github.com/seerr-team/seerr) | Media request portal |
-| [Gluetun](https://github.com/qdm12/gluetun) + autoheal | WireGuard VPN, auto-recovers when the tunnel drops |
+| [Gluetun](https://github.com/qdm12/gluetun) + autoheal | WireGuard VPN — **3-month free trial included** with each USB. Auto-recovers when the tunnel drops |
 
 Everything but indexers comes pre-configured.
 
