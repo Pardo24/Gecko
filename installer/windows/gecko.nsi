@@ -106,8 +106,11 @@ Section "Gecko (required)" SecCore
   FileWrite $0 '  <id>${SERVICE_NAME}</id>$\r$\n'
   FileWrite $0 '  <name>Gecko Server</name>$\r$\n'
   FileWrite $0 '  <description>Gecko home media server (Express + React)</description>$\r$\n'
+  ; Note: arguments MUST be quoted because $INSTDIR contains a space
+  ; ("C:\Program Files\Gecko"). Without quotes node sees "C:\Program" as
+  ; the script path and fails with MODULE_NOT_FOUND.
   FileWrite $0 '  <executable>%BASE%\node.exe</executable>$\r$\n'
-  FileWrite $0 '  <arguments>%BASE%\server.js</arguments>$\r$\n'
+  FileWrite $0 '  <arguments>"%BASE%\server.js"</arguments>$\r$\n'
   FileWrite $0 '  <workingdirectory>%BASE%</workingdirectory>$\r$\n'
   FileWrite $0 '  <env name="STATIC_DIR" value="%BASE%\renderer"/>$\r$\n'
   FileWrite $0 '  <env name="STACK_BASE" value="%BASE%\stack"/>$\r$\n'
