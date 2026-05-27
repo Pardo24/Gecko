@@ -1,17 +1,24 @@
 # Gecko 🦎
 
 **Your private Netflix at home.** Plug a USB stick into a mini PC, follow a
-3-minute wizard, and you have your own streaming server on the TV. No
+5-minute wizard, and you have your own streaming server on the TV. No
 technical skills needed.
 
-Two ways to install:
+> **Homebrew, free, MIT.** This is a side project. The work is done for
+> free, the website runs on a homelab. Funded only by VPN/hardware affiliate
+> commissions (you pay the same) and optional donations.
+> Landing: <https://gecko.nubul.art>
 
-- **Gecko OS** — bootable USB image. Flash, boot a spare PC, done.
+Three ways to install:
+
+- **Gecko OS** — bootable USB image. Flash, boot a spare mini PC, done.
   *(The recommended path for non-technical users.)*
-- **Desktop installer** — Windows + macOS native installer that runs Gecko
-  as a background service. Best if you want it on an existing PC.
+- **Desktop installer (Windows)** — native `.exe` installer that runs Gecko
+  as a Windows service. Best if you already have an always-on PC.
+- **Desktop installer (macOS)** — native `.pkg` (Apple Silicon or Intel)
+  that runs Gecko as a launchd daemon.
 
-Both share the same web UI and the same Docker stack.
+All three share the same web UI and the same Docker stack.
 
 ---
 
@@ -55,6 +62,20 @@ macOS: download `Gecko-arm64.pkg` (Apple Silicon) or `Gecko-x86_64.pkg`
 
 Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 on Windows/macOS.
+
+---
+
+## Documentation
+
+Full guides live in [`docs/`](./docs/) and on the website:
+
+- [Getting Started](./docs/getting-started.md) — from buying to streaming, the 5-minute path
+- [Hardware Guide](./gecko-os/docs/HARDWARE.md) — which mini PC to buy + what to avoid
+- [Troubleshooting](./docs/troubleshooting.md) — symptom → cause → fix
+- [AI Helper Prompt](./docs/ai-helper-prompt.md) ★ — paste into ChatGPT/Claude for Gecko-specific help
+- [Extending Gecko](./docs/extending.md) — Home Assistant, Pi-hole, Vaultwarden, Immich…
+- [User Journey](./docs/user-journey.md) — the full product flow
+- [FAQ](./docs/faq.md)
 
 ---
 
