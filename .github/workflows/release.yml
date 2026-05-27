@@ -97,10 +97,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             debootstrap dosfstools grub2-common grub-pc-bin \
-            grub-efi-amd64-bin qemu-utils parted rsync fdisk cloud-image-utils
-      - name: Build Gecko OS image
-        run: sudo ./gecko-os/build.sh
-      - name: Compress image
+            grub-efi-amd64-bin qemu-utils parted rsync fdisk cloud-image-utils \
+            xz-utils
+      - name: Build Gecko OS image (validates bundles exist + runs build.sh)
+        run: sudo ./gecko-os/build-all.sh
+      - name: Compress image (xz -1 — fast compress, large saves)
         run: xz -T0 -1 gecko-os/dist/gecko-os.img
       - uses: actions/upload-artifact@v4
         with:
