@@ -1,0 +1,93 @@
+name: CI
+
+# Fast feedback on every push: lint + build. Also runs a smoke test of
+# the Windows installer (build + silent install + verify service + uninstall)
+# so we catch installer regressions before tagging a release.
+
+on:
+  push:
+    branches: [main, gecko-os]
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  lint-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - name: Verify server starts and responds
+        run: |
+          PORT=37999 STATIC_DIR=$(pwd)/dist node dist-server/server.js &
+          PID=$!
+          # Poll for up to 15 s
+          for i in $(seq 1 30); do
+            if curl -sf -X POST http://localhost:37999/api/get-version >/dev/null; then
+              echo "Server responding"
+              VERSION=$(curl -s -X POST http://localhost:37999/api/get-version)
+              echo "version: $VERSION"
+              kill $PID
+              exit 0
+            fi
+            sleep 0.5
+          done
+          echo "Server never responded"
+          kill $PID 2>/dev/null
+          exit 1
+
+  windows-installer-smoke-test:
+    runs-on: windows-latest
+    needs: lint-and-build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Install NSIS
+        run: choco install -y nsis --no-progress
+      - name: Build Windows installer
+        shell: pwsh
+        run: ./installer/windows/build-windows.ps1
+      - name: Install silently
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem dist/Gecko-Setup-*.exe | Select-Object -First 1
+          Write-Host "Installing $($exe.FullName)"
+          Start-Process -FilePath $exe.FullName -ArgumentList "/S" -Wait
+      - name: Verify Gecko service runs and responds
+        shell: pwsh
+        run: |
+          # Wait up to 30 s for the service to be up
+          $deadline = (Get-Date).AddSeconds(30)
+          $ok = $false
+          while ((Get-Date) -lt $deadline) {
+            try {
+              $r = Invoke-WebRequest -Uri "http://localhost:3000/api/get-version" -Method POST -UseBasicParsing -TimeoutSec 3
+              if ($r.StatusCode -eq 200) { $ok = $true; break }
+            } catch { Start-Sleep -Milliseconds 500 }
+          }
+          if (-not $ok) {
+            Write-Host "Service didn't respond. Service status:"
+            Get-Service GeckoServer -ErrorAction SilentlyContinue
+            Write-Host "Log tail:"
+            Get-Content "$env:APPDATA\gecko\logs\*.log" -Tail 30 -ErrorAction SilentlyContinue
+            exit 1
+          }
+          Write-Host "Service OK. Version: $($r.Content)"
+      - name: Uninstall
+        shell: pwsh
+        run: |
+          $uninst = "$env:ProgramFiles\Gecko\Uninstall.exe"
+          if (Test-Path $uninst) {
+            Start-Process -FilePath $uninst -ArgumentList "/S" -Wait
+          }

@@ -1,5 +1,8 @@
 name: Release
 
+# Builds installers + Gecko OS image on tag push (v*). Attaches artifacts
+# to the GitHub release. Triggered by `git tag v1.x.y && git push --tags`.
+
 on:
   push:
     tags:
@@ -9,48 +12,114 @@ permissions:
   contents: write
 
 jobs:
+
+  # ── Build the UI + server bundles once, share to platform jobs ─────
+  bundles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundles
+          path: |
+            dist/
+            dist-server/
+          retention-days: 1
+
+  # ── Windows installer (NSIS, ~25 MB) ───────────────────────────────
   build-windows:
+    needs: bundles
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Windows installer
-        run: npm run make
-
-      - name: Upload Windows artifacts
-        uses: softprops/action-gh-release@v2
+      - uses: actions/download-artifact@v4
         with:
-          files: |
-            out/make/**/*.exe
-            out/make/**/*.nupkg
-            out/make/**/RELEASES
+          name: bundles
+      - name: Install NSIS
+        run: choco install -y nsis --no-progress
+      - name: Build Windows installer
+        shell: pwsh
+        run: ./installer/windows/build-windows.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: dist/Gecko-Setup-*.exe
 
-  build-mac:
+  # ── macOS pkg (Apple Silicon + Intel) ──────────────────────────────
+  build-macos:
+    needs: bundles
     runs-on: macos-latest
+    strategy:
+      matrix:
+        arch: [arm64, x86_64]
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundles
+      - name: Build macOS pkg (${{ matrix.arch }})
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: |
+          chmod +x installer/macos/build-macos.sh
+          ./installer/macos/build-macos.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-pkg-${{ matrix.arch }}
+          path: dist/Gecko-*.pkg
 
-      - name: Install dependencies
-        run: npm ci
+  # ── Gecko OS bootable image ────────────────────────────────────────
+  build-gecko-os:
+    needs: bundles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundles
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            debootstrap dosfstools grub2-common grub-pc-bin \
+            grub-efi-amd64-bin qemu-utils parted rsync fdisk cloud-image-utils
+      - name: Build Gecko OS image
+        run: sudo ./gecko-os/build.sh
+      - name: Compress image
+        run: xz -T0 -1 gecko-os/dist/gecko-os.img
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gecko-os-image
+          path: gecko-os/dist/gecko-os.img.xz
 
-      - name: Build macOS DMG
-        run: npm run make
-
-      - name: Upload macOS artifacts
-        uses: softprops/action-gh-release@v2
+  # ── Create the GitHub release with everything attached ─────────────
+  release:
+    needs: [build-windows, build-macos, build-gecko-os]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - uses: softprops/action-gh-release@v2
         with:
           files: |
-            out/make/**/*.dmg
+            artifacts/windows-installer/*
+            artifacts/macos-pkg-arm64/*
+            artifacts/macos-pkg-x86_64/*
+            artifacts/gecko-os-image/*
+          generate_release_notes: true

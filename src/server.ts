@@ -1,19 +1,26 @@
 /**
- * Headless HTTP server — serves the React bundle and exposes the same API
- * surface as the Electron IPC layer. Used by Gecko OS where Chromium kiosk
- * mode renders the UI but there's no Electron runtime.
+ * Gecko UI server — the single entry point for the user interface.
  *
- * Run: `npm run start:headless` (after `npm run build:headless` for the UI)
+ * Serves the built React bundle as a static site and exposes the install
+ * + management API as POST /api/<handler> endpoints. The browser-side
+ * code in src/lib/transport.ts wraps these so React components keep
+ * calling `window.electron.foo()` (historical name) and don't care
+ * whether they're in a Chromium kiosk, a user's browser, or anything else.
  *
- * The desktop Electron entry (src/main.ts) is untouched — it still calls
- * the same `runAutoSetup` and uses the same disk/network APIs. This file
- * provides a parallel transport for the same logic.
+ * Used by:
+ *   - Gecko OS appliance (runs in Chromium kiosk on the device)
+ *   - Windows installer (runs as a Windows service, opens default browser)
+ *   - macOS installer (runs as a launchd agent, opens default browser)
+ *
+ * Run in dev:  npm run start:dev    (vite + tsx watch)
+ * Run prod:    npm run start        (after npm run build)
  */
 
 import express from 'express';
 import * as path from 'node:path';
 import * as os from 'node:os';
 import * as fs from 'node:fs/promises';
+import * as crypto from 'node:crypto';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { EventEmitter } from 'node:events';
@@ -224,6 +231,115 @@ app.post('/api/reset-install', async (_req, res) => {
   res.status(204).end();
 });
 
+app.post('/api/add-vpn', async (req, res) => {
+  const { mullvadKey, mullvadAddress } = req.body ?? {};
+  let env = await fs.readFile(path.join(COMPOSE_DIR, '.env'), 'utf8');
+  env = env.replace(/^MULLVAD_PRIVATE_KEY=.*$/m, '').replace(/^MULLVAD_ADDRESSES=.*$/m, '').trim();
+  env += `\nMULLVAD_PRIVATE_KEY=${mullvadKey}\nMULLVAD_ADDRESSES=${mullvadAddress}\n`;
+  await fs.writeFile(path.join(COMPOSE_DIR, '.env'), env);
+  await fs.copyFile(path.join(STACK_BASE, 'docker-compose.yml'),
+                    path.join(COMPOSE_DIR, 'docker-compose.yml'));
+  await execAsync('docker compose down', { cwd: COMPOSE_DIR, env: dockerEnv() });
+  await execAsync('docker compose up -d', { cwd: COMPOSE_DIR, env: dockerEnv() });
+  res.status(204).end();
+});
+
+app.post('/api/remove-vpn', async (_req, res) => {
+  let env = await fs.readFile(path.join(COMPOSE_DIR, '.env'), 'utf8');
+  env = env.replace(/^MULLVAD_PRIVATE_KEY=.*$/m, '')
+           .replace(/^MULLVAD_ADDRESSES=.*$/m, '').trim() + '\n';
+  await fs.writeFile(path.join(COMPOSE_DIR, '.env'), env);
+  await fs.copyFile(path.join(STACK_BASE, 'docker-compose-novpn.yml'),
+                    path.join(COMPOSE_DIR, 'docker-compose.yml'));
+  await execAsync('docker compose down', { cwd: COMPOSE_DIR, env: dockerEnv() });
+  await execAsync('docker compose up -d', { cwd: COMPOSE_DIR, env: dockerEnv() });
+  res.status(204).end();
+});
+
+// ── Media list + delete (dashboard's Space Manager) ──────────────────
+app.post('/api/get-media-list', async (_req, res) => {
+  try {
+    const content = await fs.readFile(path.join(COMPOSE_DIR, '.env'), 'utf8');
+    const cfg = parseEnv(content);
+    const { RADARR_API_KEY: radarrKey, SONARR_API_KEY: sonarrKey } = cfg;
+    const radarrPort = cfg.RADARR_PORT ?? '7878';
+    const sonarrPort = cfg.SONARR_PORT ?? '8989';
+
+    const get = async (url: string, apiKey: string) => {
+      const r = await fetch(url, { headers: { 'X-Api-Key': apiKey }, signal: AbortSignal.timeout(10000) });
+      if (!r.ok) return [];
+      return r.json();
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [movies, series]: [any[], any[]] = await Promise.all([
+      radarrKey ? get(`http://localhost:${radarrPort}/api/v3/movie`, radarrKey) : Promise.resolve([]),
+      sonarrKey ? get(`http://localhost:${sonarrPort}/api/v3/series`, sonarrKey) : Promise.resolve([]),
+    ]);
+
+    res.json([
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...movies.filter((m: any) => m.sizeOnDisk > 0).map((m: any) => ({
+        id: m.id, title: m.title, year: m.year, type: 'movie', sizeOnDisk: m.sizeOnDisk,
+      })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...series.filter((s: any) => (s.statistics?.sizeOnDisk ?? 0) > 0).map((s: any) => ({
+        id: s.id, title: s.title, year: s.year, type: 'series',
+        sizeOnDisk: s.statistics.sizeOnDisk,
+      })),
+    ].sort((a, b) => b.sizeOnDisk - a.sizeOnDisk));
+  } catch {
+    res.json([]);
+  }
+});
+
+app.post('/api/delete-media', async (req, res) => {
+  const { id, type, searchAfter } = req.body ?? {};
+  const content = await fs.readFile(path.join(COMPOSE_DIR, '.env'), 'utf8');
+  const cfg = parseEnv(content);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const doFetch = async (url: string, method: string, apiKey: string, body?: any) => {
+    const r = await fetch(url, {
+      method,
+      headers: { 'X-Api-Key': apiKey, ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      body: body ? JSON.stringify(body) : undefined,
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r;
+  };
+
+  if (type === 'movie') {
+    const key = cfg.RADARR_API_KEY;
+    const base = `http://localhost:${cfg.RADARR_PORT ?? '7878'}`;
+    if (searchAfter) {
+      const movie = await (await doFetch(`${base}/api/v3/movie/${id}`, 'GET', key)).json();
+      if (movie.movieFile?.id) await doFetch(`${base}/api/v3/movieFile/${movie.movieFile.id}`, 'DELETE', key);
+      await doFetch(`${base}/api/v3/command`, 'POST', key, { name: 'MoviesSearch', movieIds: [id] });
+    } else {
+      await doFetch(`${base}/api/v3/movie/${id}?deleteFiles=true`, 'DELETE', key);
+    }
+  } else {
+    const key = cfg.SONARR_API_KEY;
+    const base = `http://localhost:${cfg.SONARR_PORT ?? '8989'}`;
+    if (searchAfter) {
+      const files = await (await doFetch(`${base}/api/v3/episodeFile?seriesId=${id}`, 'GET', key)).json();
+      if (Array.isArray(files) && files.length > 0) {
+        await fetch(`${base}/api/v3/episodeFile/bulk`, {
+          method: 'DELETE',
+          headers: { 'X-Api-Key': key, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ episodeFileIds: files.map((f: { id: number }) => f.id) }),
+          signal: AbortSignal.timeout(15000),
+        });
+      }
+      await doFetch(`${base}/api/v3/command`, 'POST', key, { name: 'SeriesSearch', seriesId: id });
+    } else {
+      await doFetch(`${base}/api/v3/series/${id}?deleteFiles=true`, 'DELETE', key);
+    }
+  }
+  res.status(204).end();
+});
+
 app.post('/api/install', async (req, res) => {
   const config = req.body;
   const { dataPath, adminPassword, subtitleLangs, vpnEnabled } = config;
@@ -263,6 +379,24 @@ app.post('/api/install', async (req, res) => {
   const seedResult = await seedDockerVolumes(path.join(COMPOSE_DIR, 'seeds'), dockerEnv());
   console.log('[install] seeded volumes:', seedResult.seeded.join(', ') || '(none)');
 
+  // Pre-create qBittorrent config with a known password (PBKDF2-HMAC-SHA512)
+  // so we can log in reliably without scraping the docker logs for the
+  // randomised temp password. The linuxserver/qbittorrent image reads this
+  // file on first start; if absent it generates its own.
+  const qbitConfigDir = path.join(dataPath, 'qbittorrent', 'qBittorrent');
+  await fs.mkdir(qbitConfigDir, { recursive: true });
+  const qbitSalt = crypto.randomBytes(16);
+  const qbitKey: Buffer = await new Promise((resolve, reject) =>
+    crypto.pbkdf2(adminPassword, qbitSalt, 100000, 64, 'sha512',
+                  (err, k) => err ? reject(err) : resolve(k))
+  );
+  const qbitHash = `@ByteArray(${qbitSalt.toString('base64')}:${qbitKey.toString('base64')})`;
+  await fs.writeFile(path.join(qbitConfigDir, 'qBittorrent.conf'), [
+    '[Preferences]',
+    'WebUI\\Username=admin',
+    `WebUI\\Password_PBKDF2="${qbitHash}"`,
+  ].join('\n'));
+
   // Step 2: pull + start
   progress(2);
   await execAsync('docker compose up -d --build', { cwd: COMPOSE_DIR, env: dockerEnv() });
@@ -280,6 +414,14 @@ app.post('/api/install', async (req, res) => {
     dockerEnvObj: dockerEnv(),
     onProgress: progress,
   });
+
+  // Restart the cleaner so it picks up the freshly written API keys
+  try {
+    await execAsync('docker compose up -d --no-deps gecko-cleaner',
+                    { cwd: COMPOSE_DIR, env: dockerEnv() });
+  } catch (err) {
+    console.warn('[install] gecko-cleaner restart failed:', err);
+  }
 
   res.json({ failedSteps: result.failedSteps });
 });
