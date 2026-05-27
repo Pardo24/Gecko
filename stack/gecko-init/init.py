@@ -188,56 +188,54 @@ def ensure_bazarr_connections():
 
 def ensure_bazarr_language_profile():
     """
-    Create a language profile via Bazarr's settings POST.
+    Pick which pre-seeded language profile becomes the default.
 
-    Bazarr's `/api/system/languages/profiles` endpoint only supports GET — the
-    settings endpoint accepts a `languages_profiles` list and creates the rows.
-    If neither path works (older Bazarr versions, schema drift), we log a SKIP
-    and the user creates it via the Bazarr UI on first visit. Bazarr works
-    without a profile; it just won't auto-fetch subs until one exists.
+    The 3 profiles ('Català + English', 'Castellano + English', 'English
+    only') are inserted into Bazarr's SQLite by the install handler before
+    Bazarr first starts — see src/lib/seedVolumes.ts +
+    stack/seeds/bazarr/bazarr.db. We just match SUBTITLE_LANGS against the
+    expected profile name and mark it default.
+
+    Bazarr's API can't CREATE profiles (GET-only). If the seed wasn't
+    copied (e.g. user pre-existing volume) or SUBTITLE_LANGS doesn't match
+    one of the seeded sets, we report SKIP cleanly.
     """
     headers = {"X-API-KEY": BAZARR["key"], "Content-Type": "application/json"}
+
+    langs = set(SUBTITLE_LANGS)
+    profile_name = (
+        "Català + English"     if langs == {"cat", "eng"} else
+        "Castellano + English" if langs == {"spa", "eng"} else
+        "English only"         if langs == {"eng"} else
+        None
+    )
+    if profile_name is None:
+        return ("[Bazarr] lang profile: SKIP — SUBTITLE_LANGS "
+                f"{sorted(langs)} doesn't match any seeded profile; "
+                "pick one manually in Bazarr UI")
+
     r = requests.get(BAZARR["url"] + "/api/system/languages/profiles",
                      headers=headers, timeout=10)
-    if r.ok:
-        try:
-            if any(p.get("name") == "Gecko" for p in r.json()):
-                return "[Bazarr] lang profile 'Gecko': exists"
-        except json.JSONDecodeError:
-            pass
-
-    items = [{"id": idx + 1, "language": code, "audio_exclude": "False",
-              "hi": "False", "forced": "False"}
-             for idx, code in enumerate(SUBTITLE_LANGS)]
-    profile = {"name": "Gecko", "items": items, "cutoff": None,
-               "mustContain": [], "mustNotContain": [], "originalFormat": None}
-    r = requests.post(BAZARR["url"] + "/api/system/settings",
-                      headers=headers,
-                      json={"languages_profiles": [profile]},
-                      timeout=15)
     if not r.ok:
-        return (f"[Bazarr] lang profile: SKIP ({r.status_code}) — "
-                f"open Bazarr in the Network tab and create a language "
-                f"profile with {','.join(SUBTITLE_LANGS)} manually")
+        return f"[Bazarr] lang profile: SKIP — can't list profiles ({r.status_code})"
+    try:
+        profiles = r.json()
+    except json.JSONDecodeError:
+        return "[Bazarr] lang profile: SKIP — bad response"
 
-    # Verify and mark as default
-    r = requests.get(BAZARR["url"] + "/api/system/languages/profiles",
-                     headers=headers, timeout=10)
-    profile_id = None
-    if r.ok:
-        for p in r.json():
-            if p.get("name") == "Gecko":
-                profile_id = p.get("profileId") or p.get("id")
-                break
-    if not profile_id:
-        return (f"[Bazarr] lang profile: SKIP — profile not created, "
-                f"set it up via the Bazarr UI ({','.join(SUBTITLE_LANGS)})")
+    profile = next((p for p in profiles if p.get("name") == profile_name), None)
+    if not profile:
+        return (f"[Bazarr] lang profile '{profile_name}': SKIP — not "
+                "present (seed may not have been copied; check Docker "
+                "volume bazarr_config)")
+
+    profile_id = profile.get("profileId") or profile.get("id")
     requests.post(BAZARR["url"] + "/api/system/settings",
                   headers=headers,
                   json={"general": {"serie_default_profile": profile_id,
                                     "movie_default_profile": profile_id}},
                   timeout=10)
-    return f"[Bazarr] lang profile 'Gecko' ({','.join(SUBTITLE_LANGS)}): created"
+    return f"[Bazarr] lang profile '{profile_name}': set as default"
 
 
 # ── Jellyseerr ↔ Jellyfin + Sonarr + Radarr ──────────────────────────

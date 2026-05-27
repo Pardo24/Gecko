@@ -18,6 +18,7 @@ import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { EventEmitter } from 'node:events';
 import { runAutoSetup } from './autoSetup';
+import { seedDockerVolumes } from './lib/seedVolumes';
 
 const execAsync = promisify(exec);
 
@@ -171,10 +172,16 @@ app.post('/api/install', async (req, res) => {
   const composeFile = vpnEnabled ? 'docker-compose.yml' : 'docker-compose-novpn.yml';
   await fs.copyFile(path.join(STACK_BASE, composeFile), path.join(COMPOSE_DIR, 'docker-compose.yml'));
   await fs.cp(path.join(STACK_BASE, 'cleaner'), path.join(COMPOSE_DIR, 'cleaner'), { recursive: true });
-  for (const sub of ['gecko-init', 'recyclarr', 'buildarr']) {
+  for (const sub of ['gecko-init', 'recyclarr', 'buildarr', 'seeds']) {
     try { await fs.cp(path.join(STACK_BASE, sub), path.join(COMPOSE_DIR, sub), { recursive: true }); }
     catch { /* not present */ }
   }
+
+  // Step 1.5: seed Docker volumes from stack/seeds/ before any service
+  // boots. Bazarr's language profiles can't be created via API so they
+  // need to be in the SQLite before bazarr first reads it.
+  const seedResult = await seedDockerVolumes(path.join(COMPOSE_DIR, 'seeds'), dockerEnv());
+  console.log('[install] seeded volumes:', seedResult.seeded.join(', ') || '(none)');
 
   // Step 2: pull + start
   progress(2);

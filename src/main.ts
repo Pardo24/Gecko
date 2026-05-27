@@ -8,6 +8,7 @@ import fs from 'node:fs/promises';
 import started from 'electron-squirrel-startup';
 import { updateElectronApp } from 'update-electron-app';
 import { runAutoSetup } from './autoSetup';
+import { seedDockerVolumes } from './lib/seedVolumes';
 
 if (started) app.quit();
 
@@ -287,11 +288,21 @@ ipcMain.handle('install', async (event, config: {
   const composeFile = vpnEnabled ? 'docker-compose.yml' : 'docker-compose-novpn.yml';
   await fs.copyFile(path.join(stackBase(), composeFile), path.join(dir, 'docker-compose.yml'));
   await fs.cp(path.join(stackBase(), 'cleaner'), path.join(dir, 'cleaner'), { recursive: true });
-  // Container-side configurators added in the Recyclarr/Buildarr/gecko-init refactor.
-  // If you're upgrading from an older install dir, these will appear next install.
-  for (const sub of ['gecko-init', 'recyclarr', 'buildarr']) {
+  // Container-side configurators + pre-built seeds. If you're upgrading from
+  // an older install dir, these will appear next install.
+  for (const sub of ['gecko-init', 'recyclarr', 'buildarr', 'seeds']) {
     const src = path.join(stackBase(), sub);
     try { await fs.cp(src, path.join(dir, sub), { recursive: true }); } catch { /* not present in legacy bundles */ }
+  }
+
+  // Step 1.5: seed Docker volumes from stack/seeds/. Must run before any
+  // service container first starts (Bazarr's language profiles in
+  // particular can't be created via API later — see seedVolumes.ts).
+  try {
+    const seedResult = await seedDockerVolumes(path.join(dir, 'seeds'), dockerEnv());
+    console.log('[install] seeded volumes:', seedResult.seeded.join(', ') || '(none)');
+  } catch (err) {
+    console.warn('[install] seed step failed (continuing — services will use defaults):', err);
   }
 
   // Step 2: Pull + start containers
