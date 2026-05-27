@@ -1,21 +1,29 @@
 [Unit]
-Description=Gecko kiosk UI (full-screen Chromium pointed at the wizard / dashboard)
-After=graphical.target network-online.target
+Description=Gecko kiosk — Chromium full-screen pointed at the wizard / dashboard
+Documentation=https://github.com/Pardo24/Gecko
+After=graphical.target network-online.target gecko-ui.service
 Wants=network-online.target
+Requires=gecko-ui.service
+# Only run on actual TTYs — skip when only ssh / serial is active.
+ConditionPathExists=/dev/tty1
 
 [Service]
+Type=simple
 User=gecko
 Group=gecko
 PAMName=login
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
 WorkingDirectory=/home/gecko
-Environment=DISPLAY=:0
-Environment=XDG_RUNTIME_DIR=/run/user/1000
-ExecStartPre=/bin/sh -c 'until pgrep -x Xorg >/dev/null; do sleep 1; done'
+StandardInput=tty
+StandardOutput=journal
+StandardError=journal
+UtmpIdentifier=tty1
+UtmpMode=user
 ExecStart=/opt/gecko/kiosk-launch.sh
 Restart=always
 RestartSec=3
-StandardOutput=journal
-StandardError=journal
 
 [Install]
 WantedBy=graphical.target

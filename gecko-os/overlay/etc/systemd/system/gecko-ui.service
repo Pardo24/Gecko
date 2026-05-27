@@ -1,0 +1,32 @@
+[Unit]
+Description=Gecko UI server (Express + React bundle)
+Documentation=https://github.com/Pardo24/Gecko
+After=network-online.target docker.service gecko-first-boot.service
+Wants=network-online.target docker.service
+Requires=gecko-first-boot.service
+
+[Service]
+Type=simple
+User=gecko
+Group=gecko
+WorkingDirectory=/opt/gecko/ui
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=STATIC_DIR=/opt/gecko/ui/renderer
+Environment=COMPOSE_DIR=/opt/gecko/userData/stack
+Environment=STACK_BASE=/opt/gecko/stack
+ExecStart=/usr/bin/node /opt/gecko/ui/server.js
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+# Hardening — the UI server has Docker socket access (it manages the stack)
+# but nothing else needs root. The 'gecko' user is in the 'docker' group.
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

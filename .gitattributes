@@ -1,5 +1,10 @@
-# Force LF line endings for shell scripts and other files that run inside
-# Linux containers — Windows CRLF would break sh interpreters and Python.
-*.sh        text eol=lf
-*.py        text eol=lf
-Dockerfile  text eol=lf
+# Force LF line endings for files consumed by Linux scripts/containers —
+# Windows CRLF would break shell interpreters, Python, and apt's package
+# name parsing (had a real "Unable to locate package linux-image-amd64\r"
+# bug from CRLF in packages.list).
+*.sh         text eol=lf
+*.py         text eol=lf
+*.list       text eol=lf
+*.service    text eol=lf
+*.config     text eol=lf
+Dockerfile   text eol=lf

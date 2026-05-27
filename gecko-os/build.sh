@@ -128,8 +128,10 @@ configure_chroot() {
   # whole-line and inline). The sed strips inline `# ...` so package names
   # aren't followed by `#` which bash would interpret as a shell comment
   # when the variable is expanded into the install command.
+  # The `tr -d '\r'` strips Windows CRLF — without it, apt sees package
+  # names with a trailing \r and reports "Unable to locate package".
   local pkgs
-  pkgs=$(sed -E 's/[[:space:]]*#.*$//; /^[[:space:]]*$/d' "${HERE}/packages.list" | tr '\n' ' ')
+  pkgs=$(sed -E 's/[[:space:]]*#.*$//; /^[[:space:]]*$/d' "${HERE}/packages.list" | tr -d '\r' | tr '\n' ' ')
 
   cat > "${MNT_DIR}/tmp/configure.sh" <<EOF
 #!/usr/bin/env bash
@@ -147,14 +149,17 @@ update-locale LANG=en_US.UTF-8
 echo "gecko" > /etc/hostname
 echo "127.0.1.1 gecko" >> /etc/hosts
 
-# Default user (password set on first boot via wizard)
-useradd -m -G sudo -s /bin/bash gecko
-passwd -d gecko    # passwordless until wizard sets one (locked-down via PAM)
-mkdir -p /etc/sudoers.d
-echo "gecko ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/gecko
-
-# APT update + install
+# APT update + install. Order matters: must come before useradd because
+# some groups ('input', 'render', etc.) are created by package postinst
+# scripts. (Heredoc has \$ expansion enabled — do not use backticks in
+# comments here, they would be executed.)
+#
+# `apt-cache gencaches` rebuilds /var/cache/apt/pkgcache.bin explicitly.
+# Without it, apt-get install can race with the post-update cache write
+# in a fresh chroot and reports "Unable to locate package" even though
+# apt-cache search can find the packages on the same filesystem.
 apt-get update
+apt-cache gencaches
 apt-get install -y --no-install-recommends ${pkgs}
 
 # Docker (official repo)
@@ -165,17 +170,33 @@ echo "deb [signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/l
   > /etc/apt/sources.list.d/docker.list
 apt-get update
 apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io docker-compose-plugin
-usermod -aG docker gecko
+
+# Default user (password set on first boot via wizard).
+# Groups: sudo (admin), docker (manage stack), video+input+tty (Xorg kiosk).
+useradd -m -G sudo,docker,video,input,tty -s /bin/bash gecko
+passwd -d gecko    # passwordless until wizard sets one (locked-down via PAM)
+mkdir -p /etc/sudoers.d
+echo "gecko ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/gecko
+
+# Mask getty on tty1 — gecko-kiosk.service takes over tty1 for Xorg.
+# Without this, getty and our Xorg fight over the TTY at boot.
+systemctl mask getty@tty1.service
 
 # Enable services we own (skip silently if not present yet — Stage 1 may
 # ship without the kiosk service unit until the display stack is added)
 systemctl enable docker
 systemctl enable ssh
-for unit in gecko-first-boot.service gecko-kiosk.service; do
+for unit in gecko-first-boot.service gecko-ui.service gecko-kiosk.service; do
   if [[ -f /etc/systemd/system/\${unit} ]]; then
     systemctl enable \${unit}
   fi
 done
+
+# Default to graphical target so kiosk starts at boot (Stage 2+)
+systemctl set-default graphical.target
+
+# Ownership: gecko user owns /opt/gecko (UI service runs as gecko)
+chown -R gecko:gecko /opt/gecko
 
 # Cleanup APT
 apt-get clean
@@ -204,6 +225,22 @@ copy_overlay() {
   if [[ -d "${HERE}/seeds" ]]; then
     mkdir -p "${MNT_DIR}/opt/gecko/seeds"
     cp -a "${HERE}/seeds/." "${MNT_DIR}/opt/gecko/seeds/"
+  fi
+
+  # UI bundles — built on the host by `npm run build:headless`. Renderer
+  # is served as static; server.js is the bundled Express entry point.
+  # node_modules NOT needed — esbuild inlined everything via --bundle.
+  local renderer_dir="${HERE}/../dist"
+  local server_bundle="${HERE}/../dist-server/server.js"
+  if [[ -f "${server_bundle}" && -d "${renderer_dir}" ]]; then
+    log "Copying UI bundles into /opt/gecko/ui"
+    mkdir -p "${MNT_DIR}/opt/gecko/ui/renderer"
+    cp -a "${renderer_dir}/." "${MNT_DIR}/opt/gecko/ui/renderer/"
+    cp "${server_bundle}" "${MNT_DIR}/opt/gecko/ui/server.js"
+  else
+    err "UI bundles missing. Run 'npm run build:headless' before build.sh."
+    err "Expected: ${renderer_dir}/ and ${server_bundle}"
+    exit 1
   fi
 
   # Restore Unix permissions lost when sources live on /mnt/c (DrvFs doesn't

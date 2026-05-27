@@ -36,21 +36,27 @@ ca-certificates
 curl
 openssh-server
 
-# ── Stage 2 (uncomment when implementing kiosk) ─────────────────────
+# ── Stage 2: kiosk display stack + Node.js for the UI server ────────
 # Display stack for Chromium kiosk
-#xserver-xorg
-#xserver-xorg-video-all
-#xinit
-#openbox
-#chromium
-#unclutter
+xserver-xorg
+xserver-xorg-video-all
+xinit
+openbox              # minimal window manager
+chromium             # the kiosk browser
+unclutter            # hides the mouse cursor after inactivity
+xterm                # fallback shell access if a user needs it
+
+# Node.js (Debian 12 ships 18.x — enough for express + tsx). The UI server
+# runs as systemd unit gecko-ui.service serving /opt/gecko/ui/.
+nodejs
+npm
 
 # Audio for Jellyfin HDMI output
-#pipewire
-#pipewire-pulse
-#wireplumber
+pipewire
+pipewire-pulse
+wireplumber
 
-# ── Stage 2 (codecs, hardware accel) — needs non-free repo ─────────
+# ── Stage 3 (codecs, hardware accel) — needs non-free repo ─────────
 # Intel iGPU hardware acceleration for Jellyfin (covers most cheap mini PCs)
 #intel-media-va-driver-non-free
 #vainfo

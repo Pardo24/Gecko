@@ -23,7 +23,7 @@ timeout --foreground "${TIMEOUT}" qemu-system-x86_64 \
   -smp 2 \
   -cpu qemu64 \
   -drive file="${IMG}",format=raw,if=virtio \
-  -netdev user,id=net0,hostfwd=tcp::2222-:22 \
+  -netdev user,id=net0,hostfwd=tcp::2222-:22,hostfwd=tcp::3300-:3000 \
   -device virtio-net-pci,netdev=net0 \
   -display none \
   -serial "file:${LOG}" \
@@ -32,7 +32,7 @@ timeout --foreground "${TIMEOUT}" qemu-system-x86_64 \
 
 echo
 echo "── boot log summary (key milestones) ──"
-grep -nE "GRUB|Linux version|systemd\[1\]|Reached target|Started|gecko-first-boot|Welcome to|login:" "$LOG" | head -50
+grep -nE "GRUB|Linux version|systemd\[1\]|Reached target|Started|gecko-first-boot|gecko-ui|gecko-kiosk|Welcome to|login:" "$LOG" | head -50
 echo
 echo "── tail of boot log ──"
 tail -30 "$LOG"
