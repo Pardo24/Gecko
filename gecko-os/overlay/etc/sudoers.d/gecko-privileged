@@ -1,0 +1,13 @@
+# Privileged operations the UI server (running as user `gecko`) can run
+# without a password. Each entry is the EXACT command — sudo won't accept
+# any deviation. No shell expansion, no wildcards.
+#
+# Keep this list small. Every entry is a path from local user → root.
+
+# Install-to-disk: dd the running USB to an internal disk, fix UUIDs, GRUB,
+# reboot. All the work happens inside the script (root-owned, 755).
+gecko ALL=(root) NOPASSWD: /usr/local/sbin/gecko-install-to-disk.sh
+
+# WiFi management via NetworkManager (nmcli) — the gecko user needs root
+# to add/remove connections. Bare `nmcli` is fine; policy is in nmcli itself.
+gecko ALL=(root) NOPASSWD: /usr/bin/nmcli

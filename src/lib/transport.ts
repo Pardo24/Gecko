@@ -28,6 +28,22 @@ export interface WifiNetwork {
   secured: boolean;
 }
 
+export interface DiskInfo {
+  name: string;             // /dev/nvme0n1
+  size: string;             // "256 GB"
+  model: string;            // "Samsung SSD 970 EVO Plus"
+  rotational: boolean;
+}
+
+export interface InstallToDiskState {
+  running: boolean;
+  stage: 'idle' | 'cloning' | 'reuuid' | 'grub' | 'rebooting' | 'failed';
+  progress: number;         // 0-100
+  bytesCopied: number;
+  totalBytes: number;
+  error: string;
+}
+
 interface ElectronAPI {
   checkDocker:       () => Promise<string>;
   startDocker:       () => Promise<void>;
@@ -52,6 +68,11 @@ interface ElectronAPI {
   wifiScan:          () => Promise<WifiNetwork[]>;
   wifiConnect:       (args: { ssid: string; password?: string }) => Promise<{ ok: boolean; error?: string }>;
   wifiStatus:        () => Promise<{ connected: boolean; wifi: string | null; ethernet: string | null }>;
+  // Install-to-disk (Gecko OS only) — dashboard action, not wizard
+  disksList:           () => Promise<{ source: string; candidates: DiskInfo[] }>;
+  installToDisk:       (args: { target: string; confirm: string }) => Promise<{ ok: boolean; error?: string }>;
+  installToDiskStatus: () => Promise<InstallToDiskState>;
+  onInstallToDiskProgress: (cb: (s: InstallToDiskState) => void) => void;
 }
 
 declare global {
@@ -109,6 +130,15 @@ function buildHttpShim(): ElectronAPI {
     wifiScan:          () => call('wifi-scan'),
     wifiConnect:       (args) => call('wifi-connect', args),
     wifiStatus:        () => call('wifi-status'),
+    disksList:           () => call('disks-list'),
+    installToDisk:       (args) => call('install-to-disk', args),
+    installToDiskStatus: () => call('install-to-disk-status'),
+    onInstallToDiskProgress: (cb) => {
+      const ev = new EventSource('/api/events');
+      ev.addEventListener('install-to-disk-progress', (e) => {
+        cb(JSON.parse((e as MessageEvent).data));
+      });
+    },
   };
 }
 

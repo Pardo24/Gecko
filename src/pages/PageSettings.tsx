@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { useT } from '../LangContext';
 import type { Lang } from '../i18n';
+import InstallToDiskCard from '../components/InstallToDiskCard';
 
 const LANGS: { code: Lang; label: string }[] = [
   { code: 'ca', label: 'Català' },
@@ -77,6 +78,9 @@ export default function PageSettings({ config, onReinstall }: Props) {
           ))}
         </div>
       </div>
+
+      {/* Install to internal disk (Gecko OS only — self-hides on others) */}
+      <InstallToDiskCard />
 
       {/* Tutorial */}
       <div className="card-sm flex items-center gap-3" style={{ padding: '12px 16px' }}>

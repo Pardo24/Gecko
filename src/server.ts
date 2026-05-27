@@ -149,11 +149,12 @@ app.post('/api/wifi-scan', async (_req, res) => {
 app.post('/api/wifi-connect', async (req, res) => {
   const { ssid, password } = req.body ?? {};
   if (!ssid) return res.status(400).json({ ok: false, error: 'ssid required' });
-  // nmcli quotes are tricky; spawn the safe way with exec + escaped args
+  // nmcli quotes are tricky; spawn the safe way with exec + escaped args.
+  // sudo prefix: /etc/sudoers.d/gecko-privileged grants NOPASSWD on nmcli.
   const escape = (s: string) => `'${String(s).replace(/'/g, `'\\''`)}'`;
   const cmd = password
-    ? `nmcli device wifi connect ${escape(ssid)} password ${escape(password)}`
-    : `nmcli device wifi connect ${escape(ssid)}`;
+    ? `sudo -n /usr/bin/nmcli device wifi connect ${escape(ssid)} password ${escape(password)}`
+    : `sudo -n /usr/bin/nmcli device wifi connect ${escape(ssid)}`;
   try {
     await execAsync(cmd, { env: dockerEnv(), timeout: 30_000 });
     res.json({ ok: true });
@@ -161,6 +162,98 @@ app.post('/api/wifi-connect', async (req, res) => {
     res.status(500).json({ ok: false, error: err instanceof Error ? err.message : String(err) });
   }
 });
+
+// ── Install-to-disk (Gecko OS only) ──────────────────────────────────
+// One-shot operation: clone the running USB to an internal disk, fix UUIDs,
+// reinstall GRUB, reboot. User-facing as a dashboard action (NOT a wizard
+// step) so the user has already seen Gecko working on the USB before
+// committing to a destructive disk wipe.
+//
+// All the destructive work lives in /usr/local/sbin/gecko-install-to-disk.sh
+// (root-only). The server only invokes it via sudo and parses progress from
+// its stdout — the helper writes progress as JSON lines, one per event.
+
+interface DiskInfo { name: string; size: string; model: string; rotational: boolean; }
+interface InstallToDiskState {
+  running: boolean;
+  stage: 'idle' | 'cloning' | 'reuuid' | 'grub' | 'rebooting' | 'failed';
+  progress: number;
+  bytesCopied: number;
+  totalBytes: number;
+  error: string;
+}
+
+const installToDiskState: InstallToDiskState = {
+  running: false, stage: 'idle', progress: 0,
+  bytesCopied: 0, totalBytes: 0, error: '',
+};
+
+app.post('/api/disks-list', async (_req, res) => {
+  try {
+    const { stdout: rootDev } = await execAsync('findmnt -no SOURCE /', { env: dockerEnv() });
+    const source = rootDev.trim().replace(/p?\d+$/, '');     // /dev/sda3 → /dev/sda
+
+    const { stdout: lsblkJson } = await execAsync(
+      'lsblk -J -d -b -o NAME,SIZE,MODEL,ROTA,TYPE',
+      { env: dockerEnv() },
+    );
+    interface LsblkDev { name: string; size: number; model: string; rota: string; type: string; }
+    const parsed: { blockdevices: LsblkDev[] } = JSON.parse(lsblkJson);
+    const fmtSize = (b: number) => {
+      const g = b / 1e9;
+      return g >= 1000 ? `${(g / 1000).toFixed(1)} TB` : `${Math.round(g)} GB`;
+    };
+    const candidates: DiskInfo[] = parsed.blockdevices
+      .filter(d => d.type === 'disk' && `/dev/${d.name}` !== source && !d.name.startsWith('loop'))
+      .map(d => ({
+        name: `/dev/${d.name}`,
+        size: fmtSize(d.size),
+        model: (d.model || '').trim() || 'Unknown',
+        rotational: d.rota === '1',
+      }));
+    res.json({ source, candidates });
+  } catch (err) {
+    res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+  }
+});
+
+app.post('/api/install-to-disk', async (req, res) => {
+  const { target, confirm } = req.body ?? {};
+  if (installToDiskState.running) return res.status(409).json({ error: 'already running' });
+  if (!target || !confirm)        return res.status(400).json({ error: 'target and confirm required' });
+
+  Object.assign(installToDiskState, {
+    running: true, stage: 'cloning', progress: 0,
+    bytesCopied: 0, totalBytes: 0, error: '',
+  });
+  res.json({ ok: true, started: true });
+
+  // Spawn the privileged helper. It writes one JSON line per progress event
+  // to stdout, terminating with stage=rebooting or stage=failed.
+  const helper = exec(
+    `sudo -n /usr/local/sbin/gecko-install-to-disk.sh ${JSON.stringify(target)} ${JSON.stringify(confirm)}`,
+    { env: dockerEnv(), maxBuffer: 1024 * 1024 * 5 },
+  );
+  helper.stdout?.on('data', (chunk: string) => {
+    for (const line of String(chunk).split('\n').filter(Boolean)) {
+      try {
+        const update = JSON.parse(line);
+        Object.assign(installToDiskState, update);
+        events.emit('install-to-disk-progress', { ...installToDiskState });
+      } catch { /* non-JSON noise; skip */ }
+    }
+  });
+  helper.on('exit', code => {
+    if (code !== 0 && installToDiskState.stage !== 'rebooting') {
+      installToDiskState.stage = 'failed';
+      installToDiskState.error = installToDiskState.error || `helper exit ${code}`;
+      events.emit('install-to-disk-progress', { ...installToDiskState });
+    }
+    installToDiskState.running = false;
+  });
+});
+
+app.post('/api/install-to-disk-status', (_req, res) => res.json(installToDiskState));
 
 app.post('/api/wifi-status', async (_req, res) => {
   try {
@@ -426,21 +519,26 @@ app.post('/api/install', async (req, res) => {
   res.json({ failedSteps: result.failedSteps });
 });
 
-// SSE stream — clients subscribe and receive install-progress events.
+// SSE stream — clients subscribe and receive named events. Each named event
+// is forwarded to the client when the server emits on the EventEmitter.
 app.get('/api/events', (_req, res) => {
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
   res.flushHeaders();
-  const send = (payload: { step: number }) => {
-    res.write(`event: install-progress\n`);
-    res.write(`data: ${JSON.stringify(payload)}\n\n`);
-  };
-  events.on('install-progress', send);
+  const NAMES = ['install-progress', 'install-to-disk-progress'] as const;
+  const senders = NAMES.map(name => {
+    const fn = (payload: unknown) => {
+      res.write(`event: ${name}\n`);
+      res.write(`data: ${JSON.stringify(payload)}\n\n`);
+    };
+    events.on(name, fn);
+    return { name, fn };
+  });
   // Heartbeat every 25 s to keep proxies from idle-closing the stream
   const heartbeat = setInterval(() => res.write(': ping\n\n'), 25_000);
   _req.on('close', () => {
-    events.off('install-progress', send);
+    for (const { name, fn } of senders) events.off(name, fn);
     clearInterval(heartbeat);
   });
 });

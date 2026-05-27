@@ -244,14 +244,25 @@ copy_overlay() {
   fi
 
   # Restore Unix permissions lost when sources live on /mnt/c (DrvFs doesn't
-  # preserve them). Scripts → +x; service unit files → 644 (systemd complains
-  # if they're world-writable or executable).
+  # preserve them).
   log "Restoring executable bits on scripts"
-  find "${MNT_DIR}/opt/gecko" "${MNT_DIR}/usr/local/bin" \
+  find "${MNT_DIR}/opt/gecko" "${MNT_DIR}/usr/local/bin" "${MNT_DIR}/usr/local/sbin" \
     \( -name "*.sh" -o -name "*.py" \) \
     -exec chmod +x {} \; 2>/dev/null || true
+  # Service unit files: 644 (systemd complains if they're world-writable or executable)
   find "${MNT_DIR}/etc/systemd/system" -name "*.service" \
     -exec chmod 644 {} \; 2>/dev/null || true
+  # sudoers.d entries: 0440 mandatory — sudo refuses to load anything else.
+  # Also: must be owned by root (cp -a from DrvFs is root anyway since build
+  # runs as root, but make it explicit).
+  if [[ -d "${MNT_DIR}/etc/sudoers.d" ]]; then
+    chmod 0440 "${MNT_DIR}/etc/sudoers.d/"*
+    chown root:root "${MNT_DIR}/etc/sudoers.d/"*
+  fi
+  # Privileged helper scripts: owned by root, executable
+  if [[ -d "${MNT_DIR}/usr/local/sbin" ]]; then
+    chown -R root:root "${MNT_DIR}/usr/local/sbin"
+  fi
 }
 
 # ── 6. fstab + GRUB install ──────────────────────────────────────────
