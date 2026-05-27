@@ -28,16 +28,20 @@ Tracking number will arrive in a follow-up email.
 2. **External HDD** — anything USB-3.0 with the space you need.
    4 TB is enough for ~1500 movies or ~5000 series episodes.
 
-3. **VPN — actually important.** We've included a free 3-month
-   trial of [Surfshark/Proton] with your order. Use code:
-
-      `GECKO-XXXXX-YYYYY` (one-time use; sign up at <https://...>)
+3. **VPN — actually important.** We strongly recommend signing up
+   to **ProtonVPN** before plugging in the USB. They have a free
+   plan (no P2P) and a paid plan at ~€4/mo (with P2P + WireGuard).
+   Sign up here: <https://go.getproton.me/aff_c?offer_id=26&aff_id=7925>
+   (our affiliate link — same price for you, helps fund Gecko).
 
    Why VPN: in DE/FR/UK/US, downloading without one gets you ISP
    notices within weeks. In ES/IT it's lighter but not zero risk.
-   The included trial covers your first 3 months; after that it's
-   ~€3-5/mo and the VPN cost will pay for itself in skipped
-   streaming subscriptions.
+   At ~€4/mo, the VPN pays for itself in skipped streaming
+   subscriptions.
+
+   Alternative: **Mullvad** (~€5/mo, accepts cash, best privacy
+   reputation, no affiliate so it's an honest recommendation, not
+   commission-driven).
 
 4. **Read [Getting Started][gs]** (5 min) to know what each wizard
    step asks for.
@@ -73,19 +77,20 @@ Dani
 
 ## Notes for whoever sends this
 
-- The VPN code is **per-order**, generated via the partner's affiliate
-  dashboard. Don't reuse — they expire on use, or some providers
-  detect duplicate codes and ban the account.
-- Customise the `[Surfshark/Proton]` placeholder with the actual
-  partner we ended up with.
+- The ProtonVPN link is our **public affiliate URL** — same price
+  for the buyer, ~35% recurring commission for us (~€1.40/mo per
+  paying subscriber). Sign up to ProtonVPN's affiliate program at
+  <https://protonvpn.com/affiliate-program> and replace the URL
+  with your own affiliate ID.
 - Track the open + click rate via Gumroad's email analytics. If <40%
   open rate, the subject line needs work.
+- Once you have ~500 active users, see `docs/partner-pitch.md` for
+  negotiating an extended-trial deal with Proton or Surfshark.
 
 ## Variants
 
-- **No-VPN customer** (they chose "No VPN" at wizard or didn't redeem
-  the code in 60 days): follow-up email at day 60 reminding them
-  the trial is still available + adds 1 month bonus to encourage
-  use.
+- **No-VPN customer** (they chose "No VPN" at wizard): follow-up
+  email at day 30 with a gentle "got ISP notice yet? Here's how to
+  add a VPN later" reminder, with the affiliate link.
 - **Hardware-not-yet-bought**: link to HARDWARE.md prominently, since
   shipping is faster than they'll buy the PC.

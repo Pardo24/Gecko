@@ -1,6 +1,26 @@
 # Partnership pitch — for Surfshark / ProtonVPN / NordVPN
 
-Cold outreach template to get a Gecko-buyer-only extended trial deal.
+> ⚠️ **DO NOT SEND THIS YET.** Cold outreach for partnerships rarely
+> works with zero sales — VPN companies ignore proposals from products
+> without proven distribution. Use the **public affiliate programs**
+> first (anyone can join, no negotiation needed) — earn standard
+> commissions on referrals via your existing landing page link.
+>
+> Send THIS pitch only after you have **6+ months of sales data** and
+> **500+ active users** to show. Then you have real leverage to ask
+> for "extended trial for Gecko buyers" deals.
+>
+> **For now** use the public affiliate links:
+> - ProtonVPN — apply at <https://protonvpn.com/affiliate-program>
+> - Surfshark — apply at <https://surfshark.com/affiliates>
+> - NordVPN — apply at <https://nordvpn.com/affiliate-program>
+>
+> All three accept open-source projects + small publishers. Commission
+> is paid on every referred subscription. No partnership needed.
+
+---
+
+Cold outreach template (for when you have leverage — months from now).
 Two versions: short (subject + first paragraph for LinkedIn / Twitter
 DMs) and full (for partner@ / affiliates@ / business@ inboxes).
 
