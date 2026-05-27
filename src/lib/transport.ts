@@ -35,6 +35,13 @@ export interface DiskInfo {
   rotational: boolean;
 }
 
+export interface PreflightCheck {
+  id: 'ram' | 'cpu' | 'disk' | 'network';
+  ok: boolean;
+  detail: string;       // "16 GB" — what the user has
+  threshold: string;    // "≥ 4 GB" — what's expected
+}
+
 export interface InstallToDiskState {
   running: boolean;
   stage: 'idle' | 'cloning' | 'reuuid' | 'grub' | 'rebooting' | 'failed';
@@ -63,6 +70,7 @@ interface ElectronAPI {
   getMediaList:      () => Promise<unknown[]>;
   deleteMedia:       (args: unknown) => Promise<void>;
   onInstallProgress: (cb: ProgressCallback) => void;
+  preflight:         () => Promise<{ checks: PreflightCheck[] }>;
   // Kiosk-context (Gecko OS) — may return no-op values in desktop Electron
   capabilities:      () => Promise<Capabilities>;
   wifiScan:          () => Promise<WifiNetwork[]>;
@@ -126,6 +134,7 @@ function buildHttpShim(): ElectronAPI {
         cb(data.step);
       });
     },
+    preflight:         () => call('preflight'),
     capabilities:      () => call('capabilities'),
     wifiScan:          () => call('wifi-scan'),
     wifiConnect:       (args) => call('wifi-connect', args),

@@ -22,6 +22,9 @@ const tr = {
     move_to_disk_remove_usb: 'Pots treure el USB un cop el dispositiu hagi reiniciat.',
     move_to_disk_failed: 'Ha fallat',
 
+    preflight_ok: 'Tot OK al teu sistema',
+    preflight_warn: 'El teu sistema està per sota del recomanat — Gecko funcionarà però potser lent',
+
     wifi_title: 'Connecta a Internet',
     wifi_sub: 'Tria la teva xarxa WiFi o salta si tens cable.',
     wifi_scanning: 'Cercant xarxes WiFi...',
@@ -268,6 +271,9 @@ const tr = {
     move_to_disk_remove_usb: 'Puedes retirar el USB una vez que el dispositivo haya reiniciado.',
     move_to_disk_failed: 'Ha fallado',
 
+    preflight_ok: 'Todo OK en tu sistema',
+    preflight_warn: 'Tu sistema está por debajo del recomendado — Gecko funcionará pero puede ir lento',
+
     wifi_title: 'Conecta a Internet',
     wifi_sub: 'Elige tu red WiFi o salta si tienes cable.',
     wifi_scanning: 'Buscando redes WiFi...',
@@ -507,6 +513,9 @@ const tr = {
     move_to_disk_rebooting: 'Done — rebooting now...',
     move_to_disk_remove_usb: 'You can remove the USB once the device has rebooted.',
     move_to_disk_failed: 'Failed',
+
+    preflight_ok: 'Your system looks good',
+    preflight_warn: 'Your system is below the recommended specs — Gecko will work but may be slow',
 
     wifi_title: 'Connect to the Internet',
     wifi_sub: 'Pick your WiFi network, or skip if you have an ethernet cable.',

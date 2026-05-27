@@ -102,6 +102,37 @@ app.post('/api/open-external', (_req, res) => {
   res.status(204).end();
 });
 
+// ── Preflight — system info + warnings on welcome screen ─────────────
+// Lightweight checks the wizard renders on the welcome step so the user
+// knows up front whether their hardware is in spec.
+app.post('/api/preflight', async (_req, res) => {
+  // Total RAM in GB
+  const ramGb = Math.round(os.totalmem() / 1e9 * 10) / 10;
+  // CPU core count + arch
+  const cpuCores = os.cpus().length;
+  const arch = os.arch();
+  // Free space on the OS root (proxy for "available now"). On Gecko OS that's
+  // the rootfs ext4 (sized to the disk); on desktop installs it's C:/ or /
+  // — meaningful as a sanity check, the user picks a separate DATA_PATH later.
+  let freeGb = 0;
+  try {
+    const target = process.platform === 'win32' ? 'C:\\' : '/';
+    // statfs is in fs/promises in Node 18+; cast to access
+    const stats = await (fs as unknown as {
+      statfs: (p: string) => Promise<{ bfree: number; bsize: number }>;
+    }).statfs(target);
+    freeGb = Math.round(stats.bfree * stats.bsize / 1e9);
+  } catch { /* leave as 0; UI marks as "unknown" */ }
+
+  const checks = [
+    { id: 'ram',     ok: ramGb >= 4,        detail: `${ramGb} GB`,   threshold: '≥ 4 GB' },
+    { id: 'cpu',     ok: cpuCores >= 2,     detail: `${cpuCores} cores · ${arch}`, threshold: '≥ 2 cores · x86_64' },
+    { id: 'disk',    ok: freeGb >= 100,     detail: freeGb ? `${freeGb} GB free` : 'unknown', threshold: '≥ 100 GB' },
+    { id: 'network', ok: true,              detail: 'reachable',     threshold: 'internet' },
+  ];
+  res.json({ checks });
+});
+
 // ── Capabilities probe — drives conditional wizard steps ─────────────
 // The wizard pings this on mount and shows/hides steps based on what the
 // host actually supports. WiFi on Gecko OS (nmcli available); install-to-

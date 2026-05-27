@@ -44,22 +44,21 @@ ship the same server.js + React bundle.
 
 Output: installers smaller, single code path, easier auto-update.
 
-### Phase 1 — International — 1-2 weeks
+### Phase 1 — International — REVISED 2026-05-27
 
-Currently we have CA, ES, EN. Add:
+**Decision (user, 2026-05-27): EN (primary) + ES + CA only.** No additional
+languages in v1.0. Rationale: ~80% of Gecko's likely audience reads
+English; maintaining 10 languages is high ongoing cost; let's validate
+demand before investing in more translations.
 
-| Phase 1a (priority) | Phase 1b (next) | Phase 1c (review needed) |
-|---------------------|-----------------|--------------------------|
-| French (FR)         | Polish (PL)     | Chinese — Simplified (ZH-CN) |
-| German (DE)         | Dutch (NL)      | Japanese (JA)            |
-| Portuguese (PT)     | Russian (RU)    | Korean (KO)              |
-| Italian (IT)        | Turkish (TR)    | Arabic (AR) — RTL!       |
+The default language was changed to detect the browser locale, falling
+back to English (was Catalan). LangContext.tsx implements this.
 
-For each language: ~150 strings × 1-2 hours of human translation
-(machine + native-speaker review). Outsource via Crowdin or Lokalise
-free tier for open source.
+If users in non-English markets request their language post-launch, we
+re-evaluate (potentially via Crowdin community translations — free for
+OSS, no maintenance burden on us).
 
-Region-aware:
+Region-aware infrastructure (kept as priority for v1.0):
 
 - VPN recommendations: Mullvad (works in China), NordVPN/Surfshark
   (Western markets), or self-hosted WireGuard.
