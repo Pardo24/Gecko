@@ -102,6 +102,8 @@ jobs:
         # repo files lose their executable bit on Windows checkouts and we
         # don't want a separate `git update-index --chmod=+x` dance.
         run: sudo bash ./gecko-os/build-all.sh
+      - name: Fix ownership of build output (sudo left root-owned files)
+        run: sudo chown -R "$USER:$USER" gecko-os/dist
       - name: Compress image (xz -1 — fast compress, large saves)
         run: xz -T0 -1 gecko-os/dist/gecko-os.img
       - uses: actions/upload-artifact@v4
