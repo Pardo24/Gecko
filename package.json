@@ -1,7 +1,7 @@
 {
   "name": "gecko",
   "productName": "Gecko",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Your wild home media server",
   "main": "dist-server/server.js",
   "private": true,
