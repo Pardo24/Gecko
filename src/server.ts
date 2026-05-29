@@ -33,7 +33,14 @@ const PORT = Number(process.env.PORT ?? 3000);
 const STATIC_DIR = process.env.STATIC_DIR ?? path.join(__dirname, '..', 'renderer', 'main_window');
 const COMPOSE_DIR = process.env.COMPOSE_DIR ?? path.join(os.homedir(), '.gecko', 'stack');
 const STACK_BASE = process.env.STACK_BASE ?? path.join(__dirname, '..', '..', 'stack');
-const PKG_VERSION = process.env.GECKO_VERSION ?? '0.0.0-dev';
+// __GECKO_VERSION__ is replaced at build time (esbuild --define, fed from
+// package.json by scripts/build-server.mjs). The env var still wins so a
+// host launcher can override it; the baked value covers Gecko OS, where
+// nothing sets GECKO_VERSION. The typeof guard keeps `tsx` dev mode (no
+// --define) from throwing a ReferenceError.
+declare const __GECKO_VERSION__: string;
+const PKG_VERSION = process.env.GECKO_VERSION
+  ?? (typeof __GECKO_VERSION__ !== 'undefined' ? __GECKO_VERSION__ : '0.0.0-dev');
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));

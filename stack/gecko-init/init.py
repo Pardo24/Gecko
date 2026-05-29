@@ -212,9 +212,18 @@ def ensure_prowlarr_indexer(definition_name="internetarchive",
                 f"'{definition_name}' not offered by this Prowlarr version; "
                 "add an indexer manually in the UI")
 
+    # The schema ships appProfileId=0, which Prowlarr rejects ("App Profile
+    # Id must be greater than 0"). setdefault won't overwrite a present-but-
+    # zero value, so resolve a real app profile id explicitly (first one;
+    # fallback 1 = the built-in "Standard" profile). Validated against a live
+    # Prowlarr — see gecko-os/scripts/test-ia-indexer.mjs.
+    ap = requests.get(base + "/api/v1/appprofile", headers=hdr, timeout=20)
+    profiles = ap.json() if ap.ok else []
+    app_profile_id = (profiles[0].get("id") if profiles else 1) or 1
+
     schema["enable"] = True
     schema["name"] = display_name
-    schema.setdefault("appProfileId", 1)
+    schema["appProfileId"] = app_profile_id
     schema.setdefault("tags", [])
 
     # forceSave=true skips the live connectivity test so install doesn't

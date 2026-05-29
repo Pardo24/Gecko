@@ -9,7 +9,7 @@
     "start": "tsx src/server.ts",
     "start:dev": "concurrently -k -n vite,server -c blue,green \"vite --config vite.renderer.config.mts\" \"tsx watch src/server.ts\"",
     "build:ui": "vite build --config vite.renderer.config.mts",
-    "build:server": "esbuild src/server.ts --bundle --platform=node --target=node18 --outfile=dist-server/server.js --external:fsevents",
+    "build:server": "node scripts/build-server.mjs",
     "build": "npm run build:ui && npm run build:server",
     "lint": "eslint --ext .ts,.tsx .",
     "build:installer:win": "powershell -ExecutionPolicy Bypass -File installer/windows/build-windows.ps1"
