@@ -547,7 +547,7 @@ app.post('/api/install', async (req, res) => {
     console.warn('[install] gecko-cleaner restart failed:', err);
   }
 
-  res.json({ failedSteps: result.failedSteps });
+  res.json({ failedSteps: result.failedSteps, skips: result.skips });
 });
 
 // SSE stream — clients subscribe and receive named events. Each named event

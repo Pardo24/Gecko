@@ -248,7 +248,7 @@ async function writeEnvKeys(envPath: string, keys: Record<string, string>): Prom
 
 // ── Run the gecko-init container (does everything else) ──────────────
 
-async function runGeckoInit(stackDir: string, dockerEnvObj: NodeJS.ProcessEnv): Promise<void> {
+async function runGeckoInit(stackDir: string, dockerEnvObj: NodeJS.ProcessEnv): Promise<string[]> {
   const { stdout, stderr } = await execAsync(
     'docker compose --profile init up --build --abort-on-container-exit gecko-init',
     { cwd: stackDir, env: dockerEnvObj, maxBuffer: 1024 * 1024 * 10 },
@@ -258,6 +258,13 @@ async function runGeckoInit(stackDir: string, dockerEnvObj: NodeJS.ProcessEnv): 
   if (stderr && !stderr.match(/^Creating|^Starting|^Building|^\s*$/m)) {
     console.warn('[gecko-init stderr]', stderr);
   }
+  // init.py exits 0 even when steps SKIP (degraded paths the user can finish
+  // in the UI). Those would otherwise be invisible — extract them so the
+  // wizard can show a "finish this manually" note instead of a false 100%.
+  return stdout
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l.includes('SKIP'));
 }
 
 // ── Trigger Recyclarr sync (also idempotent) ─────────────────────────
@@ -286,11 +293,13 @@ export interface AutoSetupConfig {
 
 export async function runAutoSetup(cfg: AutoSetupConfig): Promise<{
   failedSteps: Array<{ step: number; error: string }>;
+  skips: string[];
   apiKeys: { radarr: string; sonarr: string; lidarr: string; prowlarr: string; bazarr: string };
 }> {
   const { adminPassword, subtitleLangs, ports, vpnEnabled, stackDir, dockerEnvObj,
           onProgress, onStepFailed } = cfg;
   const failedSteps: Array<{ step: number; error: string }> = [];
+  const skips: string[] = [];
   const apiKeys = { radarr: '', sonarr: '', lidarr: '', prowlarr: '', bazarr: '' };
 
   const tryStep = async (step: number, fn: () => Promise<void>) => {
@@ -333,10 +342,13 @@ export async function runAutoSetup(cfg: AutoSetupConfig): Promise<{
 
   // Step 6: gecko-init container does root folders, download clients,
   // Prowlarr↔apps, Bazarr↔*arrs, Jellyseerr setup — all in one shot.
-  await tryStep(6, () => runGeckoInit(stackDir, dockerEnvObj));
+  await tryStep(6, async () => {
+    const initSkips = await runGeckoInit(stackDir, dockerEnvObj);
+    skips.push(...initSkips);
+  });
 
   // Step 7: Recyclarr applies TRaSH Guides quality profiles & custom formats.
   await tryStep(7, () => runRecyclarrSync(stackDir, dockerEnvObj));
 
-  return { failedSteps, apiKeys };
+  return { failedSteps, skips, apiKeys };
 }

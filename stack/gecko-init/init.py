@@ -178,6 +178,52 @@ def ensure_prowlarr_app(app_name, svc, sync_categories, anime_categories=None):
     return f"[Prowlarr] {app_name}: {'linked' if r.ok else 'FAIL ' + r.text[:200]}"
 
 
+# ── Prowlarr default indexer (100% legal, public domain) ─────────────
+
+def ensure_prowlarr_indexer(definition_name="internetarchive",
+                            display_name="Internet Archive"):
+    """
+    Pre-add a 100%-legal public-domain indexer so the user sees real,
+    searchable content at first boot WITHOUT having to configure any
+    indexer themselves, and WITHOUT Gecko shipping anything legally grey.
+
+    archive.org is anonymous/public and the definition is maintained
+    upstream by Prowlarr, so it won't rot like a community torznab feed.
+    We fetch the official schema, enable it, and forceSave (so a transient
+    archive.org hiccup at install time doesn't fail the whole add).
+    """
+    base = PROWLARR["url"]
+    hdr = hdr_arr(PROWLARR)
+
+    # Idempotent: skip if already present
+    r = requests.get(base + "/api/v1/indexer", headers=hdr, timeout=20)
+    if r.ok and any(i.get("definitionName") == definition_name
+                    or i.get("name") == display_name for i in r.json()):
+        return f"[Prowlarr] indexer {display_name}: exists"
+
+    # Pull the official schema for this definition and enable it as-is
+    s = requests.get(base + "/api/v1/indexer/schema", headers=hdr, timeout=30)
+    if not s.ok:
+        return f"[Prowlarr] indexer {display_name}: FAIL schema {s.status_code}"
+    schema = next((d for d in s.json()
+                   if d.get("definitionName") == definition_name), None)
+    if schema is None:
+        return (f"[Prowlarr] indexer {display_name}: SKIP — definition "
+                f"'{definition_name}' not offered by this Prowlarr version; "
+                "add an indexer manually in the UI")
+
+    schema["enable"] = True
+    schema["name"] = display_name
+    schema.setdefault("appProfileId", 1)
+    schema.setdefault("tags", [])
+
+    # forceSave=true skips the live connectivity test so install doesn't
+    # fail if archive.org is briefly unreachable; it still gets enabled.
+    r = requests.post(base + "/api/v1/indexer?forceSave=true",
+                      headers=hdr, json=schema, timeout=30)
+    return f"[Prowlarr] indexer {display_name}: {'added' if r.ok else 'FAIL ' + r.text[:200]}"
+
+
 # ── Bazarr ↔ Sonarr/Radarr ───────────────────────────────────────────
 
 def ensure_bazarr_connections():
@@ -412,6 +458,9 @@ def main():
                               [2000, 2010, 2020, 2030, 2040, 2045, 2050, 2060, 2070, 2080]))
     track(ensure_prowlarr_app("Lidarr", LIDARR,
                               [3000, 3010, 3020, 3030, 3040]))
+
+    section("Prowlarr indexers (default: Internet Archive — public domain)")
+    track(ensure_prowlarr_indexer())
 
     section("Bazarr")
     track(ensure_bazarr_connections())

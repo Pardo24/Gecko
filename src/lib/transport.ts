@@ -55,7 +55,7 @@ interface ElectronAPI {
   checkDocker:       () => Promise<string>;
   startDocker:       () => Promise<void>;
   pickFolder:        () => Promise<string | null>;
-  install:           (config: unknown) => Promise<{ failedSteps: Array<{ step: number; error: string }> }>;
+  install:           (config: unknown) => Promise<{ failedSteps: Array<{ step: number; error: string }>; skips?: string[] }>;
   addVpn:            (creds: unknown) => Promise<void>;
   removeVpn:         () => Promise<void>;
   getConfig:         () => Promise<Record<string, string> | null>;

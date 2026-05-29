@@ -1,8 +1,13 @@
 import { useState } from 'react';
-import { Sparkles, Lock, ChevronUp, ChevronDown, HelpCircle, Lightbulb, BookOpen, ExternalLink } from 'lucide-react';
+import { Sparkles, Lock, ChevronUp, ChevronDown, HelpCircle, Lightbulb, BookOpen, ExternalLink, CheckCircle2, PlayCircle } from 'lucide-react';
 import type { Config } from '../App';
 import { useT } from '../LangContext';
 import ServiceIcon from '../components/ServiceIcon';
+
+// Screencast on adding more Prowlarr indexers. Replace with a dedicated
+// Gecko video when recorded; for now it points at the written guide, which
+// covers the same ground with screenshots.
+const INDEXER_VIDEO_URL = 'https://gecko.nubul.art/guia.html#serveis';
 
 type Props = { config: Config; updateConfig: (p: Partial<Config>) => void; next: () => void };
 type VpnState = 'idle' | 'loading' | 'ok' | 'error';
@@ -68,6 +73,19 @@ export default function StepDone({ config, next }: Props) {
         </div>
 
         <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {/* Already-included: Internet Archive (pre-configured, 100% legal) */}
+          <div style={{
+            display: 'flex', gap: 8, alignItems: 'flex-start',
+            background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.25)',
+            borderRadius: 10, padding: '10px 12px',
+          }}>
+            <CheckCircle2 size={15} style={{ color: '#16a34a', flexShrink: 0, marginTop: 1 }} />
+            <div>
+              <p style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>{t.done_indexer_preadded_title}</p>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-2)', lineHeight: 1.55 }}>{t.done_indexer_preadded}</p>
+            </div>
+          </div>
+
           {/* What is an indexer */}
           <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
             <HelpCircle size={14} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
@@ -80,6 +98,15 @@ export default function StepDone({ config, next }: Props) {
           {/* Main CTA */}
           <button onClick={() => open('http://localhost:9696')} className="btn-primary w-full" style={{ justifyContent: 'center', minWidth: 'unset' }}>
             <ExternalLink size={13} />{t.done_indexer_btn}
+          </button>
+
+          {/* Video walkthrough */}
+          <button
+            onClick={() => open(INDEXER_VIDEO_URL)}
+            className="btn-ghost w-full"
+            style={{ justifyContent: 'center', gap: 6, fontSize: '0.78rem', color: 'var(--accent)' }}
+          >
+            <PlayCircle size={14} />{t.done_indexer_video_btn}
           </button>
 
           {/* Tips */}

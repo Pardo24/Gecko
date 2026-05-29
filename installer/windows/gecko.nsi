@@ -17,7 +17,12 @@
 !define APP_NAME       "Gecko"
 !define APP_PUBLISHER  "Pardo24"
 !define APP_URL        "https://github.com/Pardo24/Gecko"
-!define APP_VERSION    "1.3.0"
+; APP_VERSION is injected by build-windows.ps1 from package.json via
+; /DAPP_VERSION=…  The fallback below is intentionally a fake dev version so
+; a forgotten flag is obvious in the artifact name.
+!ifndef APP_VERSION
+  !define APP_VERSION  "0.0.0-dev"
+!endif
 !define SERVICE_NAME   "GeckoServer"
 !define INSTALL_ROOT   "$PROGRAMFILES64\Gecko"
 !define DATA_ROOT      "$APPDATA\gecko"

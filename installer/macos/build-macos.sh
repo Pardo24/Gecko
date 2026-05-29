@@ -10,11 +10,14 @@
 
 set -euo pipefail
 
-VERSION="${VERSION:-1.3.0}"
 NODE_VERSION="${NODE_VERSION:-20.18.0}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(cd "$HERE/../.." && pwd)"
 BUILD_DIR="$HERE/build"
+
+# Single source of truth for the version is package.json. Caller can still
+# override with VERSION=… for local experiments.
+VERSION="${VERSION:-$(node -p "require('$PROJECT_ROOT/package.json').version" 2>/dev/null || echo 0.0.0-dev)}"
 
 # Detect architecture (caller can override with ARCH=arm64 / x86_64)
 ARCH="${ARCH:-$(uname -m)}"

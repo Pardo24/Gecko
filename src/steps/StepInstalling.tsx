@@ -33,6 +33,7 @@ export default function StepInstalling({ config, next }: Props) {
   const [step, setStep] = useState(0);
   const [error, setError] = useState('');
   const [failedSteps, setFailedSteps] = useState<Array<{ step: number; error: string }>>([]);
+  const [skips, setSkips] = useState<string[]>([]);
   const total = t.installing_stages.length;
 
   useEffect(() => {
@@ -42,8 +43,10 @@ export default function StepInstalling({ config, next }: Props) {
       try {
         const result = await window.electron.install(config);
         setStep(total - 1);
-        if (result.failedSteps.length > 0) {
+        const resultSkips = result.skips ?? [];
+        if (result.failedSteps.length > 0 || resultSkips.length > 0) {
           setFailedSteps(result.failedSteps);
+          setSkips(resultSkips);
         } else {
           setTimeout(next, 1200);
         }
@@ -85,8 +88,8 @@ export default function StepInstalling({ config, next }: Props) {
     );
   }
 
-  // ── Partial success — some steps failed after all retries ─────
-  if (failedSteps.length > 0) {
+  // ── Partial success — some steps failed or were skipped ──────
+  if (failedSteps.length > 0 || skips.length > 0) {
     return (
       <div className="min-h-full flex flex-col items-center justify-center gap-6 px-8 text-center py-6">
         <div style={{
@@ -129,6 +132,16 @@ export default function StepInstalling({ config, next }: Props) {
                 }}>
                   {error}
                 </p>
+              </div>
+            ))}
+            {skips.map((line, i) => (
+              <div key={`skip-${i}`}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                  <AlertTriangle size={13} style={{ color: '#ca8a04', flexShrink: 0, marginTop: 3 }} />
+                  <p className="text-xs leading-relaxed" style={{ color: 'var(--text-2)' }}>
+                    {line.replace(/^\[|\]\s*/g, ' ').trim()}
+                  </p>
+                </div>
               </div>
             ))}
           </div>

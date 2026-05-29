@@ -19,7 +19,11 @@ $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Root = Resolve-Path "$Here\..\.."
 $Bundle = "$Here\bundle"
 
-Write-Host "[build-windows] working in $Here" -ForegroundColor Cyan
+# Single source of truth for the version is package.json.
+$Pkg = Get-Content "$Root\package.json" -Raw | ConvertFrom-Json
+$Version = $Pkg.version
+
+Write-Host "[build-windows] working in $Here (version $Version)" -ForegroundColor Cyan
 
 # ── 1. Ensure UI bundles exist ────────────────────────────────────
 if (-not (Test-Path "$Root\dist-server\server.js") -or -not (Test-Path "$Root\dist\index.html")) {
@@ -81,8 +85,8 @@ if (-not $Makensis) {
   throw "makensis not found. Install NSIS: winget install NSIS.NSIS"
 }
 
-Write-Host "[build-windows] compiling installer with $Makensis..."
-& $Makensis "$Here\gecko.nsi"
+Write-Host "[build-windows] compiling installer with $Makensis (v$Version)..."
+& $Makensis "/DAPP_VERSION=$Version" "$Here\gecko.nsi"
 if ($LASTEXITCODE -ne 0) { throw "NSIS exited $LASTEXITCODE" }
 
 $OutFile = Get-ChildItem "$Root\dist\Gecko-Setup-*.exe" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
