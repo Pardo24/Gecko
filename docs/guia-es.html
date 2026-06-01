@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guia d'usuari de Gecko</title>
-  <meta name="description" content="Guia completa per configurar i fer servir Gecko: primer inici, dashboard, serveis, accés extern amb Tailscale." />
+  <title>Guía de usuario de Gecko</title>
+  <meta name="description" content="Guía completa para configurar y usar Gecko: primer inicio, dashboard, servicios, acceso externo con Tailscale." />
   <script>
     /* Send the visitor to the guide in their language (same signal as the
        landing: saved gecko-lang → browser language → English fallback). Runs
@@ -293,7 +293,7 @@
       <div class="logo-mark"><img src="icon.png" alt="Gecko" /></div>
       Gecko
     </a>
-    <a href="index.html" class="back-link">← Tornar a la pàgina principal</a>
+    <a href="index.html" class="back-link">← Volver a la página principal</a>
   </div>
 </header>
 
@@ -302,23 +302,23 @@
   <!-- ── Sidebar ── -->
   <aside>
     <div class="sidebar-nav">
-      <div class="sidebar-nav-title">Inici</div>
-      <a href="#primer-cop">Primer cop</a>
-      <a href="#wizard">L'assistent</a>
+      <div class="sidebar-nav-title">Inicio</div>
+      <a href="#primer-cop">Primera vez</a>
+      <a href="#wizard">El asistente</a>
 
       <div class="sidebar-nav-title">Dashboard</div>
       <a href="#menu">El menú lateral</a>
-      <a href="#inici">Pàgina Inici</a>
-      <a href="#vpn-page">Pàgina VPN (Mullvad / ProtonVPN)</a>
-      <a href="#xarxa">Pàgina Xarxa</a>
-      <a href="#config">Pàgina Config</a>
+      <a href="#inici">Página Inicio</a>
+      <a href="#vpn-page">Página VPN (Mullvad / ProtonVPN)</a>
+      <a href="#xarxa">Página Red</a>
+      <a href="#config">Página Config</a>
 
-      <div class="sidebar-nav-title">Serveis</div>
-      <a href="#serveis">Tots els serveis</a>
-      <a href="#prowlarr">Prowlarr (pas obligatori)</a>
+      <div class="sidebar-nav-title">Servicios</div>
+      <a href="#serveis">Todos los servicios</a>
+      <a href="#prowlarr">Prowlarr (paso obligatorio)</a>
 
-      <div class="sidebar-nav-title">Accés extern</div>
-      <a href="#acces">Local vs. extern</a>
+      <div class="sidebar-nav-title">Acceso externo</div>
+      <a href="#acces">Local vs. externo</a>
       <a href="#tailscale">Configurar Tailscale</a>
     </div>
   </aside>
@@ -326,15 +326,15 @@
   <!-- ── Main content ── -->
   <main>
     <!-- Intro -->
-    <div class="badge badge-orange" style="margin-bottom:16px;">Documentació</div>
-    <h1>Guia d'usuari de Gecko</h1>
+    <div class="badge badge-orange" style="margin-bottom:16px;">Documentación</div>
+    <h1>Guía de usuario de Gecko</h1>
     <p class="lead">
-      Aquesta guia explica com fer servir Gecko pas a pas: des de triar com instal·lar-lo fins a accedir als teus serveis des de qualsevol lloc del món.
+      Esta guía explica cómo usar Gecko paso a paso: desde elegir cómo instalarlo hasta acceder a tus servicios desde cualquier lugar del mundo.
     </p>
 
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:32px;">
-      <a href="https://github.com/Pardo24/Gecko/releases/latest" class="btn btn-primary">⬇ Descarregar Gecko</a>
-      <a href="index.html" class="btn btn-outline">← Pàgina principal</a>
+      <a href="https://github.com/Pardo24/Gecko/releases/latest" class="btn btn-primary">⬇ Descargar Gecko</a>
+      <a href="index.html" class="btn btn-outline">← Página principal</a>
       <span class="guia-lang" style="margin-left:auto;display:inline-flex;gap:6px;align-items:center;">
         <button data-gl="ca" onclick="guiaSetLang('ca')" style="background:none;border:1px solid #e2e8f0;border-radius:6px;padding:5px 10px;cursor:pointer;font-weight:600;color:#64748b;">CA</button>
         <button data-gl="es" onclick="guiaSetLang('es')" style="background:none;border:1px solid #e2e8f0;border-radius:6px;padding:5px 10px;cursor:pointer;font-weight:600;color:#64748b;">ES</button>
@@ -346,7 +346,7 @@
     <div class="callout callout-info" style="margin-bottom:48px;">
       <div class="callout-icon">📚</div>
       <div>
-        <strong>Altres docs útils:</strong>
+        <strong>Otros docs útiles:</strong>
         <a href="https://github.com/Pardo24/Gecko/blob/main/docs/getting-started.md" target="_blank">Getting Started</a> ·
         <a href="https://github.com/Pardo24/Gecko/blob/main/gecko-os/docs/HARDWARE.md" target="_blank">Hardware Guide</a> ·
         <a href="https://github.com/Pardo24/Gecko/blob/main/docs/troubleshooting.md" target="_blank">Troubleshooting</a> ·
@@ -356,31 +356,31 @@
     </div>
 
     <!-- ── TRIA EL TEU CAMÍ ─────────────────────────────────────────────── -->
-    <h2 id="triar-cami">🛣️ Tria com vols instal·lar Gecko</h2>
+    <h2 id="triar-cami">🛣️ Elige cómo quieres instalar Gecko</h2>
     <p>
-      Tres camins, el mateix codi obert. Tots fan el mateix un cop estan engegats.
+      Tres caminos, el mismo código abierto. Todos hacen lo mismo una vez están en marcha.
     </p>
 
     <div class="menu-grid" style="margin:24px 0;">
       <div class="menu-item">
         <div class="menu-icon">💿</div>
         <div>
-          <div class="menu-label">Gecko OS USB <span style="font-size:0.7rem;color:var(--accent);font-weight:700;">★ RECOMANAT</span></div>
-          <div class="menu-desc">Imatge bootable per a un mini PC dedicat. Flashegues un USB amb Etcher, l'endolles al PC + TV, i fas el wizard. El mini PC queda dedicat a Gecko.</div>
+          <div class="menu-label">Gecko OS USB <span style="font-size:0.7rem;color:var(--accent);font-weight:700;">★ RECOMENDADO</span></div>
+          <div class="menu-desc">Imagen booteable para un mini PC dedicado. Flasheas un USB con Etcher, lo enchufas al PC + TV, y haces el wizard. El mini PC queda dedicado a Gecko.</div>
         </div>
       </div>
       <div class="menu-item">
         <div class="menu-icon">🪟</div>
         <div>
-          <div class="menu-label">Instal·lador Windows</div>
-          <div class="menu-desc"><code>.exe</code> de ~25 MB. Instal·la Gecko com a servei de Windows. Necessita Docker Desktop. La UI s'obre al teu navegador per defecte.</div>
+          <div class="menu-label">Instalador Windows</div>
+          <div class="menu-desc"><code>.exe</code> de ~25 MB. Instala Gecko como servicio de Windows. Necesita Docker Desktop. La UI se abre en tu navegador por defecto.</div>
         </div>
       </div>
       <div class="menu-item">
         <div class="menu-icon">🍎</div>
         <div>
-          <div class="menu-label">Instal·lador macOS</div>
-          <div class="menu-desc"><code>.pkg</code> per Apple Silicon o Intel. Instal·la Gecko com a daemon (launchd). Necessita Docker Desktop. UI al navegador.</div>
+          <div class="menu-label">Instalador macOS</div>
+          <div class="menu-desc"><code>.pkg</code> para Apple Silicon o Intel. Instala Gecko como daemon (launchd). Necesita Docker Desktop. UI en el navegador.</div>
         </div>
       </div>
     </div>
@@ -388,433 +388,433 @@
     <div class="callout callout-info">
       <div class="callout-icon">💡</div>
       <div>
-        <strong>No saps quin triar?</strong> Si vols un dispositiu dedicat sempre encès, <strong>Gecko OS</strong>. Si ja tens un PC sempre encès, <strong>l'instal·lador del teu OS</strong>. El millor experiencia "Netflix a la TV" és Gecko OS amb mini PC.
+        <strong>¿No sabes cuál elegir?</strong> Si quieres un dispositivo dedicado siempre encendido, <strong>Gecko OS</strong>. Si ya tienes un PC siempre encendido, <strong>el instalador de tu OS</strong>. La mejor experiencia "Netflix en la TV" es Gecko OS con mini PC.
       </div>
     </div>
 
     <!-- ── WIZARD ─────────────────────────────────────────────────────── -->
-    <h2 id="wizard">🧙 L'assistent d'instal·lació</h2>
-    <p>El wizard s'adapta automàticament al camí que has triat. Veuràs entre 5 i 8 passos depenent del teu sistema.</p>
+    <h2 id="wizard">🧙 El asistente de instalación</h2>
+    <p>El wizard se adapta automáticamente al camino que has elegido. Verás entre 5 y 8 pasos dependiendo de tu sistema.</p>
 
     <div class="step-list">
       <div class="step-item">
         <div class="step-n">1</div>
         <div class="step-content">
-          <h4>Benvinguda + comprovacions del sistema</h4>
-          <p>Pantalla introductòria amb resum de què fa Gecko. A sota, una graella discreta mostra <strong>RAM, CPU, disc lliure</strong> del teu sistema, si alguna cosa és per sota del recomanat, veuràs avís groc. No bloqueja, només informa. Prem <strong>Començar</strong>.</p>
+          <h4>Bienvenida + comprobaciones del sistema</h4>
+          <p>Pantalla introductoria con un resumen de qué hace Gecko. Debajo, una rejilla discreta muestra <strong>RAM, CPU, disco libre</strong> de tu sistema; si algo está por debajo de lo recomendado, verás un aviso amarillo. No bloquea, solo informa. Pulsa <strong>Empezar</strong>.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">2</div>
         <div class="step-content">
-          <h4>WiFi <span style="color:var(--text-3);font-size:0.85em;">(només Gecko OS, sense cable)</span></h4>
-          <p>Si l'has endollat per ethernet, aquest pas se salta. Si has d'usar WiFi, Gecko escaneja les xarxes disponibles i et deixa triar i posar contrasenya. Botó "Tinc cable" per saltar si vols.</p>
+          <h4>WiFi <span style="color:var(--text-3);font-size:0.85em;">(solo Gecko OS, sin cable)</span></h4>
+          <p>Si lo has enchufado por ethernet, este paso se salta. Si tienes que usar WiFi, Gecko escanea las redes disponibles y te deja elegir y poner contraseña. Botón "Tengo cable" para saltar si quieres.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">3</div>
         <div class="step-content">
-          <h4>Comprovació de Docker <span style="color:var(--text-3);font-size:0.85em;">(només Windows/macOS)</span></h4>
-          <p>Gecko comprova si Docker Desktop és actiu. Si no el tens, veuràs un botó per descarregar-lo. A Gecko OS, Docker ja ve preinstal·lat i actiu, aquest pas no apareix.</p>
+          <h4>Comprobación de Docker <span style="color:var(--text-3);font-size:0.85em;">(solo Windows/macOS)</span></h4>
+          <p>Gecko comprueba si Docker Desktop está activo. Si no lo tienes, verás un botón para descargarlo. En Gecko OS, Docker ya viene preinstalado y activo, este paso no aparece.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">4</div>
         <div class="step-content">
-          <h4>Carpeta de dades / disc</h4>
-          <p>On es guardaran els fitxers que descarreguis. <strong>Recomana un disc extern USB-3.0 de mínim 1 TB.</strong> Necessites almenys 100 GB lliures. Gecko no esborra res que ja hi hagi.</p>
+          <h4>Carpeta de datos / disco</h4>
+          <p>Donde se guardarán los archivos que descargues. <strong>Recomienda un disco externo USB-3.0 de mínimo 1 TB.</strong> Necesitas al menos 100 GB libres. Gecko no borra nada de lo que ya haya.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">5</div>
         <div class="step-content">
-          <h4>Contrasenya admin</h4>
-          <p>Una sola contrasenya per a tot: Jellyfin admin, qBittorrent, dashboard. Mínim 6 caràcters. Apunta-la, no la podràs recuperar si la perds.</p>
+          <h4>Contraseña admin</h4>
+          <p>Una sola contraseña para todo: Jellyfin admin, qBittorrent, dashboard. Mínimo 6 caracteres. Apúntala, no la podrás recuperar si la pierdes.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">6</div>
         <div class="step-content">
-          <h4>Idioma dels subtítols</h4>
-          <p>Tria un dels 3 perfils pre-sembrats a Bazarr: <strong>"Català + English"</strong>, <strong>"Castellano + English"</strong> o <strong>"English only"</strong>. Bazarr descarregarà subtítols automàticament en aquests idiomes.</p>
+          <h4>Idioma de los subtítulos</h4>
+          <p>Elige uno de los 3 perfiles presembrados en Bazarr: <strong>"Català + English"</strong>, <strong>"Castellano + English"</strong> o <strong>"English only"</strong>. Bazarr descargará subtítulos automáticamente en estos idiomas.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">7</div>
         <div class="step-content">
-          <h4>VPN (pràcticament obligatòria)</h4>
-          <p>A DE/FR/UK/US sense VPN tens avisos del ISP en setmanes. A ES/IT és menys aplicat però el risc hi és. Recomanem <strong>ProtonVPN</strong> (té pla gratuït sense P2P, ~4€/mes amb P2P) o <strong>Mullvad</strong> (~5€/mes, accepta efectiu). Pots saltar i configurar-la després.</p>
+          <h4>VPN (prácticamente obligatoria)</h4>
+          <p>En DE/FR/UK/US sin VPN tienes avisos del ISP en semanas. En ES/IT está menos aplicado pero el riesgo existe. Recomendamos <strong>ProtonVPN</strong> (tiene plan gratuito sin P2P, ~4€/mes con P2P) o <strong>Mullvad</strong> (~5€/mes, acepta efectivo). Puedes saltarlo y configurarla después.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">✓</div>
         <div class="step-content">
-          <h4>Instal·lació + auto-configuració</h4>
-          <p>Gecko descarrega les imatges Docker (~3 GB la primera vegada) i les configura entre elles: Prowlarr↔arrs, qBittorrent als arrs, Jellyseerr↔Jellyfin+arrs, Bazarr↔Sonarr+Radarr. Pot trigar 5-10 min. <strong>Un cop acabi, l'únic pas manual que queda és afegir indexers a Prowlarr.</strong></p>
+          <h4>Instalación + autoconfiguración</h4>
+          <p>Gecko descarga las imágenes Docker (~3 GB la primera vez) y las configura entre ellas: Prowlarr↔arrs, qBittorrent en los arrs, Jellyseerr↔Jellyfin+arrs, Bazarr↔Sonarr+Radarr. Puede tardar 5-10 min. <strong>Una vez termine, el único paso manual que queda es añadir indexers a Prowlarr.</strong></p>
         </div>
       </div>
     </div>
 
     <div class="callout callout-success">
       <div class="callout-icon">✅</div>
-      <div><strong>Auto-config quasi total:</strong> Gecko connecta tots els serveis automàticament, sembra perfils de qualitat TRaSH-Guides, sembra perfils de subtítols. <strong>L'únic pas manual</strong> que queda és afegir indexers a Prowlarr (la línia legal que dibuixem). <a href="#prowlarr">Com fer-ho →</a></div>
+      <div><strong>Autoconfiguración casi total:</strong> Gecko conecta todos los servicios automáticamente, siembra perfiles de calidad TRaSH-Guides, siembra perfiles de subtítulos. <strong>El único paso manual</strong> que queda es añadir indexers a Prowlarr (la línea legal que dibujamos). <a href="#prowlarr">Cómo hacerlo →</a></div>
     </div>
 
     <div class="callout callout-info">
       <div class="callout-icon">💾</div>
-      <div><strong>Gecko OS només:</strong> Un cop acabada la instal·lació i tot funciona, pots anar a <strong>Settings → Move to internal disk</strong> per copiar Gecko al disc intern del mini PC. Després pots retirar el USB. ~5 min, reboot automàtic, idempotent.</div>
+      <div><strong>Solo Gecko OS:</strong> Una vez terminada la instalación y todo funciona, puedes ir a <strong>Settings → Move to internal disk</strong> para copiar Gecko al disco interno del mini PC. Después puedes retirar el USB. ~5 min, reinicio automático, idempotente.</div>
     </div>
 
     <!-- ── DASHBOARD, MENÚ ───────────────────────────────────────────── -->
     <h2 id="menu">🗂️ El menú lateral del dashboard</h2>
-    <p>Un cop instal·lat el stack, Gecko mostra sempre el <strong>dashboard</strong> amb una barra lateral de navegació a l'esquerra amb quatre seccions:</p>
+    <p>Una vez instalado el stack, Gecko muestra siempre el <strong>dashboard</strong> con una barra lateral de navegación a la izquierda con cuatro secciones:</p>
 
     <div class="menu-grid">
       <div class="menu-item">
         <div class="menu-icon">🏠</div>
         <div>
-          <div class="menu-label">Inici</div>
-          <div class="menu-desc">Estat del stack (en marxa / aturat), botons per arrencar i parar tots els serveis, i accés ràpid a cada servei amb un clic.</div>
+          <div class="menu-label">Inicio</div>
+          <div class="menu-desc">Estado del stack (en marcha / parado), botones para arrancar y parar todos los servicios, y acceso rápido a cada servicio con un clic.</div>
         </div>
       </div>
       <div class="menu-item">
         <div class="menu-icon">🔒</div>
         <div>
           <div class="menu-label">VPN</div>
-          <div class="menu-desc">Veure si la VPN és activa. Activar ProtonVPN o Mullvad introduint les claus WireGuard. Desactivar-la si és necessari. Els canvis s'apliquen reiniciant el stack automàticament.</div>
+          <div class="menu-desc">Ver si la VPN está activa. Activar ProtonVPN o Mullvad introduciendo las claves WireGuard. Desactivarla si es necesario. Los cambios se aplican reiniciando el stack automáticamente.</div>
         </div>
       </div>
       <div class="menu-item">
         <div class="menu-icon">🌐</div>
         <div>
-          <div class="menu-label">Xarxa</div>
-          <div class="menu-desc">La teva IP local a la xarxa Wi-Fi, les URLs de cada servei per xarxa local, i informació per accedir des de fora de casa amb Tailscale.</div>
+          <div class="menu-label">Red</div>
+          <div class="menu-desc">Tu IP local en la red Wi-Fi, las URLs de cada servicio por red local, e información para acceder desde fuera de casa con Tailscale.</div>
         </div>
       </div>
       <div class="menu-item">
         <div class="menu-icon">⬇️</div>
         <div>
-          <div class="menu-label">Descàrregues</div>
-          <div class="menu-desc">Veu en temps real les descàrregues en curs de Radarr i Sonarr: progrés, mida i temps restant. Per cada ítem pots fer <strong>blocklist + nova cerca</strong> si la descàrrega no t'interessa.</div>
+          <div class="menu-label">Descargas</div>
+          <div class="menu-desc">Ve en tiempo real las descargas en curso de Radarr y Sonarr: progreso, tamaño y tiempo restante. Para cada elemento puedes hacer <strong>blocklist + nueva búsqueda</strong> si la descarga no te interesa.</div>
         </div>
       </div>
       <div class="menu-item">
         <div class="menu-icon">⚙️</div>
         <div>
-          <div class="menu-label">Configuració</div>
-          <div class="menu-desc">Canviar l'idioma de l'aplicació (català, castellà, anglès). Veure la versió de Gecko. Reinstal·lar el stack des de zero (no esborra el contingut multimèdia).</div>
+          <div class="menu-label">Configuración</div>
+          <div class="menu-desc">Cambiar el idioma de la aplicación (catalán, castellano, inglés). Ver la versión de Gecko. Reinstalar el stack desde cero (no borra el contenido multimedia).</div>
         </div>
       </div>
     </div>
 
-    <p style="margin-top:8px;"><strong>Idioma:</strong> A la part inferior de la barra lateral hi ha els botons <code>CA</code> / <code>ES</code> / <code>EN</code> per canviar l'idioma en qualsevol moment.</p>
+    <p style="margin-top:8px;"><strong>Idioma:</strong> En la parte inferior de la barra lateral están los botones <code>CA</code> / <code>ES</code> / <code>EN</code> para cambiar el idioma en cualquier momento.</p>
 
     <!-- ── INICI ───────────────────────────────────────────────────────── -->
-    <h2 id="inici">🏠 Pàgina Inici, Arrencar els serveis</h2>
-    <p>Aquesta és la pantalla principal del dashboard. Aquí pots:</p>
+    <h2 id="inici">🏠 Página Inicio, Arrancar los servicios</h2>
+    <p>Esta es la pantalla principal del dashboard. Aquí puedes:</p>
     <ul>
-      <li><strong>Veure l'estat</strong>: un indicador de color mostra si el stack és En marxa (verd), Aturat (vermell) o Comprovant (groc).</li>
-      <li><strong>Arrencar el stack</strong>: premeu el botó <strong>Arrencar</strong>. Els serveis Docker s'inicien en segon pla. Pot trigar 20-60 segons la primera vegada que s'arrenca.</li>
-      <li><strong>Parar el stack</strong>: el botó <strong>Parar</strong> atura tots els contenidors Docker. Útil per estalviar recursos quan no es fa servir.</li>
-      <li><strong>Accedir a un servei</strong>: els sis botons de la graella obren directament el servei al navegador (URLs de <code>localhost</code>). Estan desactivats si el stack és aturat.</li>
+      <li><strong>Ver el estado</strong>: un indicador de color muestra si el stack está En marcha (verde), Parado (rojo) o Comprobando (amarillo).</li>
+      <li><strong>Arrancar el stack</strong>: pulsa el botón <strong>Arrancar</strong>. Los servicios Docker se inician en segundo plano. Puede tardar 20-60 segundos la primera vez que se arranca.</li>
+      <li><strong>Parar el stack</strong>: el botón <strong>Parar</strong> detiene todos los contenedores Docker. Útil para ahorrar recursos cuando no se usa.</li>
+      <li><strong>Acceder a un servicio</strong>: los seis botones de la rejilla abren directamente el servicio en el navegador (URLs de <code>localhost</code>). Están desactivados si el stack está parado.</li>
     </ul>
 
     <div class="callout callout-warning">
       <div class="callout-icon">⚠️</div>
-      <div><strong>Els serveis s'accedeixen via <code>localhost</code> des del propi ordinador.</strong> Per accedir des d'altres dispositius (mòbil, televisió, portàtil), cal fer servir la IP de la xarxa local o la IP de Tailscale. Consulta la secció <a href="#xarxa">Xarxa</a>.</div>
+      <div><strong>A los servicios se accede vía <code>localhost</code> desde el propio ordenador.</strong> Para acceder desde otros dispositivos (móvil, televisión, portátil), hay que usar la IP de la red local o la IP de Tailscale. Consulta la sección <a href="#xarxa">Red</a>.</div>
     </div>
 
     <!-- ── VPN PAGE ────────────────────────────────────────────────────── -->
-    <h2 id="vpn-page">🔒 Pàgina VPN</h2>
-    <p>Des d'aquí pots gestionar la VPN en qualsevol moment, sense haver de reinstal·lar.</p>
+    <h2 id="vpn-page">🔒 Página VPN</h2>
+    <p>Desde aquí puedes gestionar la VPN en cualquier momento, sin tener que reinstalar.</p>
 
-    <h3>Quins proveïdors funcionen?</h3>
+    <h3>¿Qué proveedores funcionan?</h3>
     <p>
-      Gecko utilitza <strong>Gluetun</strong> com a contenidor VPN. <strong>No tots els proveïdors VPN funcionen</strong> amb aquesta configuració, cal que ofereixin WireGuard amb clau privada i adreça IP assignada. Els dos que funcionen de forma senzilla:
+      Gecko utiliza <strong>Gluetun</strong> como contenedor VPN. <strong>No todos los proveedores VPN funcionan</strong> con esta configuración, es necesario que ofrezcan WireGuard con clave privada y dirección IP asignada. Los dos que funcionan de forma sencilla:
     </p>
     <ul>
-      <li><strong><a href="https://mullvad.net" target="_blank">Mullvad</a></strong>: el més senzill. Genera una clau directament al web sense descarregar fitxers. ~5€/mes sense subscripció.</li>
-      <li><strong><a href="https://go.getproton.me/aff_c?offer_id=26&aff_id=7925" target="_blank">ProtonVPN</a></strong>: genera un fitxer de configuració WireGuard del qual s'extreuen les dades. Té pla gratuït.</li>
+      <li><strong><a href="https://mullvad.net" target="_blank">Mullvad</a></strong>: el más sencillo. Genera una clave directamente en la web sin descargar archivos. ~5€/mes sin suscripción.</li>
+      <li><strong><a href="https://go.getproton.me/aff_c?offer_id=26&aff_id=7925" target="_blank">ProtonVPN</a></strong>: genera un archivo de configuración WireGuard del cual se extraen los datos. Tiene plan gratuito.</li>
     </ul>
 
     <div class="callout callout-warning">
       <div class="callout-icon">⚠️</div>
-      <div><strong>NordVPN, Surfshark i similars no funcionen directament</strong> amb aquest mètode. Gluetun els suporta però requereix variables d'entorn específiques per a cada proveïdor, fora de l'abast de l'assistent.</div>
+      <div><strong>NordVPN, Surfshark y similares no funcionan directamente</strong> con este método. Gluetun los soporta pero requiere variables de entorno específicas para cada proveedor, fuera del alcance del asistente.</div>
     </div>
 
-    <h3>Mullvad, com obtenir les dades</h3>
+    <h3>Mullvad, cómo obtener los datos</h3>
     <div class="step-list">
       <div class="step-item">
         <div class="step-n">1</div>
         <div class="step-content">
-          <h4>Inicia sessió a my.mullvad.net</h4>
-          <p>Ves a <a href="https://my.mullvad.net" target="_blank">my.mullvad.net</a> i accedeix al teu compte.</p>
+          <h4>Inicia sesión en my.mullvad.net</h4>
+          <p>Ve a <a href="https://my.mullvad.net" target="_blank">my.mullvad.net</a> y accede a tu cuenta.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">2</div>
         <div class="step-content">
           <h4>WireGuard configuration → Add new device</h4>
-          <p>A la secció <strong>WireGuard configuration</strong>, escriu un nom (ex: <code>gecko</code>) i fes clic a <strong>Generate key</strong>.</p>
+          <p>En la sección <strong>WireGuard configuration</strong>, escribe un nombre (ej: <code>gecko</code>) y haz clic en <strong>Generate key</strong>.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">3</div>
         <div class="step-content">
-          <h4>Copia la clau privada i l'adreça</h4>
-          <p>Mullvad mostrarà la <strong>clau privada</strong> (string llarg) i l'<strong>adreça IP assignada</strong> (<code>10.68.x.x/32</code>). Copia ambdues a Gecko i prem <strong>Activar VPN</strong>.</p>
+          <h4>Copia la clave privada y la dirección</h4>
+          <p>Mullvad mostrará la <strong>clave privada</strong> (string largo) y la <strong>dirección IP asignada</strong> (<code>10.68.x.x/32</code>). Copia ambas en Gecko y pulsa <strong>Activar VPN</strong>.</p>
         </div>
       </div>
     </div>
 
-    <h3>ProtonVPN, com obtenir les dades</h3>
+    <h3>ProtonVPN, cómo obtener los datos</h3>
     <div class="step-list">
       <div class="step-item">
         <div class="step-n">1</div>
         <div class="step-content">
-          <h4>Ves a account.proton.me → VPN → Downloads</h4>
-          <p>Inicia sessió a <a href="https://account.proton.me" target="_blank">account.proton.me</a> i navega a <strong>VPN → Downloads → WireGuard configuration</strong>.</p>
+          <h4>Ve a account.proton.me → VPN → Downloads</h4>
+          <p>Inicia sesión en <a href="https://account.proton.me" target="_blank">account.proton.me</a> y navega a <strong>VPN → Downloads → WireGuard configuration</strong>.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">2</div>
         <div class="step-content">
-          <h4>Genera i descarrega el fitxer .conf</h4>
-          <p>Tria un país/servidor i descarrega el fitxer de configuració <code>.conf</code>.</p>
+          <h4>Genera y descarga el archivo .conf</h4>
+          <p>Elige un país/servidor y descarga el archivo de configuración <code>.conf</code>.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">3</div>
         <div class="step-content">
-          <h4>Extreu PrivateKey i Address del fitxer</h4>
-          <p>Obre el <code>.conf</code> amb el Bloc de notes. A la secció <code>[Interface]</code> trobaràs les dues dades que necessites:</p>
+          <h4>Extrae PrivateKey y Address del archivo</h4>
+          <p>Abre el <code>.conf</code> con el Bloc de notas. En la sección <code>[Interface]</code> encontrarás los dos datos que necesitas:</p>
           <div class="ip-example" style="margin-top:10px;font-size:0.82rem;">
             <span class="ip-comment">[Interface]</span><br/>
-            PrivateKey = <span class="ip-highlight">ABC123...xyz</span> <span class="ip-comment">← clau privada</span><br/>
-            Address = <span class="ip-highlight">10.2.x.x/32</span> <span class="ip-comment">← adreça IP assignada</span>
+            PrivateKey = <span class="ip-highlight">ABC123...xyz</span> <span class="ip-comment">← clave privada</span><br/>
+            Address = <span class="ip-highlight">10.2.x.x/32</span> <span class="ip-comment">← dirección IP asignada</span>
           </div>
-          <p style="margin-top:8px;">Copia ambdós valors a Gecko i prem <strong>Activar VPN</strong>.</p>
+          <p style="margin-top:8px;">Copia ambos valores en Gecko y pulsa <strong>Activar VPN</strong>.</p>
         </div>
       </div>
     </div>
 
     <h3>Desactivar la VPN</h3>
-    <p>Prem el botó <strong>Desactivar VPN</strong>. Gecko elimina les claus i passa al compose sense VPN automàticament.</p>
+    <p>Pulsa el botón <strong>Desactivar VPN</strong>. Gecko elimina las claves y pasa al compose sin VPN automáticamente.</p>
 
     <!-- ── XARXA ───────────────────────────────────────────────────────── -->
-    <h2 id="xarxa">🌐 Pàgina Xarxa</h2>
-    <p>Aquí trobaràs totes les URLs per accedir als serveis des de qualsevol dispositiu.</p>
+    <h2 id="xarxa">🌐 Página Red</h2>
+    <p>Aquí encontrarás todas las URLs para acceder a los servicios desde cualquier dispositivo.</p>
 
-    <h3>IP de xarxa local</h3>
+    <h3>IP de red local</h3>
     <p>
-      La teva IP local (ex: <code>192.168.1.42</code>) és la que fan servir els dispositius connectats al <strong>mateix Wi-Fi o cable de casa</strong>.
-      Per accedir a Jellyfin des del mòbil (al mateix Wi-Fi), la URL seria <code>http://192.168.1.42:8096</code>.
+      Tu IP local (ej: <code>192.168.1.42</code>) es la que usan los dispositivos conectados al <strong>mismo Wi-Fi o cable de casa</strong>.
+      Para acceder a Jellyfin desde el móvil (en el mismo Wi-Fi), la URL sería <code>http://192.168.1.42:8096</code>.
     </p>
 
     <div class="callout callout-danger">
       <div class="callout-icon">🚫</div>
       <div>
-        <strong>La IP local NO funciona fora de casa.</strong> Si intentes accedir a <code>http://192.168.1.42:8096</code> des del mòbil amb dades mòbils, o des d'una altra xarxa, <strong>no funcionarà</strong>.
-        Per accedir des de qualsevol lloc cal configurar Tailscale. <a href="#tailscale">Com configurar Tailscale →</a>
+        <strong>La IP local NO funciona fuera de casa.</strong> Si intentas acceder a <code>http://192.168.1.42:8096</code> desde el móvil con datos móviles, o desde otra red, <strong>no funcionará</strong>.
+        Para acceder desde cualquier lugar hay que configurar Tailscale. <a href="#tailscale">Cómo configurar Tailscale →</a>
       </div>
     </div>
 
-    <h3>URLs de cada servei (xarxa local)</h3>
-    <p>Substitueix <code>IP-LOCAL</code> per la teva IP que apareix a la pàgina Xarxa de Gecko:</p>
+    <h3>URLs de cada servicio (red local)</h3>
+    <p>Sustituye <code>IP-LOCAL</code> por tu IP que aparece en la página Red de Gecko:</p>
 
     <div class="service-grid">
       <div class="service-row">
         <div class="service-icon">🎬</div>
         <div class="service-name">Jellyfin</div>
         <div class="service-port">:8096</div>
-        <div class="service-desc">Reproductor principal. Configura les biblioteques de pel·lícules i sèries aquí.</div>
-        <div class="service-tag green">Inici aquí</div>
+        <div class="service-desc">Reproductor principal. Configura las bibliotecas de películas y series aquí.</div>
+        <div class="service-tag green">Empieza aquí</div>
       </div>
       <div class="service-row">
         <div class="service-icon">🔍</div>
         <div class="service-name">Jellyseerr</div>
         <div class="service-port">:5055</div>
-        <div class="service-desc">Portal per demanar nous continguts. Els usuaris demanen i Radarr/Sonarr els descarreguen.</div>
+        <div class="service-desc">Portal para pedir nuevos contenidos. Los usuarios piden y Radarr/Sonarr los descargan.</div>
         <div class="service-tag">Opcional</div>
       </div>
       <div class="service-row">
         <div class="service-icon">🎥</div>
         <div class="service-name">Radarr</div>
         <div class="service-port">:7878</div>
-        <div class="service-desc">Gestiona i descarrega pel·lícules automàticament. Configura la qualitat desitjada.</div>
+        <div class="service-desc">Gestiona y descarga películas automáticamente. Configura la calidad deseada.</div>
         <div class="service-tag">Backend</div>
       </div>
       <div class="service-row">
         <div class="service-icon">📺</div>
         <div class="service-name">Sonarr</div>
         <div class="service-port">:8989</div>
-        <div class="service-desc">Gestiona i descarrega sèries automàticament per episodis.</div>
+        <div class="service-desc">Gestiona y descarga series automáticamente por episodios.</div>
         <div class="service-tag">Backend</div>
       </div>
       <div class="service-row">
         <div class="service-icon">🔌</div>
         <div class="service-name">Prowlarr</div>
         <div class="service-port">:9696</div>
-        <div class="service-desc">Gestiona els indexadors (fonts de cerca). Cal configurar-lo el primer cop.</div>
-        <div class="service-tag red">Configura primer</div>
+        <div class="service-desc">Gestiona los indexadores (fuentes de búsqueda). Hay que configurarlo la primera vez.</div>
+        <div class="service-tag red">Configura primero</div>
       </div>
       <div class="service-row">
         <div class="service-icon">⬇️</div>
         <div class="service-name">qBittorrent</div>
         <div class="service-port">:8090</div>
-        <div class="service-desc">Client de descàrregues. Pots veure l'estat de cada descàrrega aquí.</div>
+        <div class="service-desc">Cliente de descargas. Puedes ver el estado de cada descarga aquí.</div>
         <div class="service-tag">Backend</div>
       </div>
     </div>
 
     <!-- ── PROWLARR ────────────────────────────────────────────────────── -->
-    <h2 id="prowlarr">🔌 Configurar Prowlarr, l'únic pas manual</h2>
+    <h2 id="prowlarr">🔌 Configurar Prowlarr, el único paso manual</h2>
     <p>
-      Un cop acabat l'assistent de Gecko, <strong>l'únic que has de fer manualment és afegir indexadors a Prowlarr.</strong>
-      Un indexador és un cercador de contingut (com Google però per a pel·lícules i sèries). Sense cap indexador, Radarr i Sonarr no trobaran res.
+      Una vez terminado el asistente de Gecko, <strong>lo único que tienes que hacer manualmente es añadir indexadores a Prowlarr.</strong>
+      Un indexador es un buscador de contenido (como Google pero para películas y series). Sin ningún indexador, Radarr y Sonarr no encontrarán nada.
     </p>
 
     <div class="callout callout-info">
       <div class="callout-icon">ℹ️</div>
       <div>
-        <strong>Prowlarr ja està connectat a Radarr, Sonarr i Lidarr.</strong> Gecko ho ha configurat automàticament. Quan afegeixes un indexador a Prowlarr, tots els serveis el veuran al moment, no cal fer res més.
+        <strong>Prowlarr ya está conectado a Radarr, Sonarr y Lidarr.</strong> Gecko lo ha configurado automáticamente. Cuando añades un indexador a Prowlarr, todos los servicios lo verán al momento, no hay que hacer nada más.
       </div>
     </div>
 
-    <p>Per afegir indexadors a Prowlarr:</p>
+    <p>Para añadir indexadores a Prowlarr:</p>
     <div class="step-list">
       <div class="step-item">
         <div class="step-n">1</div>
         <div class="step-content">
-          <h4>Obre Prowlarr</h4>
-          <p>Ves a <code>localhost:9696</code> o fes clic al botó Prowlarr des del dashboard de Gecko.</p>
+          <h4>Abre Prowlarr</h4>
+          <p>Ve a <code>localhost:9696</code> o haz clic en el botón Prowlarr desde el dashboard de Gecko.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">2</div>
         <div class="step-content">
           <h4>Indexers → Add Indexer</h4>
-          <p>Busca i afegeix els indexadors que vulguis. Prowlarr té centenars de font públiques i privades disponibles.</p>
+          <p>Busca y añade los indexadores que quieras. Prowlarr tiene cientos de fuentes públicas y privadas disponibles.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">✓</div>
         <div class="step-content">
-          <h4>Ja estàs llest</h4>
-          <p>Els indexadors s'apliquen automàticament a Radarr, Sonarr i Lidarr. Ara pots demanar contingut des de Jellyseerr o afegir pel·lícules i sèries directament des de Radarr/Sonarr.</p>
+          <h4>Ya estás listo</h4>
+          <p>Los indexadores se aplican automáticamente a Radarr, Sonarr y Lidarr. Ahora puedes pedir contenido desde Jellyseerr o añadir películas y series directamente desde Radarr/Sonarr.</p>
         </div>
       </div>
     </div>
 
-    <h3>Com trobar bons indexadors</h3>
+    <h3>Cómo encontrar buenos indexadores</h3>
     <ul>
-      <li>Busca <strong>"best public Prowlarr indexers [any actual]"</strong> a Google, hi ha llistes actualitzades regularment.</li>
-      <li>Pregunta a una IA (ChatGPT, Gemini…): <em>"Quins son els millors indexadors públics per Prowlarr per a pel·lícules i sèries en català/espanyol?"</em></li>
-      <li>Consulta la <a href="https://wiki.servarr.com/prowlarr/indexers" target="_blank">documentació oficial de Prowlarr</a> per veure el catàleg complet.</li>
+      <li>Busca <strong>"best public Prowlarr indexers [año actual]"</strong> en Google, hay listas actualizadas regularmente.</li>
+      <li>Pregunta a una IA (ChatGPT, Gemini…): <em>"¿Cuáles son los mejores indexadores públicos para Prowlarr para películas y series en catalán/español?"</em></li>
+      <li>Consulta la <a href="https://wiki.servarr.com/prowlarr/indexers" target="_blank">documentación oficial de Prowlarr</a> para ver el catálogo completo.</li>
     </ul>
 
     <div class="callout callout-warning">
       <div class="callout-icon">⚠️</div>
       <div>
-        Gecko no inclou ni recomana cap indexador concret. L'usuari és l'únic responsable del contingut al qual accedeix i de complir la legislació vigent al seu país.
+        Gecko no incluye ni recomienda ningún indexador concreto. El usuario es el único responsable del contenido al que accede y de cumplir la legislación vigente en su país.
       </div>
     </div>
 
     <!-- ── ACCÉS ───────────────────────────────────────────────────────── -->
-    <h2 id="acces">📶 Accés local vs. accés extern</h2>
-    <p>Hi ha dues maneres d'accedir als teus serveis, depenent d'on siguis:</p>
+    <h2 id="acces">📶 Acceso local vs. acceso externo</h2>
+    <p>Hay dos maneras de acceder a tus servicios, dependiendo de dónde estés:</p>
 
     <table class="access-table">
       <tr>
-        <th>Situació</th>
-        <th>URL a fer servir</th>
-        <th>Funciona?</th>
-        <th>Necessita Tailscale?</th>
+        <th>Situación</th>
+        <th>URL a usar</th>
+        <th>¿Funciona?</th>
+        <th>¿Necesita Tailscale?</th>
       </tr>
       <tr>
-        <td>A casa, al mateix Wi-Fi</td>
+        <td>En casa, en el mismo Wi-Fi</td>
         <td><code>http://192.168.1.X:PORT</code></td>
         <td class="yes">✓ Sí</td>
         <td class="no">No</td>
       </tr>
       <tr>
-        <td>A casa, des del propi PC</td>
+        <td>En casa, desde el propio PC</td>
         <td><code>http://localhost:PORT</code></td>
         <td class="yes">✓ Sí</td>
         <td class="no">No</td>
       </tr>
       <tr>
-        <td>Fora de casa, mòbil amb dades</td>
+        <td>Fuera de casa, móvil con datos</td>
         <td><code>http://192.168.1.X:PORT</code></td>
         <td class="no">✗ No</td>
-        <td class="yes">Sí, obligatori</td>
+        <td class="yes">Sí, obligatorio</td>
       </tr>
       <tr>
-        <td>Fora de casa, altra xarxa Wi-Fi</td>
+        <td>Fuera de casa, otra red Wi-Fi</td>
         <td><code>http://192.168.1.X:PORT</code></td>
         <td class="no">✗ No</td>
-        <td class="yes">Sí, obligatori</td>
+        <td class="yes">Sí, obligatorio</td>
       </tr>
       <tr>
-        <td>Amb Tailscale, des de qualsevol lloc</td>
+        <td>Con Tailscale, desde cualquier lugar</td>
         <td><code>http://100.X.X.X:PORT</code></td>
         <td class="yes">✓ Sí</td>
-        <td class="yes">Sí (ja configurat)</td>
+        <td class="yes">Sí (ya configurado)</td>
       </tr>
     </table>
 
     <!-- ── TAILSCALE ──────────────────────────────────────────────────── -->
-    <h2 id="tailscale">🔗 Configurar Tailscale (accés extern)</h2>
+    <h2 id="tailscale">🔗 Configurar Tailscale (acceso externo)</h2>
     <p>
-      <a href="https://tailscale.com" target="_blank">Tailscale</a> crea una xarxa privada virtual entre tots els teus dispositius.
-      Un cop configurat, pots accedir als serveis de Gecko des de qualsevol lloc del món, com si estiguessis a casa.
-      <strong>No cal obrir ports al router ni tenir IP pública.</strong>
+      <a href="https://tailscale.com" target="_blank">Tailscale</a> crea una red privada virtual entre todos tus dispositivos.
+      Una vez configurado, puedes acceder a los servicios de Gecko desde cualquier lugar del mundo, como si estuvieras en casa.
+      <strong>No hace falta abrir puertos en el router ni tener IP pública.</strong>
     </p>
 
     <div class="callout callout-success">
       <div class="callout-icon">✅</div>
-      <div><strong>Tailscale és gratuït</strong> per a ús personal (fins a 3 usuaris i 100 dispositius). No hi ha límit de velocitat ni de dades.</div>
+      <div><strong>Tailscale es gratuito</strong> para uso personal (hasta 3 usuarios y 100 dispositivos). No hay límite de velocidad ni de datos.</div>
     </div>
 
     <div class="step-list">
       <div class="step-item">
         <div class="step-n">1</div>
         <div class="step-content">
-          <h4>Instal·la Tailscale a l'ordinador amb Gecko</h4>
-          <p>Descarrega <a href="https://tailscale.com/download/windows" target="_blank">Tailscale per Windows</a>, instal·la'l i inicia sessió amb Google, Microsoft o correu electrònic. Tailscale s'executa en segon pla.</p>
+          <h4>Instala Tailscale en el ordenador con Gecko</h4>
+          <p>Descarga <a href="https://tailscale.com/download/windows" target="_blank">Tailscale para Windows</a>, instálalo e inicia sesión con Google, Microsoft o correo electrónico. Tailscale se ejecuta en segundo plano.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">2</div>
         <div class="step-content">
-          <h4>Anota la IP de Tailscale del teu ordinador</h4>
-          <p>A la barra de tasques, clica l'icona de Tailscale i veuràs la teva IP de Tailscale, és del format <code>100.x.x.x</code>. Anota-la.</p>
+          <h4>Anota la IP de Tailscale de tu ordenador</h4>
+          <p>En la barra de tareas, haz clic en el icono de Tailscale y verás tu IP de Tailscale, es del formato <code>100.x.x.x</code>. Anótala.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">3</div>
         <div class="step-content">
-          <h4>Instal·la Tailscale als altres dispositius</h4>
-          <p>Descarrega Tailscale al mòbil (<a href="https://tailscale.com/download/ios" target="_blank">iOS</a> / <a href="https://tailscale.com/download/android" target="_blank">Android</a>), portàtil o tablet. Inicia sessió amb el <strong>mateix compte</strong>. Activa la connexió.</p>
+          <h4>Instala Tailscale en los demás dispositivos</h4>
+          <p>Descarga Tailscale en el móvil (<a href="https://tailscale.com/download/ios" target="_blank">iOS</a> / <a href="https://tailscale.com/download/android" target="_blank">Android</a>), portátil o tablet. Inicia sesión con la <strong>misma cuenta</strong>. Activa la conexión.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-n">4</div>
         <div class="step-content">
-          <h4>Accedeix als serveis amb la IP de Tailscale</h4>
-          <p>Des de qualsevol dispositiu amb Tailscale actiu, fes servir la IP <code>100.x.x.x</code> en lloc de la IP local.</p>
+          <h4>Accede a los servicios con la IP de Tailscale</h4>
+          <p>Desde cualquier dispositivo con Tailscale activo, usa la IP <code>100.x.x.x</code> en lugar de la IP local.</p>
         </div>
       </div>
     </div>
 
-    <h3>Com queden les URLs amb Tailscale</h3>
-    <p>Si la teva IP de Tailscale és <code>100.64.1.25</code>, les URLs serien:</p>
+    <h3>Cómo quedan las URLs con Tailscale</h3>
+    <p>Si tu IP de Tailscale es <code>100.64.1.25</code>, las URLs serían:</p>
 
     <div class="ip-example">
       <span class="ip-comment"># Jellyfin (reproductor)</span><br/>
       <span class="ip-url">http://<span class="ip-highlight">100.64.1.25</span>:8096</span><br/>
       <br/>
-      <span class="ip-comment"># Jellyseerr (peticions)</span><br/>
+      <span class="ip-comment"># Jellyseerr (peticiones)</span><br/>
       <span class="ip-url">http://<span class="ip-highlight">100.64.1.25</span>:5055</span><br/>
       <br/>
       <span class="ip-comment"># Radarr · Sonarr · Prowlarr · qBittorrent</span><br/>
@@ -827,21 +827,21 @@
     <div class="callout callout-info">
       <div class="callout-icon">💡</div>
       <div>
-        <strong>Consell:</strong> Guarda les URLs de Tailscale als marcadors del navegador del teu mòbil per accedir-hi ràpidament. Les URLs de Tailscale sempre funcionen, tant si ets a casa com fora.
+        <strong>Consejo:</strong> Guarda las URLs de Tailscale en los marcadores del navegador de tu móvil para acceder a ellas rápidamente. Las URLs de Tailscale siempre funcionan, tanto si estás en casa como fuera.
       </div>
     </div>
 
-    <h3>Tailscale i la VPN de Gecko</h3>
+    <h3>Tailscale y la VPN de Gecko</h3>
     <p>
-      Tailscale i la VPN de les descàrregues de Gecko (ProtonVPN/Mullvad via Gluetun) <strong>no interfereixen entre elles</strong>.
-      Tailscale és per accedir remotament als serveis.
-      La VPN de Gecko és perquè les <em>descàrregues de qBittorrent</em> surtin xifrades.
-      Pots tenir les dues actives simultàniament sense cap problema.
+      Tailscale y la VPN de las descargas de Gecko (ProtonVPN/Mullvad vía Gluetun) <strong>no interfieren entre ellas</strong>.
+      Tailscale es para acceder remotamente a los servicios.
+      La VPN de Gecko es para que las <em>descargas de qBittorrent</em> salgan cifradas.
+      Puedes tener las dos activas simultáneamente sin ningún problema.
     </p>
 
     <!-- ── QUÈ FER QUAN ALGUNA COSA NO VA ─────────────────────────────── -->
-    <h2 id="problemes">🆘 Quan alguna cosa no va</h2>
-    <p>Tres camins per resoldre problemes, ordenats per rapidesa:</p>
+    <h2 id="problemes">🆘 Cuando algo no va</h2>
+    <p>Tres caminos para resolver problemas, ordenados por rapidez:</p>
 
     <div class="menu-grid">
       <div class="menu-item">
@@ -849,7 +849,7 @@
         <div>
           <div class="menu-label">AI Helper Prompt ★</div>
           <div class="menu-desc">
-            Copia <a href="https://github.com/Pardo24/Gecko/blob/main/docs/ai-helper-prompt.md" target="_blank">aquest prompt</a> a ChatGPT o Claude, descriu el problema en català/castellà/anglès, i rep ajuda específica per a Gecko (no consells generics). <strong>Cost zero per a tu</strong>: fas servir el teu propi compte d'IA.
+            Copia <a href="https://github.com/Pardo24/Gecko/blob/main/docs/ai-helper-prompt.md" target="_blank">este prompt</a> en ChatGPT o Claude, describe el problema en catalán/castellano/inglés, y recibe ayuda específica para Gecko (no consejos genéricos). <strong>Coste cero para ti</strong>: usas tu propia cuenta de IA.
           </div>
         </div>
       </div>
@@ -858,7 +858,7 @@
         <div>
           <div class="menu-label">Troubleshooting docs</div>
           <div class="menu-desc">
-            Taula símptoma → causa → fix amb commandes exactes. <a href="https://github.com/Pardo24/Gecko/blob/main/docs/troubleshooting.md" target="_blank">Veure docs →</a>
+            Tabla síntoma → causa → fix con comandos exactos. <a href="https://github.com/Pardo24/Gecko/blob/main/docs/troubleshooting.md" target="_blank">Ver docs →</a>
           </div>
         </div>
       </div>
@@ -867,7 +867,7 @@
         <div>
           <div class="menu-label">GitHub Issues</div>
           <div class="menu-desc">
-            Si res anterior funciona, <a href="https://github.com/Pardo24/Gecko/issues/new" target="_blank">obre un issue</a>. Adjunta sortida de <code>docker ps -a</code> + <code>docker logs --tail 50 media_gecko_init</code>.
+            Si nada de lo anterior funciona, <a href="https://github.com/Pardo24/Gecko/issues/new" target="_blank">abre un issue</a>. Adjunta la salida de <code>docker ps -a</code> + <code>docker logs --tail 50 media_gecko_init</code>.
           </div>
         </div>
       </div>
@@ -876,16 +876,16 @@
     <div class="callout callout-info" style="margin-top:24px;">
       <div class="callout-icon">⚙️</div>
       <div>
-        <strong>Vols treure més suc al mini PC?</strong> Gecko és només l'inici, pots afegir Home Assistant, Pi-hole, Nextcloud, Vaultwarden i molt més al costat sense interferir. <a href="https://github.com/Pardo24/Gecko/blob/main/docs/extending.md" target="_blank">Mira la guia d'extensió →</a>
+        <strong>¿Quieres sacarle más jugo al mini PC?</strong> Gecko es solo el inicio, puedes añadir Home Assistant, Pi-hole, Nextcloud, Vaultwarden y mucho más al lado sin interferir. <a href="https://github.com/Pardo24/Gecko/blob/main/docs/extending.md" target="_blank">Mira la guía de extensión →</a>
       </div>
     </div>
 
     <!-- CTA final -->
     <div style="margin-top:64px;padding:40px;background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:20px;text-align:center;">
       <div style="font-size:2rem;margin-bottom:12px;">🔥</div>
-      <h3 style="color:#fff;font-size:1.3rem;font-weight:800;margin-bottom:8px;">Ja tens tot el que necessites</h3>
-      <p style="color:#94a3b8;font-size:0.9rem;margin-bottom:24px;">Descarrega Gecko i tingues el teu Netflix casolà en menys de 5 minuts.</p>
-      <a href="https://github.com/Pardo24/Gecko/releases/latest" class="btn btn-primary">⬇ Descarregar Gecko</a>
+      <h3 style="color:#fff;font-size:1.3rem;font-weight:800;margin-bottom:8px;">Ya tienes todo lo que necesitas</h3>
+      <p style="color:#94a3b8;font-size:0.9rem;margin-bottom:24px;">Descarga Gecko y ten tu Netflix casero en menos de 5 minutos.</p>
+      <a href="https://github.com/Pardo24/Gecko/releases/latest" class="btn btn-primary">⬇ Descargar Gecko</a>
     </div>
 
   </main>
