@@ -643,6 +643,50 @@
 
 <div class="divider"></div>
 
+<!-- WHAT YOU NEED -->
+<section id="requirements">
+  <div class="container">
+    <div style="text-align:center;max-width:620px;margin:0 auto 48px;">
+      <p class="section-eyebrow" data-i18n="req_eyebrow">Què necessites</p>
+      <h2 class="section-title" data-i18n="req_title">Un ordinador i 100 GB lliures</h2>
+      <p class="section-desc" data-i18n="req_desc">Gecko corre en qualsevol ordinador x86_64 (Windows, Mac o un mini PC). Hi ha dues maneres de tenir-lo:</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:860px;margin:0 auto;">
+      <div class="card">
+        <div class="feature-icon fi-blue"><i data-lucide="laptop"></i></div>
+        <div class="feature-title" data-i18n="req_pc_title">Al teu ordinador, per provar-ho</div>
+        <div class="feature-desc" data-i18n="req_pc_desc">Instal·la l'app a Windows o Mac i corre en segon pla. Perfecte per fer una ullada sense comprar res. Només cal que l'ordinador estigui encès quan vulguis veure o descarregar.</div>
+      </div>
+      <div class="card" style="border:1.5px solid var(--accent);background:rgba(13,148,136,0.03);">
+        <div class="feature-icon fi-green"><i data-lucide="server"></i></div>
+        <div class="feature-title">
+          <span data-i18n="req_dedi_title">Una màquina dedicada</span>
+          <span style="margin-left:8px;font-size:0.7rem;font-weight:800;padding:2px 9px;border-radius:999px;background:rgba(13,148,136,0.12);color:var(--accent);vertical-align:middle;" data-i18n="req_dedi_tag">Recomanat</span>
+        </div>
+        <div class="feature-desc" data-i18n="req_dedi_desc">Un mini PC barat (~100-150€) que deixes encès sempre. Sempre disponible, consum mínim (~10-15W, cèntims al mes) i no interfereix amb el teu PC de cada dia. Amb Gecko OS la màquina queda 100% dedicada.</div>
+      </div>
+    </div>
+
+    <div style="max-width:860px;margin:22px auto 0;display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;gap:11px;align-items:flex-start;padding:12px 16px;border-radius:12px;background:#ffffff;border:1px solid rgba(15,23,42,0.08);">
+        <i data-lucide="battery-charging" style="color:var(--accent);flex-shrink:0;margin-top:2px;width:18px;height:18px;"></i>
+        <p style="margin:0;font-size:0.9rem;color:var(--text-2);line-height:1.65;"><strong style="color:var(--text);" data-i18n="req_laptop_t">Un portàtil serveix?</strong> <span data-i18n="req_laptop_d">Sí. Un portàtil vell reaprofitat és un servidor casolà excel·lent: silenciós, de baix consum, i la bateria fa de SAI si va la llum. Un mini PC està una mica més pensat per a ús 24/7.</span></p>
+      </div>
+      <div style="display:flex;gap:11px;align-items:flex-start;padding:12px 16px;border-radius:12px;background:#ffffff;border:1px solid rgba(15,23,42,0.08);">
+        <i data-lucide="tv" style="color:var(--accent);flex-shrink:0;margin-top:2px;width:18px;height:18px;"></i>
+        <p style="margin:0;font-size:0.9rem;color:var(--text-2);line-height:1.65;"><strong style="color:var(--text);" data-i18n="req_devices_t">On ho veus?</strong> <span data-i18n="req_devices_d">A qualsevol dispositiu amb Jellyfin: smart TV, Chromecast, Apple TV, Fire TV, Nvidia Shield, mòbil, tablet o navegador.</span></p>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:28px;">
+      <a href="https://github.com/Pardo24/Gecko/blob/main/gecko-os/docs/HARDWARE.md" target="_blank" rel="noopener" class="btn btn-outline" data-i18n="req_hw_btn">Guia de hardware: quin mini PC comprar</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- Docs -->
 <section id="docs">
   <div class="container">
@@ -1063,6 +1107,13 @@ const i18n = {
     feat7_title:"S'adapta a la teva tele i idioma", feat7_desc:"Durant la instal·lació, Gecko et pregunta quina pantalla fas servir i si prefereixes versió original amb subtítols o doblatge, i ajusta la qualitat de les descàrregues perquè es vegin sense talls.",
     feat8_title:"Suport amb IA inclòs", feat8_desc:"Si alguna cosa falla, copia el prompt d'ajuda de Gecko a ChatGPT o Claude i rep ajuda concreta al moment, en el teu idioma. Sense cost ni esperes.",
     nav_docs:"Docs",
+    req_eyebrow:"Què necessites", req_title:"Un ordinador i 100 GB lliures",
+    req_desc:"Gecko corre en qualsevol ordinador x86_64 (Windows, Mac o un mini PC). Hi ha dues maneres de tenir-lo:",
+    req_pc_title:"Al teu ordinador, per provar-ho", req_pc_desc:"Instal·la l'app a Windows o Mac i corre en segon pla. Perfecte per fer una ullada sense comprar res. Només cal que l'ordinador estigui encès quan vulguis veure o descarregar.",
+    req_dedi_title:"Una màquina dedicada", req_dedi_tag:"Recomanat", req_dedi_desc:"Un mini PC barat (~100-150€) que deixes encès sempre. Sempre disponible, consum mínim (~10-15W, cèntims al mes) i no interfereix amb el teu PC de cada dia. Amb Gecko OS la màquina queda 100% dedicada.",
+    req_laptop_t:"Un portàtil serveix?", req_laptop_d:"Sí. Un portàtil vell reaprofitat és un servidor casolà excel·lent: silenciós, de baix consum, i la bateria fa de SAI si va la llum. Un mini PC està una mica més pensat per a ús 24/7.",
+    req_devices_t:"On ho veus?", req_devices_d:"A qualsevol dispositiu amb Jellyfin: smart TV, Chromecast, Apple TV, Fire TV, Nvidia Shield, mòbil, tablet o navegador.",
+    req_hw_btn:"Guia de hardware: quin mini PC comprar",
     docs_eyebrow:"Documentació", docs_title:"Tot el que necessites saber",
     docs_desc:"Pulides, multilingües i offline-accessibles des del dashboard. La que feia falta abans de comprar i la que farà falta el dia que algun servei doni problemes.",
     docs_start_t:"Getting Started", docs_start_d:"Des de comprar a estar mirant pel·lis. 5-minute path.",
@@ -1147,6 +1198,13 @@ const i18n = {
     feat7_title:"Se adapta a tu tele e idioma", feat7_desc:"Durante la instalación, Gecko te pregunta qué pantalla usas y si prefieres versión original con subtítulos o doblaje, y ajusta la calidad de las descargas para que se vean sin cortes.",
     feat8_title:"Soporte con IA incluido", feat8_desc:"Si algo falla, copia el prompt de ayuda de Gecko en ChatGPT o Claude y recibe ayuda concreta al instante, en tu idioma. Sin coste ni esperas.",
     nav_docs:"Docs",
+    req_eyebrow:"Qué necesitas", req_title:"Un ordenador y 100 GB libres",
+    req_desc:"Gecko corre en cualquier ordenador x86_64 (Windows, Mac o un mini PC). Hay dos maneras de tenerlo:",
+    req_pc_title:"En tu ordenador, para probarlo", req_pc_desc:"Instala la app en Windows o Mac y corre en segundo plano. Perfecto para echar un vistazo sin comprar nada. Solo hace falta que el ordenador esté encendido cuando quieras ver o descargar.",
+    req_dedi_title:"Una máquina dedicada", req_dedi_tag:"Recomendado", req_dedi_desc:"Un mini PC barato (~100-150€) que dejas encendido siempre. Siempre disponible, consumo mínimo (~10-15W, céntimos al mes) y no interfiere con tu PC de cada día. Con Gecko OS la máquina queda 100% dedicada.",
+    req_laptop_t:"¿Sirve un portátil?", req_laptop_d:"Sí. Un portátil viejo reaprovechado es un servidor casero excelente: silencioso, de bajo consumo, y la batería hace de SAI si se va la luz. Un mini PC está algo más pensado para uso 24/7.",
+    req_devices_t:"¿Dónde lo ves?", req_devices_d:"En cualquier dispositivo con Jellyfin: smart TV, Chromecast, Apple TV, Fire TV, Nvidia Shield, móvil, tablet o navegador.",
+    req_hw_btn:"Guía de hardware: qué mini PC comprar",
     docs_eyebrow:"Documentación", docs_title:"Todo lo que necesitas saber",
     docs_desc:"Pulidas, multilingües y accesibles offline desde el dashboard. La que hacía falta antes de comprar y la que hará falta el día que algún servicio dé problemas.",
     docs_start_t:"Getting Started", docs_start_d:"Desde comprar hasta ver pelis. Recorrido de 5 minutos.",
@@ -1231,6 +1289,13 @@ const i18n = {
     feat7_title:"Adapts to your TV and language", feat7_desc:"During setup, Gecko asks which screen you use and whether you prefer original-with-subtitles or dubbed, then tunes download quality so everything plays smoothly.",
     feat8_title:"AI support included", feat8_desc:"If something breaks, paste Gecko's help prompt into ChatGPT or Claude and get specific help instantly, in your language. No cost, no waiting.",
     nav_docs:"Docs",
+    req_eyebrow:"What you need", req_title:"A computer and 100 GB free",
+    req_desc:"Gecko runs on any x86_64 computer (Windows, Mac or a mini PC). There are two ways to have it:",
+    req_pc_title:"On your computer, to try it", req_pc_desc:"Install the app on Windows or Mac and it runs in the background. Perfect for taking a look without buying anything. The computer just needs to be on when you want to watch or download.",
+    req_dedi_title:"A dedicated machine", req_dedi_tag:"Recommended", req_dedi_desc:"A cheap mini PC (~€100-150) you leave on all the time. Always available, tiny power draw (~10-15W, cents a month) and it doesn't interfere with your everyday PC. With Gecko OS the machine becomes 100% dedicated.",
+    req_laptop_t:"Does a laptop work?", req_laptop_d:"Yes. An old laptop repurposed as a server is excellent: quiet, low-power, and the battery acts as a UPS if the power blips. A mini PC is a bit better suited for 24/7 use.",
+    req_devices_t:"Where do you watch?", req_devices_d:"On any device with Jellyfin: smart TV, Chromecast, Apple TV, Fire TV, Nvidia Shield, phone, tablet or browser.",
+    req_hw_btn:"Hardware guide: which mini PC to buy",
     docs_eyebrow:"Documentation", docs_title:"Everything you need to know",
     docs_desc:"Polished, multilingual, offline-accessible from the dashboard. The docs you'll want before buying, and when something inevitably breaks.",
     docs_start_t:"Getting Started", docs_start_d:"From buying to streaming. The 5-minute path.",
