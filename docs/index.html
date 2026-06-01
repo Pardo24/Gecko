@@ -298,9 +298,8 @@
       <a href="#features" data-i18n="nav_features">Característiques</a>
       <a href="#how" data-i18n="nav_how">Com funciona</a>
       <a href="#vpn">VPN</a>
+      <a href="#docs" data-i18n="nav_docs">Docs</a>
       <a href="#faq">FAQ</a>
-      <a href="getting-started.md">Docs</a>
-      <a href="troubleshooting.md">Help</a>
       <a href="guia.html" data-i18n="nav_guide">Guia</a>
       <a href="https://github.com/Pardo24/Gecko" target="_blank">GitHub</a>
       <div class="nav-sep"></div>
@@ -330,30 +329,26 @@
 <section class="hero">
   <div class="container hero-content">
     <div class="badge badge-teal" style="margin-bottom:24px;" data-i18n="hero_badge">
-      ✦ Gratuït &nbsp;·&nbsp; Codi obert &nbsp;·&nbsp; Windows
+      ✦ Gratuït &nbsp;·&nbsp; MIT &nbsp;·&nbsp; Linux / Windows / macOS
     </div>
 
     <h1 data-i18n="hero_title">
-      El teu<br/>
-      <span class="gradient-text">Netflix casolà</span><br/>
-      sense subscripcions
+      <span class="gradient-text">Gecko OS</span><br/>
+      el teu servidor multimèdia,<br/>
+      llest en 5 minuts
     </h1>
 
     <p class="hero-sub" data-i18n="hero_sub">
-      Un instal·lador que configura Jellyfin, Radarr, Sonarr, qBittorrent i més
-      en el teu ordinador en menys de 5 minuts. Sense comandos, sense complicacions.
+      Un sistema operatiu bootable per a qualsevol mini PC. Connecta'l a la TV, segueix el wizard, i ja tens el teu propi Netflix amb Jellyfin, Sonarr, Radarr, Bazarr i companyia — pre-configurats.
     </p>
 
-    <div class="free-badge"><i data-lucide="check"></i> <span data-i18n="hero_free">100% gratuït · per sempre</span></div>
+    <div class="free-badge"><i data-lucide="check"></i> <span data-i18n="hero_free">Descarrega gratis · MIT licensed · per sempre</span></div>
     <div class="hero-buttons">
       <a href="#download" class="btn btn-primary" style="font-size:1rem;padding:15px 36px;" data-i18n="hero_btn_dl">
-        Descarregar Gecko
-      </a>
-      <a href="https://github.com/Pardo24/Gecko" target="_blank" class="btn btn-outline" data-i18n="hero_btn_gh">
-        Veure a GitHub
+        Descarregar gratis
       </a>
     </div>
-    <p class="hero-note" data-i18n="hero_note">Windows 10 / 11 &nbsp;·&nbsp; x64 &nbsp;·&nbsp; Requereix Docker Desktop (gratuït)</p>
+    <p class="hero-note" data-i18n="hero_note">Gecko OS USB · Windows .exe · macOS .pkg — totes 3 vies, mateix codi obert</p>
 
     <div class="mockup-wrapper fade-up">
       <div class="mockup">
@@ -371,12 +366,16 @@
               <span class="m-nav-label" data-i18n="mock_nav_home">INICI</span>
             </div>
             <div class="m-nav">
-              <span class="m-nav-icon"><i data-lucide="shield-check"></i></span>
-              <span class="m-nav-label" data-i18n="mock_nav_vpn">VPN</span>
-            </div>
-            <div class="m-nav">
               <span class="m-nav-icon"><i data-lucide="globe-2"></i></span>
               <span class="m-nav-label" data-i18n="mock_nav_net">XARXA</span>
+            </div>
+            <div class="m-nav">
+              <span class="m-nav-icon"><i data-lucide="download"></i></span>
+              <span class="m-nav-label" data-i18n="mock_nav_dl">DESCÀ</span>
+            </div>
+            <div class="m-nav">
+              <span class="m-nav-icon"><i data-lucide="list-checks"></i></span>
+              <span class="m-nav-label" data-i18n="mock_nav_guide">GUIA</span>
             </div>
             <div class="m-nav">
               <span class="m-nav-icon"><i data-lucide="settings-2"></i></span>
@@ -439,7 +438,7 @@
             <div class="m-card m-storage-card" style="align-items:stretch;padding:8px 10px;gap:6px;">
               <div class="m-path" style="color:#94a3b8;">
                 <i data-lucide="folder-open" style="width:12px;height:12px;margin-right:4px;"></i>
-                D:\Gecko\media
+                /media/gecko
               </div>
               <div class="m-storage-track">
                 <div class="m-storage-fill"></div>
@@ -586,6 +585,11 @@
         <div class="feature-title" data-i18n="feat6_title">3 idiomes inclosos</div>
         <div class="feature-desc" data-i18n="feat6_desc">Gecko és disponible en català, castellà i anglès. Canvia d'idioma en qualsevol moment des del panell lateral, sense reiniciar.</div>
       </div>
+      <div class="card fade-up">
+        <div class="feature-icon fi-blue"><i data-lucide="sliders-horizontal"></i></div>
+        <div class="feature-title" data-i18n="feat7_title">S'adapta a la teva tele i idioma</div>
+        <div class="feature-desc" data-i18n="feat7_desc">Durant la instal·lació, Gecko et pregunta quina pantalla fas servir i si prefereixes versió original amb subtítols o doblatge — i ajusta la qualitat de les descàrregues perquè es vegin sense talls.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -607,34 +611,119 @@
       <div class="step">
         <div class="step-num">1</div>
         <div class="step-body">
-          <h4 data-i18n="step1_title">Descarrega i executa Gecko</h4>
-          <p data-i18n="step1_desc">Un únic fitxer <code style="background:rgba(0,0,0,0.06);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:0.85em;">.exe</code>. Doble clic i l'assistent s'obre. Crea drecera a l'Escriptori i a l'Inici automàticament.</p>
+          <h4 data-i18n="step1_title">Arrenca Gecko OS des d'un USB</h4>
+          <p data-i18n="step1_desc">Flasheja la imatge gratuïta a un USB (o demana'l ja preparat), connecta'l a qualsevol mini PC, endolla'l a la TV i encén. No s'instal·la res a la màquina.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <div class="step-body">
-          <h4 data-i18n="step2_title">Instal·la Docker Desktop</h4>
-          <p data-i18n="step2_desc">Si no el tens, Gecko t'hi redirigeix directament. Docker és el motor que executa tots els serveis. És gratuït i oficial de Microsoft.</p>
+          <h4 data-i18n="step2_title">Segueix l'assistent</h4>
+          <p data-i18n="step2_desc">Tria el WiFi, posa una contrasenya d'administrador i, si vols, activa la VPN. Gecko configura sol Jellyfin i tot l'stack (Radarr, Sonarr, Prowlarr, Bazarr, qBittorrent).</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-body">
-          <h4 data-i18n="step3_title">Tria on guardar els fitxers</h4>
-          <p data-i18n="step3_desc">Selecciona una carpeta al teu disc dur o disc extern. Necessites almenys 100 GB lliures. Gecko no toca res que ja hi hagi.</p>
+          <h4 data-i18n="step3_title">Fes-lo permanent i teu</h4>
+          <p data-i18n="step3_desc">Instal·la Gecko al disc intern amb un clic (després pots treure el USB). Indica quina pantalla fas servir i com vols l'àudio — versió original amb subtítols (recomanat) o doblat — i ajusta la qualitat de les descàrregues automàticament.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">4</div>
         <div class="step-body">
           <h4 data-i18n="step4_title">Gaudeix del teu Netflix casolà</h4>
-          <p data-i18n="step4_desc">Gecko arrenca tot el stack automàticament. Obre Jellyfin, afegeix indexadors a Prowlarr i comença a descarregar.</p>
+          <p data-i18n="step4_desc">Obre Jellyfin i comença a veure. Ja inclou contingut legal de domini públic (Internet Archive) des del primer moment.</p>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<div class="divider"></div>
+
+<!-- Docs -->
+<section id="docs">
+  <div class="container">
+    <div style="text-align:center;max-width:640px;margin:0 auto 48px;" class="fade-up">
+      <p class="section-eyebrow" data-i18n="docs_eyebrow">Documentació</p>
+      <h2 class="section-title" data-i18n="docs_title">Tot el que necessites saber</h2>
+      <p class="section-desc" style="margin:0 auto;" data-i18n="docs_desc">
+        Pulides, multilingües i offline-accessibles des del dashboard. La que feia falta abans de comprar i la que farà falta el dia que algun servei doni problemes.
+      </p>
+    </div>
+    <div class="docs-grid fade-up">
+      <a href="https://github.com/Pardo24/Gecko/blob/main/docs/getting-started.md" target="_blank" rel="noopener" class="doc-card">
+        <div class="doc-icon" style="background:linear-gradient(135deg,#0d9488,#14b8a6);"><i data-lucide="rocket"></i></div>
+        <h3 data-i18n="docs_start_t">Getting Started</h3>
+        <p data-i18n="docs_start_d">Des de comprar a estar mirant pel·lis. 5-minute path.</p>
+      </a>
+      <a href="https://github.com/Pardo24/Gecko/blob/main/gecko-os/docs/HARDWARE.md" target="_blank" rel="noopener" class="doc-card">
+        <div class="doc-icon" style="background:linear-gradient(135deg,#f59e0b,#fbbf24);"><i data-lucide="cpu"></i></div>
+        <h3 data-i18n="docs_hw_t">Hardware Guide</h3>
+        <p data-i18n="docs_hw_d">Quin mini PC comprar. Recomanacions reals + què NO comprar.</p>
+      </a>
+      <a href="https://github.com/Pardo24/Gecko/blob/main/docs/troubleshooting.md" target="_blank" rel="noopener" class="doc-card">
+        <div class="doc-icon" style="background:linear-gradient(135deg,#dc2626,#ef4444);"><i data-lucide="wrench"></i></div>
+        <h3 data-i18n="docs_trouble_t">Troubleshooting</h3>
+        <p data-i18n="docs_trouble_d">Símptoma → causa → fix. La majoria d'issues, resolts.</p>
+      </a>
+      <a href="https://github.com/Pardo24/Gecko/blob/main/docs/ai-helper-prompt.md" target="_blank" rel="noopener" class="doc-card" style="border-color:rgba(13,148,136,0.4);background:linear-gradient(135deg,rgba(13,148,136,0.04),rgba(20,184,166,0.06));">
+        <div class="doc-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);"><i data-lucide="sparkles"></i></div>
+        <h3 data-i18n="docs_ai_t">AI Helper Prompt</h3>
+        <p data-i18n="docs_ai_d">Copia el prompt a ChatGPT/Claude i obté ajuda específica de Gecko. Cost zero per a tu.</p>
+        <div style="font-size:0.7rem;font-weight:700;color:#0d9488;margin-top:6px;text-transform:uppercase;letter-spacing:0.05em;" data-i18n="docs_ai_badge">★ El que ens diferencia</div>
+      </a>
+      <a href="https://github.com/Pardo24/Gecko/blob/main/docs/extending.md" target="_blank" rel="noopener" class="doc-card">
+        <div class="doc-icon" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);"><i data-lucide="layers"></i></div>
+        <h3 data-i18n="docs_ext_t">Extending Gecko</h3>
+        <p data-i18n="docs_ext_d">Home Assistant, Pi-hole, Vaultwarden, Immich, Nextcloud... La teva mini PC pot fer més.</p>
+      </a>
+      <a href="https://github.com/Pardo24/Gecko/blob/main/docs/user-journey.md" target="_blank" rel="noopener" class="doc-card">
+        <div class="doc-icon" style="background:linear-gradient(135deg,#10b981,#34d399);"><i data-lucide="map"></i></div>
+        <h3 data-i18n="docs_journey_t">User Journey</h3>
+        <p data-i18n="docs_journey_d">El flow complet del producte des de compra fins a ús diari.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ── Docs section ───────────────────────────────────────────── */
+  .docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  .doc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 22px;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .doc-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border-color: var(--accent);
+  }
+  .doc-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    margin-bottom: 4px;
+  }
+  .doc-icon svg { width: 20px; height: 20px; }
+  .doc-card h3 { font-size: 1.05rem; font-weight: 700; margin: 0; }
+  .doc-card p { font-size: 0.85rem; color: var(--text-2); line-height: 1.55; margin: 0; }
+</style>
 
 <div class="divider"></div>
 
@@ -696,7 +785,7 @@
       </div>
       <div class="faq-item fade-up delay-1">
         <button class="faq-q" onclick="toggleFaq(this)"><span data-i18n="faq2_q">Funciona a Mac o Linux?</span><span class="faq-arrow">▼</span></button>
-        <div class="faq-a" data-i18n="faq2_a">De moment, Gecko (l'aplicació d'escriptori) és exclusiva de Windows 10/11. El propi stack de serveis (Docker) funciona a qualsevol plataforma, però l'instal·lador és per a Windows. Suport Mac/Linux és possible en versions futures.</div>
+        <div class="faq-a" data-i18n="faq2_a">Sí. Hi ha tres camins: (1) <strong>Gecko OS</strong> — imatge bootable per a qualsevol mini-PC x86_64 (és la via recomanada per a no-tècnics), (2) <strong>Instal·lador Windows</strong> (.exe ~25 MB, corre com a servei), (3) <strong>Instal·lador macOS</strong> (.pkg, Apple Silicon o Intel). Tots tres comparteixen el mateix codi web; només canvia com s'inicia.</div>
       </div>
       <div class="faq-item fade-up delay-2">
         <button class="faq-q" onclick="toggleFaq(this)"><span data-i18n="faq3_q">L'ordinador ha d'estar sempre engegat?</span><span class="faq-arrow">▼</span></button>
@@ -722,25 +811,188 @@
 <section class="cta-section" id="download">
   <div class="container" style="position:relative;z-index:1;">
     <div class="logo-mark" style="width:76px;height:76px;border-radius:22px;margin:0 auto 28px;box-shadow:0 12px 32px rgba(13,148,136,0.38);"><img src="icon.png" alt="Gecko" style="border-radius:22px;" /></div>
-    <h2 data-i18n="cta_title">Comença avui. És gratis.</h2>
-    <p data-i18n="cta_sub">Descarrega Gecko i tingues el teu Netflix casolà en 5 minuts.</p>
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <a id="dl-win" href="https://github.com/Pardo24/Gecko/releases/latest" class="btn btn-primary">
-        <i class="fa-brands fa-windows" style="margin-right:7px;"></i><span data-i18n="cta_btn_win">Descarregar per Windows</span>
+    <h2 data-i18n="cta_title">Descarrega Gecko OS gratis</h2>
+    <p data-i18n="cta_sub">És un projecte homebrew d'ús lliure. Descarrega-ho, fes-ho servir, comparteix-ho. Sense paywalls, sense intermediaris.</p>
+
+    <!-- Primary CTA: Gecko OS download (huge) -->
+    <div style="margin:36px auto;max-width:520px;">
+      <a href="https://github.com/Pardo24/Gecko/releases/latest" class="btn btn-primary" style="width:100%;justify-content:center;font-size:1.05rem;padding:18px 36px;box-shadow:0 12px 32px rgba(13,148,136,0.4);">
+        <i data-lucide="download" style="margin-right:9px;"></i><span data-i18n="cta_os_btn">Descarregar Gecko OS gratis</span>
       </a>
-      <a id="dl-mac" href="https://github.com/Pardo24/Gecko/releases/latest" class="btn" style="background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.2);color:#fff;">
-        <i class="fa-brands fa-apple" style="margin-right:7px;"></i><span data-i18n="cta_btn_mac">Descarregar per Mac</span>
-      </a>
+      <p style="text-align:center;font-size:0.78rem;color:rgba(255,255,255,0.7);margin-top:10px;" data-i18n="cta_os_meta">~1 GB · x86_64 · MIT · Imatge bootable per a mini PC</p>
     </div>
-    <p class="cta-note" data-i18n="cta_note">Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.0.6 &nbsp;·&nbsp; Docker Desktop necessari (gratuït)</p>
-    <div style="margin-top:28px;">
-      <a href="https://buymeacoffee.com/danipardo24" target="_blank" rel="noopener" class="btn-bmc">
-        <i data-lucide="coffee" style="margin-right:6px;"></i><span data-i18n="bmc_btn">Invita'm a un cafè</span>
-      </a>
-      <p style="font-size:0.78rem;color:var(--text-2);margin-top:10px;" data-i18n="bmc_sub">Si Gecko t'ha estat útil, pots donar suport al projecte amb un cafè.</p>
+
+    <!-- Secondary options inline -->
+    <div style="text-align:center;font-size:0.88rem;color:rgba(255,255,255,0.75);margin-top:20px;line-height:1.9;">
+      <span data-i18n="cta_alt">També disponible:</span>
+      <a href="https://github.com/Pardo24/Gecko/releases/latest" style="color:white;text-decoration:underline;text-underline-offset:3px;"><i class="fa-brands fa-windows" style="margin-right:4px;"></i>Windows .exe</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/Pardo24/Gecko/releases/latest" style="color:white;text-decoration:underline;text-underline-offset:3px;"><i class="fa-brands fa-apple" style="margin-right:4px;"></i>macOS .pkg</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/Pardo24/Gecko/issues/new?title=I+want+a+pre-flashed+USB&labels=usb-order" target="_blank" rel="noopener" style="color:white;text-decoration:underline;text-underline-offset:3px;" data-i18n="cta_usb_inline">USB pre-flashejat (€35, opcional)</a>
+    </div>
+
+    <!-- How is this funded -->
+    <div class="funding-section">
+      <h3 data-i18n="fund_title">Com es paga aquest projecte?</h3>
+      <p data-i18n="fund_sub">Honestament: és un projecte side hobby. La feina la faig jo (Dani) gratis perquè m'agrada. El servidor de la web és el meu propi homelab. Les úniques fonts d'ingressos són:</p>
+      <ul class="funding-list">
+        <li>
+          <span class="funding-emoji">🔐</span>
+          <span>
+            <strong data-i18n="fund_vpn_t">Afiliats VPN.</strong>
+            <span data-i18n="fund_vpn_d">Si segueixes el nostre enllaç i et subscrius a ProtonVPN o Mullvad, ens donen una petita comissió. Tu pagues el mateix.</span>
+          </span>
+        </li>
+        <li>
+          <span class="funding-emoji">💻</span>
+          <span>
+            <strong data-i18n="fund_hw_t">Afiliats hardware.</strong>
+            <span data-i18n="fund_hw_d">Si compres el mini PC seguint els nostres enllaços d'Amazon a la <a href="https://github.com/Pardo24/Gecko/blob/main/gecko-os/docs/HARDWARE.md" target="_blank" style="color:white;text-decoration:underline;">guia de hardware</a>, ens portem un 3-8%. Tu pagues el mateix.</span>
+          </span>
+        </li>
+        <li>
+          <span class="funding-emoji">☕</span>
+          <span>
+            <strong data-i18n="fund_donate_t">Donatius.</strong>
+            <span data-i18n="fund_donate_d">Si el projecte t'ha estalviat temps, considera donar suport. 100% va al desenvolupador.</span>
+          </span>
+        </li>
+        <li>
+          <span class="funding-emoji">📬</span>
+          <span>
+            <strong data-i18n="fund_usb_t">USB pre-flashejat opcional.</strong>
+            <span data-i18n="fund_usb_d">€35 per a qui no vol fer ho ell. Marge mínim (cobreix USB + enviament + temps).</span>
+          </span>
+        </li>
+      </ul>
+
+      <div class="donate-tiers" style="margin-top:24px;">
+        <a href="https://buymeacoffee.com/danipardo24" target="_blank" rel="noopener" class="donate-tier">
+          <div class="donate-emoji">☕</div>
+          <div class="donate-amount">€5</div>
+          <div class="donate-label" data-i18n="donate_coffee">Un cafè</div>
+        </a>
+        <a href="https://buymeacoffee.com/danipardo24" target="_blank" rel="noopener" class="donate-tier">
+          <div class="donate-emoji">🍕</div>
+          <div class="donate-amount">€15</div>
+          <div class="donate-label" data-i18n="donate_pizza">Una pizza</div>
+        </a>
+        <a href="https://buymeacoffee.com/danipardo24" target="_blank" rel="noopener" class="donate-tier donate-tier-featured">
+          <div class="donate-emoji">❤️</div>
+          <div class="donate-amount">€30</div>
+          <div class="donate-label" data-i18n="donate_month">Un mes</div>
+        </a>
+      </div>
     </div>
   </div>
 </section>
+
+<style>
+  /* Funding section */
+  .funding-section {
+    margin-top: 56px; max-width: 640px; margin-left: auto; margin-right: auto;
+    color: white; text-align: left;
+    padding: 28px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px;
+  }
+  .funding-section h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 8px; text-align: center; }
+  .funding-section > p { font-size: 0.9rem; opacity: 0.85; line-height: 1.6; margin-bottom: 18px; text-align: center; }
+  .funding-list {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .funding-list li {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 12px; border-radius: 10px;
+    background: rgba(0,0,0,0.18);
+  }
+  .funding-emoji { font-size: 1.4rem; flex-shrink: 0; }
+  .funding-list strong { display: block; margin-bottom: 2px; font-size: 0.92rem; }
+  .funding-list span span { font-size: 0.84rem; opacity: 0.88; line-height: 1.55; }
+</style>
+
+<style>
+  /* Download options grid */
+  .download-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin: 36px auto;
+    max-width: 920px;
+  }
+  .download-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: white;
+    text-align: left;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .download-card:hover {
+    border-color: rgba(255,255,255,0.25);
+    transform: translateY(-2px);
+  }
+  .download-card-primary {
+    background: rgba(13,148,136,0.18);
+    border-color: rgba(20,184,166,0.5);
+    box-shadow: 0 8px 32px rgba(13,148,136,0.25);
+  }
+  .download-card h3 { font-size: 1.15rem; font-weight: 800; margin: 0; }
+  .download-card p { font-size: 0.85rem; line-height: 1.55; opacity: 0.85; margin: 0 0 8px; }
+  .download-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; color: white;
+  }
+  .download-icon svg { width: 22px; height: 22px; }
+  .download-badge {
+    position: absolute; top: -10px; right: 14px;
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+    color: white; font-size: 0.65rem; font-weight: 700;
+    padding: 4px 10px; border-radius: 99px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* Donate */
+  .donate-section {
+    margin-top: 56px; max-width: 580px; margin-left: auto; margin-right: auto;
+    color: white; text-align: center;
+  }
+  .donate-section h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 8px; }
+  .donate-section > p { font-size: 0.88rem; opacity: 0.85; line-height: 1.6; margin-bottom: 22px; }
+  .donate-tiers {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px;
+  }
+  .donate-tier {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px; padding: 16px 12px;
+    text-decoration: none; color: white;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    transition: all 0.2s;
+  }
+  .donate-tier:hover {
+    background: rgba(255,255,255,0.13);
+    border-color: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+  }
+  .donate-tier-featured {
+    background: rgba(13,148,136,0.22);
+    border-color: rgba(20,184,166,0.6);
+  }
+  .donate-emoji { font-size: 1.6rem; }
+  .donate-amount { font-size: 1.1rem; font-weight: 800; }
+  .donate-label { font-size: 0.72rem; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.04em; }
+  .donate-note { font-size: 0.72rem; opacity: 0.7; }
+</style>
 
 <!-- FOOTER -->
 <footer>
@@ -788,14 +1040,14 @@
 const i18n = {
   ca: {
     nav_features:"Característiques", nav_how:"Com funciona", nav_guide:"Guia", nav_download:"Descarregar", nav_bmc:"Suport",
-    hero_badge:"✦ Gratuït &nbsp;·&nbsp; Codi obert &nbsp;·&nbsp; Windows &amp; Mac",
-    hero_title:'El teu<br/><span class="gradient-text">Netflix casolà</span><br/>sense subscripcions',
-    hero_sub:"Un clic. Cinc minuts. El teu propi Netflix a casa, per sempre i sense pagar subscripcions.",
-    hero_free:"100% gratuït · per sempre",
-    hero_btn_dl:"Descarregar Gecko", hero_btn_gh:"Veure a GitHub",
-    hero_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; Requereix Docker Desktop (gratuït)",
+    hero_badge:"✦ Gratuït &nbsp;·&nbsp; MIT &nbsp;·&nbsp; Linux / Windows / macOS",
+    hero_title:'<span class="gradient-text">Gecko OS</span><br/>el teu servidor multimèdia,<br/>llest en 5 minuts',
+    hero_sub:"Un sistema operatiu bootable per a qualsevol mini PC. Connecta'l a la TV, segueix el wizard, i ja tens el teu propi Netflix amb Jellyfin, Sonarr, Radarr, Bazarr i companyia — pre-configurats.",
+    hero_free:"Descarrega gratis · MIT licensed · per sempre",
+    hero_btn_dl:"Descarregar gratis", hero_btn_buy:"Compra USB pre-flashejat €35",
+    hero_note:"Gecko OS USB · Windows .exe · macOS .pkg — totes 3 vies, mateix codi obert",
     mock_running:"En marxa", mock_stop:"Parar", mock_active:"● actiu",
-    mock_nav_home:"INICI", mock_nav_vpn:"VPN", mock_nav_net:"XARXA", mock_nav_cfg:"CFG",
+    mock_nav_home:"INICI", mock_nav_net:"XARXA", mock_nav_dl:"DESCÀ", mock_nav_guide:"GUIA", mock_nav_cfg:"CFG",
     mock_cinema:"Cinema", mock_request:"Sol·licituds", mock_downloads:"Descàrregues", mock_tools:"Eines",
     stat1:"Serveis integrats", stat2:"Clic per instal·lar", stat3:"Cost de llicència", stat4:"Idiomes inclosos",
     pills_eyebrow:"Tot inclòs", pills_title:"Tots els serveis, configurats per tu",
@@ -807,13 +1059,23 @@ const i18n = {
     feat4_title:"Instal·lació en 1 clic", feat4_desc:"L'assistent configura tota la infraestructura Docker i connecta tots els serveis automàticament — Prowlarr, Radarr, Sonarr, Bazarr i qBittorrent llestos sense tocar res.",
     feat5_title:"Dashboard de gestió", feat5_desc:"Atura i arrenca el stack, gestiona la VPN, consulta les URLs de la xarxa i configura l'idioma des d'una interfície unificada.",
     feat6_title:"3 idiomes inclosos", feat6_desc:"Gecko és disponible en català, castellà i anglès. Canvia d'idioma en qualsevol moment des del panell lateral, sense reiniciar.",
+    feat7_title:"S'adapta a la teva tele i idioma", feat7_desc:"Durant la instal·lació, Gecko et pregunta quina pantalla fas servir i si prefereixes versió original amb subtítols o doblatge — i ajusta la qualitat de les descàrregues perquè es vegin sense talls.",
+    nav_docs:"Docs",
+    docs_eyebrow:"Documentació", docs_title:"Tot el que necessites saber",
+    docs_desc:"Pulides, multilingües i offline-accessibles des del dashboard. La que feia falta abans de comprar i la que farà falta el dia que algun servei doni problemes.",
+    docs_start_t:"Getting Started", docs_start_d:"Des de comprar a estar mirant pel·lis. 5-minute path.",
+    docs_hw_t:"Hardware Guide", docs_hw_d:"Quin mini PC comprar. Recomanacions reals + què NO comprar.",
+    docs_trouble_t:"Troubleshooting", docs_trouble_d:"Símptoma → causa → fix. La majoria d'issues, resolts.",
+    docs_ai_t:"AI Helper Prompt", docs_ai_d:"Copia el prompt a ChatGPT/Claude i obté ajuda específica de Gecko. Cost zero per a tu.", docs_ai_badge:"★ El que ens diferencia",
+    docs_ext_t:"Extending Gecko", docs_ext_d:"Home Assistant, Pi-hole, Vaultwarden, Immich, Nextcloud... La teva mini PC pot fer més.",
+    docs_journey_t:"User Journey", docs_journey_d:"El flow complet del producte des de compra fins a ús diari.",
     how_eyebrow:"Com funciona", how_title:"Llest en 5 minuts",
     how_desc:"L'instal·lador et guia pas a pas. No cal tenir cap coneixement tècnic — si pots instal·lar un programa normal, pots instal·lar Gecko.",
     how_btn:"Descarregar ara",
-    step1_title:"Descarrega i executa Gecko", step1_desc:'Un únic fitxer <code style="background:rgba(0,0,0,0.06);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:0.85em;">.exe</code>. Doble clic i l\'assistent s\'obre. Crea drecera a l\'Escriptori i a l\'Inici automàticament.',
-    step2_title:"Instal·la Docker Desktop", step2_desc:"Si no el tens, Gecko t'hi redirigeix directament. Docker és el motor que executa tots els serveis. És gratuït i oficial de Microsoft.",
-    step3_title:"Tria on guardar els fitxers", step3_desc:"Selecciona una carpeta al teu disc dur o disc extern. Necessites almenys 100 GB lliures. Gecko no toca res que ja hi hagi.",
-    step4_title:"Gaudeix del teu Netflix casolà", step4_desc:"Gecko arrenca tot el stack automàticament. Obre Jellyfin, afegeix indexadors a Prowlarr i comença a descarregar.",
+    step1_title:"Arrenca Gecko OS des d'un USB", step1_desc:"Flasheja la imatge gratuïta a un USB (o demana'l ja preparat), connecta'l a qualsevol mini PC, endolla'l a la TV i encén. No s'instal·la res a la màquina.",
+    step2_title:"Segueix l'assistent", step2_desc:"Tria el WiFi, posa una contrasenya d'administrador i, si vols, activa la VPN. Gecko configura sol Jellyfin i tot l'stack (Radarr, Sonarr, Prowlarr, Bazarr, qBittorrent).",
+    step3_title:"Fes-lo permanent i teu", step3_desc:"Instal·la Gecko al disc intern amb un clic (després pots treure el USB). Indica quina pantalla fas servir i com vols l'àudio — versió original amb subtítols (recomanat) o doblat — i ajusta la qualitat de les descàrregues automàticament.",
+    step4_title:"Gaudeix del teu Netflix casolà", step4_desc:"Obre Jellyfin i comença a veure. Ja inclou contingut legal de domini públic (Internet Archive) des del primer moment.",
     vpn_eyebrow:"Privacitat recomanada", vpn_title:"Protegeix les teves descàrregues",
     vpn_desc:"Una VPN amaga les teves descàrregues del teu proveïdor d'internet. Gecko la integra en un sol pas, sense configuració extra.",
     vpn_badge:"Recomanat per Gecko",
@@ -823,14 +1085,32 @@ const i18n = {
     vpn_disclaimer:"⚠️ L'ús de Gecko i de les descàrregues és responsabilitat exclusiva de l'usuari. Compleix la legislació vigent al teu país.",
     faq_eyebrow:"Preguntes freqüents", faq_title:"Tens dubtes?",
     faq1_q:"Cal tenir coneixements tècnics per instal·lar Gecko?", faq1_a:"No. L'assistent de Gecko guia l'usuari pas a pas. Si pots instal·lar un programa com VLC o Spotify, pots instal·lar Gecko sense cap problema.",
-    faq2_q:"Funciona a Mac o Linux?", faq2_a:"Sí, Gecko té instal·lador per a Windows i Mac. Linux no està suportat de moment. A més, pots veure el teu contingut des de qualsevol dispositiu: iPhone, iPad i Apple TV via l'app de Jellyfin, i Android via l'app oficial o el navegador.",
+    faq2_q:"Funciona a Mac, Linux o sense ordinador propi?", faq2_a:"Sí, tres camins: (1) <strong>Gecko OS</strong> bootable USB → mini PC qualsevol; (2) instal·lador Windows (.exe ~25 MB); (3) instal·lador macOS (.pkg per Apple Silicon o Intel). Tots tres comparteixen el mateix codi.",
     faq3_q:"L'ordinador ha d'estar sempre engegat?", faq3_a:"Sí. Per accedir als teus continguts des d'altres dispositius, l'ordinador on s'executa Gecko ha d'estar encès. Per a un ús continu, es recomana tenir-lo connectat per cable Ethernet i configurar Windows perquè no es suspengui.",
     faq4_q:"Quant d'espai ocupen els serveis?", faq4_a:"Les imatges Docker dels 6 serveis ocupen aproximadament 3-4 GB. El contingut multimèdia que descarreguis ocuparà tant espai com vulguis al disc que triïs. Es recomana un disc dur de com a mínim 1 TB per al contingut.",
     faq5_q:"És gratuït per sempre?", faq5_a:"Sí. Gecko és programari de codi obert sota llicència MIT. No hi ha versions premium, subscripcions ni funcions de pagament. Els serveis que instal·la (Jellyfin, Radarr, Sonarr, etc.) també són gratuïts i de codi obert.",
     faq6_q:"Puc accedir als meus continguts fora de casa?", faq6_a:"Sí. La forma més senzilla és instal·lar Tailscale (gratuït) al teu ordinador i als dispositius que facis servir. Tailscale crea una xarxa privada virtual entre els teus dispositius sense que hagis d'obrir ports al router.",
-    cta_title:"Comença avui. És gratis.", cta_sub:"Descarrega Gecko i tingues el teu Netflix casolà en 5 minuts.",
+    cta_title:"Descarrega Gecko OS gratis", cta_sub:"És un projecte homebrew d'ús lliure. Descarrega-ho, fes-ho servir, comparteix-ho. Sense paywalls, sense intermediaris.",
+    cta_os_btn:"Descarregar Gecko OS gratis",
+    cta_os_meta:"~1 GB · x86_64 · MIT · Imatge bootable per a mini PC",
+    cta_alt:"També disponible:",
+    cta_usb_inline:"USB pre-flashejat (€35, opcional)",
+    fund_title:"Com es paga aquest projecte?",
+    fund_sub:"Honestament: és un projecte side hobby. La feina la faig jo (Dani) gratis perquè m'agrada. El servidor de la web és el meu propi homelab. Les úniques fonts d'ingressos són:",
+    fund_vpn_t:"Afiliats VPN.",
+    fund_vpn_d:"Si segueixes el nostre enllaç i et subscrius a ProtonVPN o Mullvad, ens donen una petita comissió. Tu pagues el mateix.",
+    fund_hw_t:"Afiliats hardware.",
+    fund_hw_d:"Si compres el mini PC seguint els nostres enllaços d'Amazon a la <a href=\"https://github.com/Pardo24/Gecko/blob/main/gecko-os/docs/HARDWARE.md\" target=\"_blank\" style=\"color:white;text-decoration:underline;\">guia de hardware</a>, ens portem un 3-8%. Tu pagues el mateix.",
+    fund_donate_t:"Donatius.",
+    fund_donate_d:"Si el projecte t'ha estalviat temps, considera donar suport. 100% va al desenvolupador.",
+    fund_usb_t:"USB pre-flashejat opcional.",
+    fund_usb_d:"€35 per a qui no vol fer-ho ell. Marge mínim (cobreix USB + enviament + temps).",
+    donate_title:"Suporta el projecte si t'ha estalviat temps",
+    donate_sub:"Gecko és gratis i MIT. Si t'ha resolt un problema o t'ha estalviat un cap de setmana muntant docker-compose, considera donar suport. Va al mantenidor (Dani) per pagar el seu temps.",
+    donate_coffee:"Un cafè", donate_pizza:"Una pizza", donate_month:"Un mes",
+    donate_note:"100% va al desenvolupador. Sense Gumroad, Stripe ni cap intermediari amagat.",
     cta_btn_win:"Descarregar per Windows", cta_btn_mac:"Descarregar per Mac",
-    cta_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.0.6 &nbsp;·&nbsp; Docker Desktop necessari (gratuït)",
+    cta_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.4.3 &nbsp;·&nbsp; Docker Desktop necessari (gratuït)",
     footer_tagline:"El teu servidor multimèdia de codi obert. Gratuït per sempre.",
     footer_col1:"Projecte", footer_releases:"Versions", footer_guide_link:"Guia d'usuari", footer_issues:"Reportar error",
     footer_col2:"Eines recomanades", footer_col3:"Serveis",
@@ -843,14 +1123,14 @@ const i18n = {
   },
   es: {
     nav_features:"Características", nav_how:"Cómo funciona", nav_guide:"Guía", nav_download:"Descargar", nav_bmc:"Apoya",
-    hero_badge:"✦ Gratuito &nbsp;·&nbsp; Código abierto &nbsp;·&nbsp; Windows &amp; Mac",
-    hero_title:'Tu propio<br/><span class="gradient-text">Netflix casero</span><br/>sin suscripciones',
-    hero_sub:"Un clic. Cinco minutos. Tu propio Netflix en casa, para siempre y sin pagar suscripciones.",
-    hero_free:"100% gratuito · para siempre",
-    hero_btn_dl:"Descargar Gecko", hero_btn_gh:"Ver en GitHub",
-    hero_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; Requiere Docker Desktop (gratuito)",
+    hero_badge:"✦ Gratis &nbsp;·&nbsp; MIT &nbsp;·&nbsp; Linux / Windows / macOS",
+    hero_title:'<span class="gradient-text">Gecko OS</span><br/>tu servidor multimedia,<br/>listo en 5 minutos',
+    hero_sub:"Un sistema operativo booteable para cualquier mini PC. Conéctalo a la TV, sigue el wizard, y ya tienes tu propio Netflix con Jellyfin, Sonarr, Radarr, Bazarr y compañía — preconfigurados.",
+    hero_free:"Descarga gratis · MIT licensed · para siempre",
+    hero_btn_dl:"Descargar gratis", hero_btn_buy:"Compra USB pre-flasheado €35",
+    hero_note:"Gecko OS USB · Windows .exe · macOS .pkg — tres vías, el mismo código abierto",
     mock_running:"En marcha", mock_stop:"Parar", mock_active:"● activo",
-    mock_nav_home:"INICIO", mock_nav_vpn:"VPN", mock_nav_net:"RED", mock_nav_cfg:"CFG",
+    mock_nav_home:"INICIO", mock_nav_net:"RED", mock_nav_dl:"DESC", mock_nav_guide:"GUÍA", mock_nav_cfg:"CFG",
     mock_cinema:"Cinema", mock_request:"Solicitudes", mock_downloads:"Descargas", mock_tools:"Herramientas",
     stat1:"Servicios integrados", stat2:"Clic para instalar", stat3:"Coste de licencia", stat4:"Idiomas incluidos",
     pills_eyebrow:"Todo incluido", pills_title:"Todos los servicios, configurados para ti",
@@ -862,13 +1142,23 @@ const i18n = {
     feat4_title:"Instalación en 1 clic", feat4_desc:"El asistente configura toda la infraestructura Docker y conecta todos los servicios automáticamente — Prowlarr, Radarr, Sonarr, Bazarr y qBittorrent listos sin tocar nada.",
     feat5_title:"Panel de gestión", feat5_desc:"Para e inicia el stack, gestiona la VPN, consulta las URLs de la red y configura el idioma desde una interfaz unificada.",
     feat6_title:"3 idiomas incluidos", feat6_desc:"Gecko está disponible en catalán, castellano e inglés. Cambia de idioma en cualquier momento desde el panel lateral, sin reiniciar.",
+    feat7_title:"Se adapta a tu tele e idioma", feat7_desc:"Durante la instalación, Gecko te pregunta qué pantalla usas y si prefieres versión original con subtítulos o doblaje — y ajusta la calidad de las descargas para que se vean sin cortes.",
+    nav_docs:"Docs",
+    docs_eyebrow:"Documentación", docs_title:"Todo lo que necesitas saber",
+    docs_desc:"Pulidas, multilingües y accesibles offline desde el dashboard. La que hacía falta antes de comprar y la que hará falta el día que algún servicio dé problemas.",
+    docs_start_t:"Getting Started", docs_start_d:"Desde comprar hasta ver pelis. Recorrido de 5 minutos.",
+    docs_hw_t:"Hardware Guide", docs_hw_d:"Qué mini PC comprar. Recomendaciones reales + qué NO comprar.",
+    docs_trouble_t:"Troubleshooting", docs_trouble_d:"Síntoma → causa → fix. La mayoría de problemas, resueltos.",
+    docs_ai_t:"AI Helper Prompt", docs_ai_d:"Copia el prompt en ChatGPT/Claude y obtén ayuda específica de Gecko. Coste cero para ti.", docs_ai_badge:"★ Lo que nos diferencia",
+    docs_ext_t:"Extending Gecko", docs_ext_d:"Home Assistant, Pi-hole, Vaultwarden, Immich, Nextcloud... Tu mini PC puede hacer más.",
+    docs_journey_t:"User Journey", docs_journey_d:"El flow completo del producto desde la compra hasta el uso diario.",
     how_eyebrow:"Cómo funciona", how_title:"Listo en 5 minutos",
     how_desc:"El instalador te guía paso a paso. No necesitas ningún conocimiento técnico — si puedes instalar un programa normal, puedes instalar Gecko.",
     how_btn:"Descargar ahora",
-    step1_title:"Descarga y ejecuta Gecko", step1_desc:'Un único archivo <code style="background:rgba(0,0,0,0.06);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:0.85em;">.exe</code>. Doble clic y el asistente se abre. Crea acceso directo en el Escritorio e Inicio automáticamente.',
-    step2_title:"Instala Docker Desktop", step2_desc:"Si no lo tienes, Gecko te redirige directamente. Docker es el motor que ejecuta todos los servicios. Es gratuito y oficial de Microsoft.",
-    step3_title:"Elige dónde guardar los archivos", step3_desc:"Selecciona una carpeta en tu disco duro o disco externo. Necesitas al menos 100 GB libres. Gecko no toca nada que ya exista.",
-    step4_title:"Disfruta de tu Netflix casero", step4_desc:"Gecko arranca todo el stack automáticamente. Abre Jellyfin, añade indexadores en Prowlarr y empieza a descargar.",
+    step1_title:"Arranca Gecko OS desde un USB", step1_desc:"Flashea la imagen gratuita en un USB (o pídelo ya preparado), conéctalo a cualquier mini PC, enchúfalo a la TV y enciéndelo. No se instala nada en la máquina.",
+    step2_title:"Sigue el asistente", step2_desc:"Elige el WiFi, pon una contraseña de administrador y, si quieres, activa la VPN. Gecko configura solo Jellyfin y todo el stack (Radarr, Sonarr, Prowlarr, Bazarr, qBittorrent).",
+    step3_title:"Hazlo permanente y tuyo", step3_desc:"Instala Gecko en el disco interno con un clic (después puedes retirar el USB). Indica qué pantalla usas y cómo quieres el audio — versión original con subtítulos (recomendado) o doblado — y ajusta la calidad de las descargas automáticamente.",
+    step4_title:"Disfruta de tu Netflix casero", step4_desc:"Abre Jellyfin y empieza a ver. Ya incluye contenido legal de dominio público (Internet Archive) desde el primer momento.",
     vpn_eyebrow:"Privacidad recomendada", vpn_title:"Protege tus descargas",
     vpn_desc:"Una VPN oculta tus descargas a tu proveedor de internet. Gecko la integra en un solo paso, sin configuración extra.",
     vpn_badge:"Recomendado por Gecko",
@@ -878,14 +1168,32 @@ const i18n = {
     vpn_disclaimer:"⚠️ El uso de Gecko y de las descargas es responsabilidad exclusiva del usuario. Cumple la legislación vigente en tu país.",
     faq_eyebrow:"Preguntas frecuentes", faq_title:"¿Tienes dudas?",
     faq1_q:"¿Se necesitan conocimientos técnicos para instalar Gecko?", faq1_a:"No. El asistente de Gecko guía al usuario paso a paso. Si puedes instalar un programa como VLC o Spotify, puedes instalar Gecko sin ningún problema.",
-    faq2_q:"¿Funciona en Mac o Linux?", faq2_a:"Sí, Gecko tiene instalador para Windows y Mac. Linux no está soportado de momento. Además, puedes ver tu contenido desde cualquier dispositivo: iPhone, iPad y Apple TV via la app de Jellyfin, y Android via la app oficial o el navegador.",
+    faq2_q:"¿Funciona en Mac, Linux o sin ordenador propio?", faq2_a:"Sí, tres caminos: (1) <strong>Gecko OS</strong> USB booteable → cualquier mini PC; (2) instalador Windows (.exe ~25 MB); (3) instalador macOS (.pkg para Apple Silicon o Intel). Los tres comparten el mismo código.",
     faq3_q:"¿El ordenador tiene que estar siempre encendido?", faq3_a:"Sí. Para acceder a tus contenidos desde otros dispositivos, el ordenador donde se ejecuta Gecko debe estar encendido. Para un uso continuo, se recomienda tenerlo conectado por cable Ethernet y configurar Windows para que no se suspenda.",
     faq4_q:"¿Cuánto espacio ocupan los servicios?", faq4_a:"Las imágenes Docker de los 6 servicios ocupan aproximadamente 3-4 GB. El contenido multimedia que descargues ocupará tanto espacio como quieras en el disco que elijas. Se recomienda un disco duro de al menos 1 TB para el contenido.",
     faq5_q:"¿Es gratuito para siempre?", faq5_a:"Sí. Gecko es software de código abierto bajo licencia MIT. No hay versiones premium, suscripciones ni funciones de pago. Los servicios que instala (Jellyfin, Radarr, Sonarr, etc.) también son gratuitos y de código abierto.",
     faq6_q:"¿Puedo acceder a mis contenidos desde fuera de casa?", faq6_a:"Sí. La forma más sencilla es instalar Tailscale (gratuito) en tu ordenador y en los dispositivos que uses. Tailscale crea una red privada virtual entre tus dispositivos sin que tengas que abrir puertos en el router.",
-    cta_title:"Empieza hoy. Es gratis.", cta_sub:"Descarga Gecko y ten tu Netflix casero en 5 minutos.",
+    cta_title:"Descarga Gecko OS gratis", cta_sub:"Es un proyecto homebrew de uso libre. Descárgalo, úsalo, compártelo. Sin paywalls, sin intermediarios.",
+    cta_os_btn:"Descargar Gecko OS gratis",
+    cta_os_meta:"~1 GB · x86_64 · MIT · Imagen booteable para mini PC",
+    cta_alt:"También disponible:",
+    cta_usb_inline:"USB pre-flasheado (€35, opcional)",
+    fund_title:"¿Cómo se paga este proyecto?",
+    fund_sub:"Honestamente: es un proyecto side hobby. El trabajo lo hago yo (Dani) gratis porque me gusta. El servidor de la web es mi propio homelab. Las únicas fuentes de ingresos son:",
+    fund_vpn_t:"Afiliados VPN.",
+    fund_vpn_d:"Si sigues nuestro enlace y te suscribes a ProtonVPN o Mullvad, nos dan una pequeña comisión. Tú pagas lo mismo.",
+    fund_hw_t:"Afiliados hardware.",
+    fund_hw_d:"Si compras el mini PC siguiendo nuestros enlaces de Amazon en la <a href=\"https://github.com/Pardo24/Gecko/blob/main/gecko-os/docs/HARDWARE.md\" target=\"_blank\" style=\"color:white;text-decoration:underline;\">guía de hardware</a>, nos llevamos un 3-8%. Tú pagas lo mismo.",
+    fund_donate_t:"Donativos.",
+    fund_donate_d:"Si el proyecto te ha ahorrado tiempo, considera apoyarlo. 100% va al desarrollador.",
+    fund_usb_t:"USB pre-flasheado opcional.",
+    fund_usb_d:"€35 para quien no quiere hacérselo él mismo. Margen mínimo (cubre USB + envío + tiempo).",
+    donate_title:"Apoya el proyecto si te ha ahorrado tiempo",
+    donate_sub:"Gecko es gratis y MIT. Si te ha resuelto un problema o te ha ahorrado un fin de semana montando docker-compose, considera apoyarlo. Va al mantenedor (Dani) para pagar su tiempo.",
+    donate_coffee:"Un café", donate_pizza:"Una pizza", donate_month:"Un mes",
+    donate_note:"100% va al desarrollador. Sin Gumroad, Stripe ni intermediarios ocultos.",
     cta_btn_win:"Descargar para Windows", cta_btn_mac:"Descargar para Mac",
-    cta_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.0.6 &nbsp;·&nbsp; Docker Desktop necesario (gratuito)",
+    cta_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.4.3 &nbsp;·&nbsp; Docker Desktop necesario (gratuito)",
     footer_tagline:"Tu servidor multimedia de código abierto. Gratis para siempre.",
     footer_col1:"Proyecto", footer_releases:"Versiones", footer_guide_link:"Guía de usuario", footer_issues:"Reportar error",
     footer_col2:"Herramientas recomendadas", footer_col3:"Servicios",
@@ -898,14 +1206,14 @@ const i18n = {
   },
   en: {
     nav_features:"Features", nav_how:"How it works", nav_guide:"Guide", nav_download:"Download", nav_bmc:"Support",
-    hero_badge:"✦ Free &nbsp;·&nbsp; Open source &nbsp;·&nbsp; Windows &amp; Mac",
-    hero_title:'Your own<br/><span class="gradient-text">home Netflix</span><br/>without subscriptions',
-    hero_sub:"One click. Five minutes. Your own Netflix at home, forever and without paying subscriptions.",
-    hero_free:"100% free · forever",
-    hero_btn_dl:"Download Gecko", hero_btn_gh:"View on GitHub",
-    hero_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; Requires Docker Desktop (free)",
+    hero_badge:"✦ Free &nbsp;·&nbsp; MIT &nbsp;·&nbsp; Linux / Windows / macOS",
+    hero_title:'<span class="gradient-text">Gecko OS</span><br/>your home media server,<br/>ready in 5 minutes',
+    hero_sub:"A bootable OS for any mini PC. Plug it into a TV, follow the wizard, and you have your own Netflix with Jellyfin, Sonarr, Radarr, Bazarr and the rest — all preconfigured.",
+    hero_free:"Free download · MIT licensed · forever",
+    hero_btn_dl:"Download free", hero_btn_buy:"Buy pre-flashed USB €35",
+    hero_note:"Gecko OS USB · Windows .exe · macOS .pkg — three paths, same open-source code",
     mock_running:"Running", mock_stop:"Stop", mock_active:"● active",
-    mock_nav_home:"HOME", mock_nav_vpn:"VPN", mock_nav_net:"NETWORK", mock_nav_cfg:"CFG",
+    mock_nav_home:"HOME", mock_nav_net:"NETWORK", mock_nav_dl:"DL", mock_nav_guide:"GUIDE", mock_nav_cfg:"CFG",
     mock_cinema:"Cinema", mock_request:"Requests", mock_downloads:"Downloads", mock_tools:"Tools",
     stat1:"Integrated services", stat2:"Click to install", stat3:"License cost", stat4:"Languages included",
     pills_eyebrow:"All included", pills_title:"All services, configured for you",
@@ -917,13 +1225,23 @@ const i18n = {
     feat4_title:"1-click installation", feat4_desc:"The wizard configures all Docker infrastructure and connects every service automatically — Prowlarr, Radarr, Sonarr, Bazarr and qBittorrent ready without touching a thing.",
     feat5_title:"Management dashboard", feat5_desc:"Stop and start the stack, manage the VPN, check network URLs and configure language from a unified interface.",
     feat6_title:"3 languages included", feat6_desc:"Gecko is available in Catalan, Spanish and English. Switch language at any time from the side panel, without restarting.",
+    feat7_title:"Adapts to your TV and language", feat7_desc:"During setup, Gecko asks which screen you use and whether you prefer original-with-subtitles or dubbed — then tunes download quality so everything plays smoothly.",
+    nav_docs:"Docs",
+    docs_eyebrow:"Documentation", docs_title:"Everything you need to know",
+    docs_desc:"Polished, multilingual, offline-accessible from the dashboard. The docs you'll want before buying — and when something inevitably breaks.",
+    docs_start_t:"Getting Started", docs_start_d:"From buying to streaming. The 5-minute path.",
+    docs_hw_t:"Hardware Guide", docs_hw_d:"Which mini PC to buy. Honest recommendations + what NOT to buy.",
+    docs_trouble_t:"Troubleshooting", docs_trouble_d:"Symptom → cause → fix. Most issues, solved.",
+    docs_ai_t:"AI Helper Prompt", docs_ai_d:"Paste the prompt into ChatGPT/Claude and get Gecko-specific help. Zero cost on your end.", docs_ai_badge:"★ Our differentiator",
+    docs_ext_t:"Extending Gecko", docs_ext_d:"Home Assistant, Pi-hole, Vaultwarden, Immich, Nextcloud... Your mini PC can do more.",
+    docs_journey_t:"User Journey", docs_journey_d:"The full product flow from purchase to daily use.",
     how_eyebrow:"How it works", how_title:"Ready in 5 minutes",
     how_desc:"The installer guides you step by step. No technical knowledge required — if you can install a regular program, you can install Gecko.",
     how_btn:"Download now",
-    step1_title:"Download and run Gecko", step1_desc:'A single <code style="background:rgba(0,0,0,0.06);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:0.85em;">.exe</code> file. Double-click and the wizard opens. Creates shortcuts on the Desktop and Start Menu automatically.',
-    step2_title:"Install Docker Desktop", step2_desc:"If you don't have it, Gecko redirects you directly. Docker is the engine that runs all the services. It's free and official from Microsoft.",
-    step3_title:"Choose where to save files", step3_desc:"Select a folder on your hard drive or external disk. You need at least 100 GB free. Gecko won't touch anything already there.",
-    step4_title:"Enjoy your home Netflix", step4_desc:"Gecko starts the whole stack automatically. Open Jellyfin, add indexers to Prowlarr and start downloading.",
+    step1_title:"Boot Gecko OS from a USB stick", step1_desc:"Flash the free image to a USB stick (or grab one pre-flashed), plug it into any mini PC, connect it to the TV and power on. Nothing is installed on the machine.",
+    step2_title:"Follow the wizard", step2_desc:"Pick your WiFi, set an admin password and, if you want, turn on the VPN. Gecko configures Jellyfin and the whole stack (Radarr, Sonarr, Prowlarr, Bazarr, qBittorrent) for you.",
+    step3_title:"Make it permanent and yours", step3_desc:"Install Gecko to the internal disk in one click (then you can remove the USB). Tell it which screen you use and how you like your audio — original with subtitles (recommended) or dubbed — and it tunes download quality automatically.",
+    step4_title:"Enjoy your home Netflix", step4_desc:"Open Jellyfin and start watching. Legal public-domain content (Internet Archive) is included from the very first boot.",
     vpn_eyebrow:"Recommended privacy", vpn_title:"Protect your downloads",
     vpn_desc:"A VPN hides your downloads from your internet provider. Gecko integrates it in one step, with no extra configuration.",
     vpn_badge:"Recommended by Gecko",
@@ -933,14 +1251,32 @@ const i18n = {
     vpn_disclaimer:"⚠️ The use of Gecko and downloads is the user's sole responsibility. Comply with the laws applicable in your country.",
     faq_eyebrow:"Frequently asked questions", faq_title:"Got questions?",
     faq1_q:"Do I need technical knowledge to install Gecko?", faq1_a:"No. Gecko's wizard guides the user step by step. If you can install a program like VLC or Spotify, you can install Gecko without any problem.",
-    faq2_q:"Does it work on Mac or Linux?", faq2_a:"Yes, Gecko has an installer for both Windows and Mac. Linux is not supported yet. You can also watch your content from any device: iPhone, iPad and Apple TV via the Jellyfin app, and Android via the official app or browser.",
+    faq2_q:"Does it work on Mac, Linux, or with no PC of my own?", faq2_a:"Yes — three paths: (1) <strong>Gecko OS</strong> bootable USB → any mini PC; (2) Windows installer (.exe ~25 MB); (3) macOS installer (.pkg for Apple Silicon or Intel). All three share the same code.",
     faq3_q:"Does the computer need to stay on all the time?", faq3_a:"Yes. To access your content from other devices, the computer running Gecko must be on. For continuous use, it's recommended to connect it via Ethernet and configure Windows to prevent sleep.",
     faq4_q:"How much space do the services take up?", faq4_a:"The Docker images for the 6 services take up approximately 3-4 GB. The media content you download will take as much space as you want on the disk you choose. A hard drive of at least 1 TB is recommended for content.",
     faq5_q:"Is it free forever?", faq5_a:"Yes. Gecko is open-source software under the MIT license. There are no premium versions, subscriptions or paid features. The services it installs (Jellyfin, Radarr, Sonarr, etc.) are also free and open source.",
     faq6_q:"Can I access my content from outside home?", faq6_a:"Yes. The easiest way is to install Tailscale (free) on your computer and the devices you use. Tailscale creates a private virtual network between your devices without you having to open ports on your router.",
-    cta_title:"Start today. It's free.", cta_sub:"Download Gecko and have your home Netflix in 5 minutes.",
+    cta_title:"Download Gecko OS for free", cta_sub:"It's a homebrew project, freely available. Download it, use it, share it. No paywalls, no middlemen.",
+    cta_os_btn:"Download Gecko OS free",
+    cta_os_meta:"~1 GB · x86_64 · MIT · Bootable image for mini PC",
+    cta_alt:"Also available:",
+    cta_usb_inline:"Pre-flashed USB (€35, optional)",
+    fund_title:"How is this project funded?",
+    fund_sub:"Honestly: it's a side hobby. I (Dani) do the work for free because I enjoy it. The website server is my own homelab. The only sources of income are:",
+    fund_vpn_t:"VPN affiliates.",
+    fund_vpn_d:"If you follow our link and subscribe to ProtonVPN or Mullvad, they give us a small commission. You pay the same.",
+    fund_hw_t:"Hardware affiliates.",
+    fund_hw_d:"If you buy the mini PC through our Amazon links in the <a href=\"https://github.com/Pardo24/Gecko/blob/main/gecko-os/docs/HARDWARE.md\" target=\"_blank\" style=\"color:white;text-decoration:underline;\">hardware guide</a>, we get 3-8%. You pay the same.",
+    fund_donate_t:"Donations.",
+    fund_donate_d:"If the project saved you time, consider supporting. 100% goes to the developer.",
+    fund_usb_t:"Optional pre-flashed USB.",
+    fund_usb_d:"€35 for those who don't want to do it themselves. Minimal margin (covers USB + shipping + time).",
+    donate_title:"Support the project if it saved you time",
+    donate_sub:"Gecko is free and MIT. If it solved a problem for you or saved you a weekend of fighting docker-compose, consider supporting. Goes to the maintainer (Dani) to pay for the time.",
+    donate_coffee:"A coffee", donate_pizza:"A pizza", donate_month:"A month",
+    donate_note:"100% goes to the developer. No Gumroad, Stripe or hidden middlemen.",
     cta_btn_win:"Download for Windows", cta_btn_mac:"Download for Mac",
-    cta_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.0.6 &nbsp;·&nbsp; Docker Desktop required (free)",
+    cta_note:"Windows 10 / 11 &nbsp;·&nbsp; macOS 12+ &nbsp;·&nbsp; x64 &nbsp;·&nbsp; v1.4.3 &nbsp;·&nbsp; Docker Desktop required (free)",
     footer_tagline:"Your open-source media server. Free forever.",
     footer_col1:"Project", footer_releases:"Releases", footer_guide_link:"User guide", footer_issues:"Report issue",
     footer_col2:"Recommended tools", footer_col3:"Services",
@@ -956,7 +1292,7 @@ const i18n = {
 /* ── Apply language ───────────────────────────────────────────────────────── */
 function applyLang(lang) {
   if (!i18n[lang]) return;
-  localStorage.setItem('moss-lang', lang);
+  localStorage.setItem('gecko-lang', lang);
   document.documentElement.lang = lang;
   const t = i18n[lang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -986,27 +1322,27 @@ function setLang(lang) { applyLang(lang); }
 
 /* ── Auto-detect ──────────────────────────────────────────────────────────── */
 async function initLang() {
-  // 1. Saved preference
-  const saved = localStorage.getItem('moss-lang');
+  // 1. A manual choice the visitor made before always wins.
+  const saved = localStorage.getItem('gecko-lang') || localStorage.getItem('moss-lang');
   if (saved && i18n[saved]) { applyLang(saved); return; }
 
-  // 2. Browser language
-  const langs = Array.from(navigator.languages || [navigator.language || 'en']);
+  // 2. Browser language is the strongest auto signal.
+  const langs = Array.from(navigator.languages || [navigator.language || '']);
   for (const l of langs) {
     const c = l.toLowerCase().split('-')[0];
-    if (c === 'ca') { applyLang('ca'); return; }
-    if (c === 'es') { applyLang('es'); return; }
-    if (c === 'en') { applyLang('en'); return; }
+    if (c === 'ca' || c === 'es' || c === 'en') { applyLang(c); return; }
   }
 
-  // 3. IP geolocation fallback (only if browser lang gave no clear signal)
+  // 3. No clear browser signal → default to English IMMEDIATELY (so a non-CA/ES
+  //    visitor never sees a flash of Catalan), then upgrade by IP geolocation if
+  //    they're physically in a Catalan/Spanish region.
+  applyLang('en');
   try {
     const r = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) });
     const d = await r.json();
-    if (d.country_code === 'ES') { applyLang('es'); return; }
+    if (d.country_code === 'AD') applyLang('ca');        // Andorra → Catalan
+    else if (d.country_code === 'ES') applyLang('es');   // Spain → Spanish
   } catch (_) {}
-
-  applyLang('en');
 }
 
 initLang();
@@ -1030,27 +1366,6 @@ document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 if (window.lucide && window.lucide.createIcons) {
   window.lucide.createIcons();
 }
-
-/* ── Direct download links from latest GitHub release ────────────────── */
-(async () => {
-  try {
-    const r = await fetch('https://api.github.com/repos/Pardo24/Gecko/releases/latest', { signal: AbortSignal.timeout(5000) });
-    if (!r.ok) return;
-    const data = await r.json();
-    const assets = data.assets || [];
-    const winAsset = assets.find(a => a.name.endsWith('.exe') && !a.name.endsWith('.nupkg'));
-    const macAsset = assets.find(a => a.name.endsWith('.dmg'));
-    const winBtn = document.getElementById('dl-win');
-    const macBtn = document.getElementById('dl-mac');
-    if (winAsset && winBtn) { winBtn.href = winAsset.browser_download_url; winBtn.setAttribute('download', winAsset.name); }
-    if (macAsset && macBtn) { macBtn.href = macAsset.browser_download_url; macBtn.setAttribute('download', macAsset.name); }
-    if (data.tag_name) {
-      document.querySelectorAll('[data-i18n="cta_note"]').forEach(el => {
-        el.innerHTML = el.innerHTML.replace(/v[\d.]+/, data.tag_name);
-      });
-    }
-  } catch (_) { /* falls back to releases page link */ }
-})();
 </script>
 
 </body>
