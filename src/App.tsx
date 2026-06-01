@@ -30,7 +30,7 @@ export type Config = {
   mullvadAddress: string;
   // Quality preferences (StepQuality) — drive Recyclarr scores at install time.
   qualityDevice: 'modern' | 'old-tv';
-  qualityLang: 'original' | 'both' | 'dubbed';
+  qualityLang: 'original' | 'dubbed';
 };
 
 const STEPS = ['welcome', 'target', 'wifi', 'docker', 'storage', 'admin', 'vpn', 'quality', 'installing', 'done'] as const;
@@ -65,7 +65,7 @@ function Wizard({ onInstalled }: { onInstalled: () => void }) {
   const [isKiosk, setIsKiosk] = useState(false);
   const [config, setConfig] = useState<Config>({
     dataPath: '', adminPassword: '', subtitleLangs: [], vpnEnabled: false, mullvadKey: '', mullvadAddress: '',
-    qualityDevice: 'modern', qualityLang: 'both',
+    qualityDevice: 'modern', qualityLang: 'original',
   });
 
   // Capability detection drives which optional steps show. WiFi requires

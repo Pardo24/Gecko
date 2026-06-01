@@ -8,13 +8,16 @@
 #
 # Scoring model (deliberately filter-based, because min_format_score is 0 so
 # ANY net-negative release is rejected):
-#   {{DEVICE_PENALTY}}     0  (modern/PC) | -10000 (old/basic TV → reject HEVC,
-#                          10-bit and high-bitrate audio so it falls back to
-#                          H.264 8-bit + standard audio that direct-plays)
-#   {{MULTI_SCORE}}        0  (original-only) | 500 (multi-user / dubbed → prefer
-#                          dual-audio releases)
-#   {{NOT_ORIGINAL_SCORE}} 0  (multi/dubbed) | -10000 (original-only → reject
-#                          releases whose language isn't the original)
+#   {{DEVICE_PENALTY}}  0  (modern/PC) | -10000 (old/basic TV → reject HEVC,
+#                       10-bit and high-bitrate audio so it falls back to
+#                       H.264 8-bit + standard audio that direct-plays)
+#   {{MULTI_SCORE}}     0  (original + subs, the recommended default — original
+#                       audio is in nearly every release and Bazarr fetches the
+#                       subtitles, so language isn't biased; a dual-audio release
+#                       brings the dub along for free) | 500 (dubbed → prefer
+#                       MULTi so the dub track is present)
+# Dubbed releases are never rejected — leaving a non-technical user with nothing
+# to watch is worse than a less-preferred audio track.
 # Universal junk (AV1, BR-DISK, LQ groups) is always rejected at -10000.
 # Remux is handled by the quality-profile upgrade cutoff, not a score.
 #
@@ -70,18 +73,12 @@ sonarr:
         assign_scores_to:
           - name: WEB-1080p
             score: {{DEVICE_PENALTY}}
-      # Dual-audio (MULTi) — boosted for multi-user / dubbed setups.
+      # Dual-audio (MULTi) — boosted when the user wants the dub track present.
       - trash_ids:
           - 7ba05c6e0e14e793538174c679126996   # MULTi
         assign_scores_to:
           - name: WEB-1080p
             score: {{MULTI_SCORE}}
-      # Non-original language — rejected for original-only setups.
-      - trash_ids:
-          - ae575f95ab639ba5d15f663bf019e3e8   # Language: Not Original
-        assign_scores_to:
-          - name: WEB-1080p
-            score: {{NOT_ORIGINAL_SCORE}}
 
 radarr:
   gecko_radarr:
@@ -133,15 +130,9 @@ radarr:
         assign_scores_to:
           - name: HD Bluray + WEB
             score: {{DEVICE_PENALTY}}
-      # Dual-audio (MULTi) — boosted for multi-user / dubbed setups.
+      # Dual-audio (MULTi) — boosted when the user wants the dub track present.
       - trash_ids:
           - 4b900e171accbfb172729b63323ea8ca   # MULTi
         assign_scores_to:
           - name: HD Bluray + WEB
             score: {{MULTI_SCORE}}
-      # Non-original language — rejected for original-only setups.
-      - trash_ids:
-          - d6e9318c875905d6cfb5bee961afcea9   # Language: Not Original
-        assign_scores_to:
-          - name: HD Bluray + WEB
-            score: {{NOT_ORIGINAL_SCORE}}

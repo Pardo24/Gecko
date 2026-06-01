@@ -270,31 +270,34 @@ async function runGeckoInit(stackDir: string, dockerEnvObj: NodeJS.ProcessEnv): 
 // ── Render the Recyclarr template from the wizard's quality prefs ─────
 
 export type QualityDevice = 'modern' | 'old-tv';
-export type QualityLang = 'original' | 'both' | 'dubbed';
+export type QualityLang = 'original' | 'dubbed';
 export interface QualityPrefs {
   device: QualityDevice;
   lang: QualityLang;
 }
 
-export const DEFAULT_QUALITY_PREFS: QualityPrefs = { device: 'modern', lang: 'both' };
+export const DEFAULT_QUALITY_PREFS: QualityPrefs = { device: 'modern', lang: 'original' };
 
 const REJECT = -10000;   // with min_format_score: 0, any net-negative release is dropped
 const MULTI_BOOST = 500;
 
 /**
- * Map the two wizard answers to the three template score placeholders.
+ * Map the two wizard answers to the template score placeholders.
  *   - device 'old-tv'  → reject HEVC / 10-bit / high-bitrate audio so the
  *     download falls back to H.264 8-bit + standard audio that old/basic TVs
  *     can direct-play (the Nubul "Hisense" lesson).
- *   - lang 'both'/'dubbed' → boost MULTi (dual-audio) releases.
- *   - lang 'original'  → reject non-original-language releases.
+ *   - lang 'original' (recommended) → neutral: original audio is present in
+ *     virtually every release and subtitles come from Bazarr, so we don't bias
+ *     by language. The dub track comes along free when a release happens to be
+ *     dual-audio. We deliberately do NOT reject dubbed releases (that footgun
+ *     could leave a non-technical user with nothing to watch).
+ *   - lang 'dubbed' → boost MULTi (dual-audio) so the dub track is present.
  * See stack/recyclarr/recyclarr.yml.tpl for the model rationale.
  */
 function computeRecyclarrScores(prefs: QualityPrefs): Record<string, number> {
   return {
     DEVICE_PENALTY: prefs.device === 'old-tv' ? REJECT : 0,
-    MULTI_SCORE: prefs.lang === 'original' ? 0 : MULTI_BOOST,
-    NOT_ORIGINAL_SCORE: prefs.lang === 'original' ? REJECT : 0,
+    MULTI_SCORE: prefs.lang === 'dubbed' ? MULTI_BOOST : 0,
   };
 }
 

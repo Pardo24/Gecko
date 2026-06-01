@@ -541,7 +541,7 @@ app.post('/api/install', async (req, res) => {
       prowlarr: 9696, bazarr: 6767, qbit: 8090, jellyseerr: 5055,
     },
     vpnEnabled,
-    qualityPrefs: { device: qualityDevice ?? 'modern', lang: qualityLang ?? 'both' },
+    qualityPrefs: { device: qualityDevice ?? 'modern', lang: qualityLang ?? 'original' },
     stackDir: COMPOSE_DIR,
     dockerEnvObj: dockerEnv(),
     onProgress: progress,

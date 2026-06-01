@@ -7,9 +7,10 @@ type Props = { config: Config; updateConfig: (p: Partial<Config>) => void; next:
 // A single selectable option card (radio-style). Mirrors the visual idiom of
 // StepInstallTarget: card-sm, teal accent when selected.
 function OptionCard({
-  icon, title, desc, selected, onClick,
+  icon, title, desc, selected, recommended, recommendedLabel, onClick,
 }: {
-  icon: React.ReactNode; title: string; desc: string; selected: boolean; onClick: () => void;
+  icon: React.ReactNode; title: string; desc: string; selected: boolean;
+  recommended?: boolean; recommendedLabel?: string; onClick: () => void;
 }) {
   return (
     <button
@@ -25,7 +26,15 @@ function OptionCard({
         {icon}
       </div>
       <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-        <span className="font-medium text-sm">{title}</span>
+        <span className="font-medium text-sm">
+          {title}
+          {recommended && (
+            <span className="ml-2 text-xs font-bold px-2 py-0.5 rounded-full"
+                  style={{ background: 'rgba(13,148,136,0.12)', color: 'var(--accent)' }}>
+              {recommendedLabel}
+            </span>
+          )}
+        </span>
         <span className="text-xs" style={{ color: 'var(--text-3)' }}>{desc}</span>
       </div>
     </button>
@@ -56,6 +65,7 @@ export default function StepQuality({ config, updateConfig, next }: Props) {
             title={t.quality_device_modern_title}
             desc={t.quality_device_modern_desc}
             selected={config.qualityDevice === 'modern'}
+            recommended recommendedLabel={t.quality_tag_recommended}
             onClick={() => updateConfig({ qualityDevice: 'modern' })}
           />
           <OptionCard
@@ -73,17 +83,11 @@ export default function StepQuality({ config, updateConfig, next }: Props) {
             <Languages size={13} className="inline mr-1 -mt-0.5" />{t.quality_lang_q}
           </p>
           <OptionCard
-            icon={<span className="text-base">🌐</span>}
-            title={t.quality_lang_both_title}
-            desc={t.quality_lang_both_desc}
-            selected={config.qualityLang === 'both'}
-            onClick={() => updateConfig({ qualityLang: 'both' })}
-          />
-          <OptionCard
             icon={<span className="text-base">🎬</span>}
             title={t.quality_lang_original_title}
             desc={t.quality_lang_original_desc}
             selected={config.qualityLang === 'original'}
+            recommended recommendedLabel={t.quality_tag_recommended}
             onClick={() => updateConfig({ qualityLang: 'original' })}
           />
           <OptionCard
