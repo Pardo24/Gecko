@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="favicon.png" />
   <title>Guia d'usuari de Gecko</title>
   <meta name="description" content="Guia completa per configurar i fer servir Gecko: primer inici, dashboard, serveis, accés extern amb Tailscale." />
   <script>
@@ -118,7 +119,7 @@
       text-decoration: none;
     }
     .sidebar-nav a:hover { color: var(--text); background: rgba(0,0,0,0.04); }
-    .sidebar-nav a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(249,115,22,0.06); }
+    .sidebar-nav a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(13,148,136,0.06); }
 
     /* ── Typography ── */
     h1 { font-size: 2.4rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 16px; }
@@ -164,14 +165,14 @@
       position: absolute;
       left: 17px; top: 38px;
       width: 2px; height: calc(100% - 12px);
-      background: linear-gradient(to bottom, var(--accent), rgba(249,115,22,0.08));
+      background: linear-gradient(to bottom, var(--accent), rgba(13,148,136,0.08));
     }
     .step-n {
       width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
       background: var(--accent-g); color: #fff;
       display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 0.85rem;
-      box-shadow: 0 3px 10px rgba(249,115,22,0.3);
+      box-shadow: 0 3px 10px rgba(13,148,136,0.3);
     }
     .step-content { padding-top: 6px; flex: 1; }
     .step-content h4 { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
@@ -195,7 +196,7 @@
     .service-desc { font-size: 0.82rem; color: var(--text-2); flex: 1; }
     .service-tag {
       font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 99px;
-      background: rgba(249,115,22,0.1); color: var(--accent);
+      background: rgba(13,148,136,0.1); color: var(--accent);
       white-space: nowrap; flex-shrink: 0;
     }
     .service-tag.green { background: rgba(34,197,94,0.1); color: #16a34a; }
@@ -271,14 +272,14 @@
       font-family: inherit; font-weight: 700; font-size: 0.9rem;
       cursor: pointer; border: none; transition: all 0.15s; text-decoration: none;
     }
-    .btn-primary { background: var(--accent-g); color: #fff; box-shadow: 0 4px 14px rgba(249,115,22,0.35); }
+    .btn-primary { background: var(--accent-g); color: #fff; box-shadow: 0 4px 14px rgba(13,148,136,0.35); }
     .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); text-decoration: none; }
     .btn-outline { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); box-shadow: var(--shadow-sm); }
     .btn-outline:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); text-decoration: none; }
 
     /* ── Badge ── */
     .badge { display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:0.72rem;font-weight:700; }
-    .badge-orange { background:rgba(249,115,22,0.1);color:var(--accent);border:1px solid rgba(249,115,22,0.2); }
+    .badge-orange { background:rgba(13,148,136,0.1);color:var(--accent);border:1px solid rgba(13,148,136,0.2); }
     .badge-green  { background:rgba(34,197,94,0.1);color:#16a34a;border:1px solid rgba(34,197,94,0.2); }
 
     /* ── Divider ── */
