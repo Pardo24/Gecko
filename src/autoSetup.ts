@@ -267,6 +267,58 @@ async function runGeckoInit(stackDir: string, dockerEnvObj: NodeJS.ProcessEnv): 
     .filter(l => l.includes('SKIP'));
 }
 
+// ── Render the Recyclarr template from the wizard's quality prefs ─────
+
+export type QualityDevice = 'modern' | 'old-tv';
+export type QualityLang = 'original' | 'both' | 'dubbed';
+export interface QualityPrefs {
+  device: QualityDevice;
+  lang: QualityLang;
+}
+
+export const DEFAULT_QUALITY_PREFS: QualityPrefs = { device: 'modern', lang: 'both' };
+
+const REJECT = -10000;   // with min_format_score: 0, any net-negative release is dropped
+const MULTI_BOOST = 500;
+
+/**
+ * Map the two wizard answers to the three template score placeholders.
+ *   - device 'old-tv'  → reject HEVC / 10-bit / high-bitrate audio so the
+ *     download falls back to H.264 8-bit + standard audio that old/basic TVs
+ *     can direct-play (the Nubul "Hisense" lesson).
+ *   - lang 'both'/'dubbed' → boost MULTi (dual-audio) releases.
+ *   - lang 'original'  → reject non-original-language releases.
+ * See stack/recyclarr/recyclarr.yml.tpl for the model rationale.
+ */
+function computeRecyclarrScores(prefs: QualityPrefs): Record<string, number> {
+  return {
+    DEVICE_PENALTY: prefs.device === 'old-tv' ? REJECT : 0,
+    MULTI_SCORE: prefs.lang === 'original' ? 0 : MULTI_BOOST,
+    NOT_ORIGINAL_SCORE: prefs.lang === 'original' ? REJECT : 0,
+  };
+}
+
+/**
+ * Render stack/recyclarr/recyclarr.yml.tpl → recyclarr.yml with scores from
+ * the wizard. No-op (leaves the committed balanced-default recyclarr.yml in
+ * place) if the template is missing, so a failed render degrades to sane
+ * defaults rather than breaking the sync.
+ */
+async function renderRecyclarrTemplate(stackDir: string, prefs: QualityPrefs): Promise<void> {
+  const tplPath = path.join(stackDir, 'recyclarr', 'recyclarr.yml.tpl');
+  let tpl: string;
+  try {
+    tpl = await fs.readFile(tplPath, 'utf8');
+  } catch {
+    return; // no template shipped — keep the committed default recyclarr.yml
+  }
+  const scores = computeRecyclarrScores(prefs);
+  const rendered = tpl.replace(/\{\{(\w+)\}\}/g, (m, key: string) =>
+    key in scores ? String(scores[key]) : m,
+  );
+  await fs.writeFile(path.join(stackDir, 'recyclarr', 'recyclarr.yml'), rendered, 'utf8');
+}
+
 // ── Trigger Recyclarr sync (also idempotent) ─────────────────────────
 
 async function runRecyclarrSync(stackDir: string, dockerEnvObj: NodeJS.ProcessEnv): Promise<void> {
@@ -285,6 +337,7 @@ export interface AutoSetupConfig {
     prowlarr: number; bazarr: number; qbit: number; jellyseerr: number;
   };
   vpnEnabled: boolean;
+  qualityPrefs?: QualityPrefs;   // wizard "quality preferences" — drives Recyclarr scores
   stackDir: string;             // path to ./stack — where docker-compose.yml lives
   dockerEnvObj: NodeJS.ProcessEnv;
   onProgress: (step: number) => void;
@@ -296,7 +349,7 @@ export async function runAutoSetup(cfg: AutoSetupConfig): Promise<{
   skips: string[];
   apiKeys: { radarr: string; sonarr: string; lidarr: string; prowlarr: string; bazarr: string };
 }> {
-  const { adminPassword, subtitleLangs, ports, vpnEnabled, stackDir, dockerEnvObj,
+  const { adminPassword, subtitleLangs, ports, vpnEnabled, qualityPrefs, stackDir, dockerEnvObj,
           onProgress, onStepFailed } = cfg;
   const failedSteps: Array<{ step: number; error: string }> = [];
   const skips: string[] = [];
@@ -348,7 +401,12 @@ export async function runAutoSetup(cfg: AutoSetupConfig): Promise<{
   });
 
   // Step 7: Recyclarr applies TRaSH Guides quality profiles & custom formats.
-  await tryStep(7, () => runRecyclarrSync(stackDir, dockerEnvObj));
+  // Render the template from the wizard's quality prefs first (falls back to
+  // the committed balanced-default recyclarr.yml if no prefs / no template).
+  await tryStep(7, async () => {
+    await renderRecyclarrTemplate(stackDir, qualityPrefs ?? DEFAULT_QUALITY_PREFS);
+    await runRecyclarrSync(stackDir, dockerEnvObj);
+  });
 
   return { failedSteps, skips, apiKeys };
 }

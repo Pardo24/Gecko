@@ -473,7 +473,7 @@ app.post('/api/delete-media', async (req, res) => {
 
 app.post('/api/install', async (req, res) => {
   const config = req.body;
-  const { dataPath, adminPassword, subtitleLangs, vpnEnabled } = config;
+  const { dataPath, adminPassword, subtitleLangs, vpnEnabled, qualityDevice, qualityLang } = config;
   const progress = (step: number) => events.emit('install-progress', { step });
 
   // Step 0: dirs
@@ -541,6 +541,7 @@ app.post('/api/install', async (req, res) => {
       prowlarr: 9696, bazarr: 6767, qbit: 8090, jellyseerr: 5055,
     },
     vpnEnabled,
+    qualityPrefs: { device: qualityDevice ?? 'modern', lang: qualityLang ?? 'both' },
     stackDir: COMPOSE_DIR,
     dockerEnvObj: dockerEnv(),
     onProgress: progress,

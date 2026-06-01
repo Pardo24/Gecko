@@ -213,12 +213,15 @@ export default function StepInstalling({ config, next }: Props) {
           }}
         >
           {/* Service icon */}
-          <div style={{
-            width: 72, height: 72, borderRadius: 20,
-            background: 'rgba(13,148,136,0.08)',
-            border: '1.5px solid rgba(13,148,136,0.15)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
+          <div
+            className="installing-icon-breathe"
+            style={{
+              width: 72, height: 72, borderRadius: 20,
+              background: 'rgba(13,148,136,0.08)',
+              border: '1.5px solid rgba(13,148,136,0.15)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
             {serviceInfo?.name ? (
               <ServiceIcon name={serviceInfo.name} size={48} />
             ) : (

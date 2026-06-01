@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lock, Eye, EyeOff } from 'lucide-react';
+import { Lock, Eye, EyeOff, Check } from 'lucide-react';
 import type { Config } from '../App';
 import { useT } from '../LangContext';
 
@@ -79,8 +79,17 @@ export default function StepAdmin({ config, updateConfig, next }: Props) {
             value={confirm}
             onChange={e => { setConfirm(e.target.value); setError(''); }}
             className="input-field"
-            style={{ paddingRight: 44 }}
+            style={{ paddingRight: confirm && config.adminPassword === confirm ? 72 : 44 }}
           />
+          {confirm && config.adminPassword === confirm && (
+            <span
+              className="absolute top-1/2 -translate-y-1/2"
+              style={{ right: 38, color: '#16a34a' }}
+              aria-label="passwords match"
+            >
+              <Check size={16} strokeWidth={2.5} />
+            </span>
+          )}
           <button
             onClick={() => setShow(s => !s)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-sm"

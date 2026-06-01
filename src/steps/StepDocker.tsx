@@ -90,8 +90,7 @@ export default function StepDocker({ next }: Props) {
           <p className="text-sm leading-relaxed" style={{ color: 'var(--text-2)' }}>{t.docker_missing_desc}</p>
           <button
             onClick={() => window.electron.openExternal('https://www.docker.com/products/docker-desktop/')}
-            className="btn-primary"
-            style={{ background: 'linear-gradient(135deg,#3b82f6,#60a5fa)', boxShadow: '0 4px 14px rgba(59,130,246,0.35)' }}
+            className="btn-primary docker"
           >
             {t.docker_download}
           </button>

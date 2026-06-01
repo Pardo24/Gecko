@@ -4,6 +4,8 @@ import { LangProvider, useT } from './LangContext';
 import type { Lang } from './i18n';
 import appIcon from '../assets/icons/icons/png/64x64.png';
 import StepWelcome from './steps/StepWelcome';
+import StepInstallTarget from './steps/StepInstallTarget';
+import StepQuality from './steps/StepQuality';
 import StepWifi from './steps/StepWifi';
 import StepDocker from './steps/StepDocker';
 import StepStorage from './steps/StepStorage';
@@ -13,6 +15,12 @@ import StepInstalling from './steps/StepInstalling';
 import StepDone from './steps/StepDone';
 import Dashboard from './Dashboard';
 
+// Default data path used when running on the Gecko OS kiosk — there's no
+// native folder picker and asking the user to type a Linux path makes no
+// sense, so we use the one the OS image already provisions (see
+// gecko-os/docs/BOOT_FLOW.md stage 2.4).
+const KIOSK_DATA_PATH = '/opt/gecko/userData/data';
+
 export type Config = {
   dataPath: string;
   adminPassword: string;
@@ -20,9 +28,12 @@ export type Config = {
   vpnEnabled: boolean;
   mullvadKey: string;
   mullvadAddress: string;
+  // Quality preferences (StepQuality) — drive Recyclarr scores at install time.
+  qualityDevice: 'modern' | 'old-tv';
+  qualityLang: 'original' | 'both' | 'dubbed';
 };
 
-const STEPS = ['welcome', 'wifi', 'docker', 'storage', 'admin', 'vpn', 'installing', 'done'] as const;
+const STEPS = ['welcome', 'target', 'wifi', 'docker', 'storage', 'admin', 'vpn', 'quality', 'installing', 'done'] as const;
 type Step = typeof STEPS[number];
 
 const SETUP_STEPS = ['docker', 'storage', 'admin', 'vpn'] as const;
@@ -51,25 +62,46 @@ function Wizard({ onInstalled }: { onInstalled: () => void }) {
   const { t } = useT();
   const [step, setStep] = useState<Step>('welcome');
   const [hasWifi, setHasWifi] = useState(false);
+  const [isKiosk, setIsKiosk] = useState(false);
   const [config, setConfig] = useState<Config>({
     dataPath: '', adminPassword: '', subtitleLangs: [], vpnEnabled: false, mullvadKey: '', mullvadAddress: '',
+    qualityDevice: 'modern', qualityLang: 'both',
   });
 
-  // Capability detection: only show the WiFi step where it makes sense
-  // (Gecko OS kiosk has nmcli; Electron desktop returns wifi:false).
+  // Capability detection drives which optional steps show. WiFi requires
+  // nmcli (kiosk only). The 'target' step + Storage-skip require the
+  // install-to-disk pipeline (parted+dd), which is also a Gecko OS marker.
   useEffect(() => {
-    // Silently ignore errors — we keep wifi step hidden in that case.
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    window.electron.capabilities().then(c => setHasWifi(c.wifi)).catch(() => {});
+    // Dev-only override: ?kiosk=1 lets us preview the kiosk-only steps from
+    // a desktop browser without booting Gecko OS. Stripped from prod builds
+    // via import.meta.env.DEV (a Vite build-time constant).
+    const devKioskOverride = import.meta.env.DEV
+      && new URLSearchParams(window.location.search).get('kiosk') === '1';
+
+    window.electron.capabilities().then(c => {
+      const kiosk = c.installToDisk || devKioskOverride;
+      setHasWifi(c.wifi || devKioskOverride);
+      setIsKiosk(kiosk);
+      if (kiosk) {
+        // On the kiosk there's no folder picker — pre-fill the well-known
+        // OS data path so the wizard can skip the Storage screen cleanly.
+        setConfig(prev => prev.dataPath ? prev : { ...prev, dataPath: KIOSK_DATA_PATH });
+      }
+    }).catch(() => { /* keep optional steps hidden */ });
   }, []);
 
   const next = () => {
-    const idx = STEPS.indexOf(step);
     if (step === 'done') { onInstalled(); return; }
-    let nextStep = STEPS[idx + 1];
-    // Skip wifi step if the host doesn't support it
-    if (nextStep === 'wifi' && !hasWifi) nextStep = STEPS[idx + 2];
-    if (nextStep) setStep(nextStep);
+    // Walk forward to the first step that's enabled in this context.
+    let i = STEPS.indexOf(step) + 1;
+    while (i < STEPS.length) {
+      const s = STEPS[i];
+      if (s === 'target'  && !isKiosk) { i++; continue; }
+      if (s === 'wifi'    && !hasWifi) { i++; continue; }
+      if (s === 'storage' &&  isKiosk) { i++; continue; }
+      break;
+    }
+    if (STEPS[i]) setStep(STEPS[i]);
   };
 
   const updateConfig = (partial: Partial<Config>) => setConfig(prev => ({ ...prev, ...partial }));
@@ -118,14 +150,16 @@ function Wizard({ onInstalled }: { onInstalled: () => void }) {
           </div>
         )}
         <div className="flex-1 overflow-y-auto">
-          {step === 'welcome'    && <StepWelcome    {...stepProps} />}
-          {step === 'wifi'       && <StepWifi       next={next} />}
-          {step === 'docker'     && <StepDocker     {...stepProps} />}
-          {step === 'storage'    && <StepStorage    {...stepProps} />}
-          {step === 'admin'      && <StepAdmin      {...stepProps} />}
-          {step === 'vpn'        && <StepVpn        {...stepProps} />}
-          {step === 'installing' && <StepInstalling {...stepProps} />}
-          {step === 'done'       && <StepDone       {...stepProps} />}
+          {step === 'welcome'    && <StepWelcome       {...stepProps} />}
+          {step === 'target'     && <StepInstallTarget {...stepProps} />}
+          {step === 'wifi'       && <StepWifi          next={next} />}
+          {step === 'docker'     && <StepDocker        {...stepProps} />}
+          {step === 'storage'    && <StepStorage       {...stepProps} />}
+          {step === 'admin'      && <StepAdmin         {...stepProps} />}
+          {step === 'vpn'        && <StepVpn           {...stepProps} />}
+          {step === 'quality'    && <StepQuality       {...stepProps} />}
+          {step === 'installing' && <StepInstalling    {...stepProps} />}
+          {step === 'done'       && <StepDone          {...stepProps} />}
         </div>
       </div>
     </div>

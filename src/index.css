@@ -408,6 +408,26 @@
 @keyframes spin   { to { transform: rotate(360deg); } }
 .spin { animation: spin 0.8s linear infinite; }
 
+/* Breathing halo for the active service icon during install — installs
+   that take 30s+ per step otherwise feel frozen. */
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(13,148,136,0.18); transform: scale(1);    }
+  50%      { box-shadow: 0 0 0 8px rgba(13,148,136,0);   transform: scale(1.03); }
+}
+.installing-icon-breathe { animation: breathe 2.2s ease-in-out infinite; }
+
+/* Docker-branded variant of the primary button (blue rather than teal).
+   Used on StepDocker when Docker is missing and we link to the install
+   page; the blue ties the CTA to Docker's brand without leaving the
+   design system. */
+.btn-primary.docker {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+}
+.btn-primary.docker:hover:not(:disabled) {
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.42);
+}
+
 /* ─── Celebration ─────────────────────────────────────────────────────────── */
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(18px) scale(0.97); }
