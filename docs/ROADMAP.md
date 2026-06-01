@@ -159,6 +159,14 @@ Wait for week 1-2 user feedback before locking these in. Likely candidates:
   one-click restore on a new machine. Currently not supported.
 - **Multi-user Jellyfin profiles**: wizard asks "how many people in
   your house?" and seeds N Jellyfin accounts.
+- **Apply the wizard language choice to Jellyfin's default audio/subtitle
+  track**: the StepQuality "original + subtitles vs dubbed" answer currently
+  only drives Recyclarr download scoring (which audio tracks are *present* in
+  the file). It does not set which track *plays by default*. Add a post-install
+  step that sets the Jellyfin user's default audio language + "always show
+  subtitles" preference from the wizard answer (original → original audio +
+  forced subs; dubbed → user's language audio). Needs the Jellyfin user-config
+  API; verify it survives the first-boot wizard. *Effort*: ~half a day.
 - **Optional Pi-hole add-on**: simple toggle to add network-wide ad
   blocking. Strong "wow factor" for non-technical users.
 
