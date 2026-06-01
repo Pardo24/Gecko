@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guia d'usuari — Gecko</title>
+  <title>Guia d'usuari de Gecko</title>
   <meta name="description" content="Guia completa per configurar i fer servir Gecko: primer inici, dashboard, serveis, accés extern amb Tailscale." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -371,7 +371,7 @@
         <div class="step-n">1</div>
         <div class="step-content">
           <h4>Benvinguda + comprovacions del sistema</h4>
-          <p>Pantalla introductòria amb resum de què fa Gecko. A sota, una graella discreta mostra <strong>RAM, CPU, disc lliure</strong> del teu sistema — si alguna cosa és per sota del recomanat, veuràs avís groc. No bloqueja, només informa. Prem <strong>Començar</strong>.</p>
+          <p>Pantalla introductòria amb resum de què fa Gecko. A sota, una graella discreta mostra <strong>RAM, CPU, disc lliure</strong> del teu sistema, si alguna cosa és per sota del recomanat, veuràs avís groc. No bloqueja, només informa. Prem <strong>Començar</strong>.</p>
         </div>
       </div>
       <div class="step-item">
@@ -385,7 +385,7 @@
         <div class="step-n">3</div>
         <div class="step-content">
           <h4>Comprovació de Docker <span style="color:var(--text-3);font-size:0.85em;">(només Windows/macOS)</span></h4>
-          <p>Gecko comprova si Docker Desktop és actiu. Si no el tens, veuràs un botó per descarregar-lo. A Gecko OS, Docker ja ve preinstal·lat i actiu — aquest pas no apareix.</p>
+          <p>Gecko comprova si Docker Desktop és actiu. Si no el tens, veuràs un botó per descarregar-lo. A Gecko OS, Docker ja ve preinstal·lat i actiu, aquest pas no apareix.</p>
         </div>
       </div>
       <div class="step-item">
@@ -399,7 +399,7 @@
         <div class="step-n">5</div>
         <div class="step-content">
           <h4>Contrasenya admin</h4>
-          <p>Una sola contrasenya per a tot: Jellyfin admin, qBittorrent, dashboard. Mínim 6 caràcters. Apunta-la — no la podràs recuperar si la perds.</p>
+          <p>Una sola contrasenya per a tot: Jellyfin admin, qBittorrent, dashboard. Mínim 6 caràcters. Apunta-la, no la podràs recuperar si la perds.</p>
         </div>
       </div>
       <div class="step-item">
@@ -435,7 +435,7 @@
       <div><strong>Gecko OS només:</strong> Un cop acabada la instal·lació i tot funciona, pots anar a <strong>Settings → Move to internal disk</strong> per copiar Gecko al disc intern del mini PC. Després pots retirar el USB. ~5 min, reboot automàtic, idempotent.</div>
     </div>
 
-    <!-- ── DASHBOARD — MENÚ ───────────────────────────────────────────── -->
+    <!-- ── DASHBOARD, MENÚ ───────────────────────────────────────────── -->
     <h2 id="menu">🗂️ El menú lateral del dashboard</h2>
     <p>Un cop instal·lat el stack, Gecko mostra sempre el <strong>dashboard</strong> amb una barra lateral de navegació a l'esquerra amb quatre seccions:</p>
 
@@ -480,13 +480,13 @@
     <p style="margin-top:8px;"><strong>Idioma:</strong> A la part inferior de la barra lateral hi ha els botons <code>CA</code> / <code>ES</code> / <code>EN</code> per canviar l'idioma en qualsevol moment.</p>
 
     <!-- ── INICI ───────────────────────────────────────────────────────── -->
-    <h2 id="inici">🏠 Pàgina Inici — Arrencar els serveis</h2>
+    <h2 id="inici">🏠 Pàgina Inici, Arrencar els serveis</h2>
     <p>Aquesta és la pantalla principal del dashboard. Aquí pots:</p>
     <ul>
-      <li><strong>Veure l'estat</strong> — un indicador de color mostra si el stack és En marxa (verd), Aturat (vermell) o Comprovant (groc).</li>
-      <li><strong>Arrencar el stack</strong> — premeu el botó <strong>Arrencar</strong>. Els serveis Docker s'inicien en segon pla. Pot trigar 20-60 segons la primera vegada que s'arrenca.</li>
-      <li><strong>Parar el stack</strong> — el botó <strong>Parar</strong> atura tots els contenidors Docker. Útil per estalviar recursos quan no es fa servir.</li>
-      <li><strong>Accedir a un servei</strong> — els sis botons de la graella obren directament el servei al navegador (URLs de <code>localhost</code>). Estan desactivats si el stack és aturat.</li>
+      <li><strong>Veure l'estat</strong>: un indicador de color mostra si el stack és En marxa (verd), Aturat (vermell) o Comprovant (groc).</li>
+      <li><strong>Arrencar el stack</strong>: premeu el botó <strong>Arrencar</strong>. Els serveis Docker s'inicien en segon pla. Pot trigar 20-60 segons la primera vegada que s'arrenca.</li>
+      <li><strong>Parar el stack</strong>: el botó <strong>Parar</strong> atura tots els contenidors Docker. Útil per estalviar recursos quan no es fa servir.</li>
+      <li><strong>Accedir a un servei</strong>: els sis botons de la graella obren directament el servei al navegador (URLs de <code>localhost</code>). Estan desactivats si el stack és aturat.</li>
     </ul>
 
     <div class="callout callout-warning">
@@ -500,11 +500,11 @@
 
     <h3>Quins proveïdors funcionen?</h3>
     <p>
-      Gecko utilitza <strong>Gluetun</strong> com a contenidor VPN. <strong>No tots els proveïdors VPN funcionen</strong> amb aquesta configuració — cal que ofereixin WireGuard amb clau privada i adreça IP assignada. Els dos que funcionen de forma senzilla:
+      Gecko utilitza <strong>Gluetun</strong> com a contenidor VPN. <strong>No tots els proveïdors VPN funcionen</strong> amb aquesta configuració, cal que ofereixin WireGuard amb clau privada i adreça IP assignada. Els dos que funcionen de forma senzilla:
     </p>
     <ul>
-      <li><strong><a href="https://mullvad.net" target="_blank">Mullvad</a></strong> — el més senzill. Genera una clau directament al web sense descarregar fitxers. ~5€/mes sense subscripció.</li>
-      <li><strong><a href="https://go.getproton.me/aff_c?offer_id=26&aff_id=7925" target="_blank">ProtonVPN</a></strong> — genera un fitxer de configuració WireGuard del qual s'extreuen les dades. Té pla gratuït.</li>
+      <li><strong><a href="https://mullvad.net" target="_blank">Mullvad</a></strong>: el més senzill. Genera una clau directament al web sense descarregar fitxers. ~5€/mes sense subscripció.</li>
+      <li><strong><a href="https://go.getproton.me/aff_c?offer_id=26&aff_id=7925" target="_blank">ProtonVPN</a></strong>: genera un fitxer de configuració WireGuard del qual s'extreuen les dades. Té pla gratuït.</li>
     </ul>
 
     <div class="callout callout-warning">
@@ -512,7 +512,7 @@
       <div><strong>NordVPN, Surfshark i similars no funcionen directament</strong> amb aquest mètode. Gluetun els suporta però requereix variables d'entorn específiques per a cada proveïdor, fora de l'abast de l'assistent.</div>
     </div>
 
-    <h3>Mullvad — com obtenir les dades</h3>
+    <h3>Mullvad, com obtenir les dades</h3>
     <div class="step-list">
       <div class="step-item">
         <div class="step-n">1</div>
@@ -537,7 +537,7 @@
       </div>
     </div>
 
-    <h3>ProtonVPN — com obtenir les dades</h3>
+    <h3>ProtonVPN, com obtenir les dades</h3>
     <div class="step-list">
       <div class="step-item">
         <div class="step-n">1</div>
@@ -638,7 +638,7 @@
     </div>
 
     <!-- ── PROWLARR ────────────────────────────────────────────────────── -->
-    <h2 id="prowlarr">🔌 Configurar Prowlarr — l'únic pas manual</h2>
+    <h2 id="prowlarr">🔌 Configurar Prowlarr, l'únic pas manual</h2>
     <p>
       Un cop acabat l'assistent de Gecko, <strong>l'únic que has de fer manualment és afegir indexadors a Prowlarr.</strong>
       Un indexador és un cercador de contingut (com Google però per a pel·lícules i sèries). Sense cap indexador, Radarr i Sonarr no trobaran res.
@@ -647,7 +647,7 @@
     <div class="callout callout-info">
       <div class="callout-icon">ℹ️</div>
       <div>
-        <strong>Prowlarr ja està connectat a Radarr, Sonarr i Lidarr.</strong> Gecko ho ha configurat automàticament. Quan afegeixes un indexador a Prowlarr, tots els serveis el veuran al moment — no cal fer res més.
+        <strong>Prowlarr ja està connectat a Radarr, Sonarr i Lidarr.</strong> Gecko ho ha configurat automàticament. Quan afegeixes un indexador a Prowlarr, tots els serveis el veuran al moment, no cal fer res més.
       </div>
     </div>
 
@@ -678,7 +678,7 @@
 
     <h3>Com trobar bons indexadors</h3>
     <ul>
-      <li>Busca <strong>"best public Prowlarr indexers [any actual]"</strong> a Google — hi ha llistes actualitzades regularment.</li>
+      <li>Busca <strong>"best public Prowlarr indexers [any actual]"</strong> a Google, hi ha llistes actualitzades regularment.</li>
       <li>Pregunta a una IA (ChatGPT, Gemini…): <em>"Quins son els millors indexadors públics per Prowlarr per a pel·lícules i sèries en català/espanyol?"</em></li>
       <li>Consulta la <a href="https://wiki.servarr.com/prowlarr/indexers" target="_blank">documentació oficial de Prowlarr</a> per veure el catàleg complet.</li>
     </ul>
@@ -758,7 +758,7 @@
         <div class="step-n">2</div>
         <div class="step-content">
           <h4>Anota la IP de Tailscale del teu ordinador</h4>
-          <p>A la barra de tasques, clica l'icona de Tailscale i veuràs la teva IP de Tailscale — és del format <code>100.x.x.x</code>. Anota-la.</p>
+          <p>A la barra de tasques, clica l'icona de Tailscale i veuràs la teva IP de Tailscale, és del format <code>100.x.x.x</code>. Anota-la.</p>
         </div>
       </div>
       <div class="step-item">
@@ -819,7 +819,7 @@
         <div>
           <div class="menu-label">AI Helper Prompt ★</div>
           <div class="menu-desc">
-            Copia <a href="https://github.com/Pardo24/Gecko/blob/main/docs/ai-helper-prompt.md" target="_blank">aquest prompt</a> a ChatGPT o Claude, descriu el problema en català/castellà/anglès, i rep ajuda específica per a Gecko (no consells generics). <strong>Cost zero per a tu</strong> — fas servir el teu propi compte d'IA.
+            Copia <a href="https://github.com/Pardo24/Gecko/blob/main/docs/ai-helper-prompt.md" target="_blank">aquest prompt</a> a ChatGPT o Claude, descriu el problema en català/castellà/anglès, i rep ajuda específica per a Gecko (no consells generics). <strong>Cost zero per a tu</strong>: fas servir el teu propi compte d'IA.
           </div>
         </div>
       </div>
@@ -846,7 +846,7 @@
     <div class="callout callout-info" style="margin-top:24px;">
       <div class="callout-icon">⚙️</div>
       <div>
-        <strong>Vols treure més suc al mini PC?</strong> Gecko és només l'inici — pots afegir Home Assistant, Pi-hole, Nextcloud, Vaultwarden i molt més al costat sense interferir. <a href="https://github.com/Pardo24/Gecko/blob/main/docs/extending.md" target="_blank">Mira la guia d'extensió →</a>
+        <strong>Vols treure més suc al mini PC?</strong> Gecko és només l'inici, pots afegir Home Assistant, Pi-hole, Nextcloud, Vaultwarden i molt més al costat sense interferir. <a href="https://github.com/Pardo24/Gecko/blob/main/docs/extending.md" target="_blank">Mira la guia d'extensió →</a>
       </div>
     </div>
 
