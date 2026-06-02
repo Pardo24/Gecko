@@ -20,6 +20,7 @@ import express from 'express';
 import * as path from 'node:path';
 import * as os from 'node:os';
 import * as fs from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import * as crypto from 'node:crypto';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -30,7 +31,19 @@ import { seedDockerVolumes } from './lib/seedVolumes';
 const execAsync = promisify(exec);
 
 const PORT = Number(process.env.PORT ?? 3000);
-const STATIC_DIR = process.env.STATIC_DIR ?? path.join(__dirname, '..', 'renderer', 'main_window');
+// Where the built React UI lives. The installer sets STATIC_DIR explicitly;
+// otherwise locate it: dev/local builds put it at <root>/dist (Vite), and the
+// packaged app copies it next to the server bundle under ./renderer. The old
+// default ('renderer/main_window', an Electron Forge Webpack path) no longer
+// exists and caused ENOENT on index.html.
+const STATIC_DIR = (() => {
+  if (process.env.STATIC_DIR) return process.env.STATIC_DIR;
+  const distDir = path.join(__dirname, '..', 'dist');       // dev (src/) or local bundle (dist-server/) → <root>/dist
+  if (existsSync(path.join(distDir, 'index.html'))) return distDir;
+  const rendererDir = path.join(__dirname, 'renderer');     // installed fallback (see installer/windows/gecko.nsi)
+  if (existsSync(path.join(rendererDir, 'index.html'))) return rendererDir;
+  return distDir;
+})();
 const COMPOSE_DIR = process.env.COMPOSE_DIR ?? path.join(os.homedir(), '.gecko', 'stack');
 const STACK_BASE = process.env.STACK_BASE ?? path.join(__dirname, '..', '..', 'stack');
 // __GECKO_VERSION__ is replaced at build time (esbuild --define, fed from
