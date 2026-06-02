@@ -58,6 +58,13 @@ VIAddVersionKey "LegalCopyright" "MIT License"
 
 !define MUI_ABORTWARNING
 
+; ── Branding: gecko icon + a teal welcome/finish image, instead of the
+;    default NSIS graphics (which is what made the installer look dated).
+!define MUI_ICON   "..\..\assets\icons\icons\win\icon.ico"
+!define MUI_UNICON "..\..\assets\icons\icons\win\icon.ico"
+!define MUI_WELCOMEFINISHPAGE_BITMAP   "welcome.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP "welcome.bmp"
+
 !insertmacro MUI_PAGE_WELCOME
 ; TODO: add MUI_PAGE_LICENSE when we ship a top-level LICENSE file
 !insertmacro MUI_PAGE_DIRECTORY
@@ -93,6 +100,9 @@ Section "Gecko (required)" SecCore
 
   ; ── Gecko server entry point ───────────────────────────────────────
   File "..\..\dist-server\server.js"
+
+  ; App icon (used by the Start Menu shortcut below).
+  File "/oname=gecko.ico" "..\..\assets\icons\icons\win\icon.ico"
 
   ; ── React bundle → INSTDIR\renderer\ ───────────────────────────────
   SetOutPath "$INSTDIR\renderer"
